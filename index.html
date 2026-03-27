@@ -2,298 +2,50 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>PASEO - דשבורד לידים</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { overflow-x: hidden; width: 100%; max-width: 100vw; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f0f2f5; color: #1a1a2e; min-height: 100vh; }
 
-        body {
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: #f0f2f5;
-            color: #1a1a2e;
-            min-height: 100vh;
-        }
+        .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: white; padding: 16px; display: flex; justify-content: space-between; align-items: center; }
+        .header h1 { font-size: 22px; font-weight: 700; letter-spacing: 2px; }
+        .header-subtitle { font-size: 12px; opacity: 0.7; margin-top: 2px; }
+        .refresh-btn { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: white; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 13px; }
+        .last-update { font-size: 11px; opacity: 0.6; }
+        .auto-refresh-indicator { display: inline-block; width: 6px; height: 6px; background: #4caf50; border-radius: 50%; margin-left: 6px; animation: pulse 2s infinite; }
+        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
 
-        .header {
-            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
-            color: white;
-            padding: 24px 32px;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.15);
-        }
+        .stats-bar { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; padding: 10px; }
+        .stat-card { background: white; border-radius: 10px; padding: 10px 8px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+        .stat-card .stat-number { font-size: 20px; font-weight: 700; color: #1a1a2e; }
+        .stat-card .stat-label { font-size: 9px; color: #888; margin-top: 2px; }
 
-        .header h1 {
-            font-size: 28px;
-            font-weight: 700;
-            letter-spacing: 2px;
-        }
+        .controls { padding: 8px 10px; display: flex; gap: 6px; flex-wrap: wrap; align-items: center; }
+        .search-box { padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; width: 100%; direction: rtl; }
+        .search-box:focus { outline: none; border-color: #1a1a2e; }
+        .filters { display: flex; gap: 4px; flex-wrap: wrap; padding: 0 10px 8px; }
+        .filter-btn { padding: 6px 10px; border: 1px solid #ddd; border-radius: 6px; background: white; cursor: pointer; font-size: 11px; }
+        .filter-btn.active { background: #1a1a2e; color: white; border-color: #1a1a2e; }
 
-        .header-subtitle {
-            font-size: 14px;
-            opacity: 0.7;
-            margin-top: 4px;
-        }
+        .leads-list { padding: 0 10px 20px; }
 
-        .header-actions {
-            display: flex;
-            align-items: center;
-            gap: 16px;
-        }
+        .lead-card { background: white; border-radius: 12px; padding: 14px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+        .lead-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+        .lead-name { font-size: 16px; font-weight: 600; color: #1a1a2e; }
+        .lead-meta { display: flex; gap: 6px; align-items: center; }
+        .lead-date { font-size: 11px; color: #aaa; }
+        .lead-job { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+        .lead-phone { font-family: 'SF Mono', Consolas, monospace; font-size: 14px; color: #555; direction: ltr; display: inline; }
 
-        .refresh-btn {
-            background: rgba(255,255,255,0.15);
-            border: 1px solid rgba(255,255,255,0.25);
-            color: white;
-            padding: 10px 20px;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 14px;
-            transition: all 0.2s;
-        }
-
-        .refresh-btn:hover {
-            background: rgba(255,255,255,0.25);
-        }
-
-        .last-update {
-            font-size: 12px;
-            opacity: 0.6;
-        }
-
-        .stats-bar {
-            display: flex;
-            gap: 16px;
-            padding: 20px 32px;
-            flex-wrap: wrap;
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: 12px;
-            padding: 18px 24px;
-            flex: 1;
-            min-width: 160px;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-        }
-
-        .stat-card .stat-number {
-            font-size: 32px;
-            font-weight: 700;
-            color: #1a1a2e;
-        }
-
-        .stat-card .stat-label {
-            font-size: 13px;
-            color: #888;
-            margin-top: 4px;
-        }
-
-        .controls {
-            padding: 0 32px 16px;
-            display: flex;
-            gap: 12px;
-            flex-wrap: wrap;
-            align-items: center;
-        }
-
-        .search-box {
-            padding: 10px 16px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            font-size: 14px;
-            width: 260px;
-            direction: rtl;
-        }
-
-        .search-box:focus {
-            outline: none;
-            border-color: #1a1a2e;
-            box-shadow: 0 0 0 3px rgba(26,26,46,0.1);
-        }
-
-        .filter-btn {
-            padding: 8px 16px;
-            border: 1px solid #ddd;
-            border-radius: 8px;
-            background: white;
-            cursor: pointer;
-            font-size: 13px;
-            transition: all 0.2s;
-        }
-
-        .filter-btn.active {
-            background: #1a1a2e;
-            color: white;
-            border-color: #1a1a2e;
-        }
-
-        .filter-btn:hover:not(.active) {
-            background: #f8f8f8;
-        }
-
-        .table-container {
-            padding: 0 32px 32px;
-            overflow-x: auto;
-            -webkit-overflow-scrolling: touch;
-        }
-
-        table {
-            width: 100%;
-            min-width: 600px;
-            border-collapse: separate;
-            border-spacing: 0;
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 1px 4px rgba(0,0,0,0.08);
-        }
-
-        thead {
-            background: #fafafa;
-        }
-
-        th {
-            padding: 14px 20px;
-            text-align: right;
-            font-weight: 600;
-            font-size: 13px;
-            color: #666;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            border-bottom: 2px solid #eee;
-        }
-
-        td {
-            padding: 16px 20px;
-            font-size: 15px;
-            border-bottom: 1px solid #f0f0f0;
-        }
-
-        tr:last-child td {
-            border-bottom: none;
-        }
-
-        tbody tr {
-            transition: background 0.15s;
-        }
-
-        tbody tr:hover {
-            background: #f8f9ff;
-        }
-
-        .name-cell {
-            font-weight: 600;
-            color: #1a1a2e;
-        }
-
-        .phone-cell {
-            direction: ltr;
-            text-align: right;
-        }
-
-        .phone-actions {
-            display: flex;
-            gap: 6px;
-            align-items: center;
-            justify-content: flex-end;
-        }
-
-        .phone-num {
-            font-family: 'SF Mono', 'Consolas', monospace;
-            color: #444;
-            font-size: 14px;
-        }
-
-        .btn-call, .btn-wa {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 30px;
-            height: 30px;
-            border-radius: 50%;
-            text-decoration: none;
-            font-size: 15px;
-            flex-shrink: 0;
-        }
-
-        .btn-call {
-            background: #e3f2fd;
-            color: #1565c0;
-        }
-
-        .btn-wa {
-            background: #e8f5e9;
-            color: #25d366;
-        }
-
-        .btn-call:hover { background: #bbdefb; }
-        .btn-wa:hover { background: #c8e6c9; }
-
-        .status-cell {
-            text-align: center;
-        }
-
-        .status-btn {
-            padding: 4px 10px;
-            border-radius: 12px;
-            font-size: 12px;
-            font-weight: 500;
-            cursor: pointer;
-            border: 1px solid #ddd;
-            background: #f5f5f5;
-            color: #888;
-            transition: all 0.2s;
-        }
-
-        .status-btn.contacted-yarin {
-            background: #e3f2fd;
-            color: #1565c0;
-            border-color: #90caf9;
-        }
-
-        .status-btn.contacted-adi {
-            background: #f3e5f5;
-            color: #7b1fa2;
-            border-color: #ce93d8;
-        }
-
-        .status-menu {
-            position: absolute;
-            background: white;
-            border-radius: 8px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            z-index: 100;
-            overflow: hidden;
-            min-width: 120px;
-        }
-
-        .status-menu-item {
-            padding: 10px 16px;
-            cursor: pointer;
-            font-size: 13px;
-            border-bottom: 1px solid #f0f0f0;
-            transition: background 0.15s;
-        }
-
-        .status-menu-item:last-child { border-bottom: none; }
-        .status-menu-item:hover { background: #f8f8f8; }
-        .status-menu-item.yarin { color: #1565c0; }
-        .status-menu-item.adi { color: #7b1fa2; }
-        .status-menu-item.clear { color: #888; }
-
-        .job-badge {
-            display: inline-block;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 13px;
-            font-weight: 500;
-        }
+        .lead-actions { display: flex; gap: 8px; margin-top: 10px; }
+        .action-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px; border-radius: 10px; text-decoration: none; font-size: 14px; font-weight: 500; border: none; cursor: pointer; }
+        .action-call { background: #e3f2fd; color: #1565c0; }
+        .action-wa { background: #e8f5e9; color: #25d366; }
+        .action-status { background: #f5f5f5; color: #888; border: 1px solid #e0e0e0; }
+        .action-status.contacted-yarin { background: #e3f2fd; color: #1565c0; border-color: #90caf9; }
+        .action-status.contacted-adi { background: #f3e5f5; color: #7b1fa2; border-color: #ce93d8; }
 
         .job-kitchen { background: #fff3e0; color: #e65100; }
         .job-host { background: #e8f5e9; color: #2e7d32; }
@@ -301,81 +53,35 @@
         .job-bar { background: #f3e5f5; color: #7b1fa2; }
         .job-other { background: #f5f5f5; color: #616161; }
 
-        .platform-icon {
-            font-size: 12px;
-            padding: 3px 8px;
-            border-radius: 4px;
-            font-weight: 500;
-        }
-
+        .platform-badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 500; }
         .platform-ig { background: #fce4ec; color: #c2185b; }
         .platform-fb { background: #e3f2fd; color: #1565c0; }
 
-        .date-cell {
-            font-size: 13px;
-            color: #888;
-        }
+        .status-menu { position: fixed; bottom: 0; left: 0; right: 0; background: white; border-radius: 16px 16px 0 0; box-shadow: 0 -4px 20px rgba(0,0,0,0.15); z-index: 200; padding: 10px 0; }
+        .status-menu-item { padding: 16px 24px; cursor: pointer; font-size: 16px; text-align: center; border-bottom: 1px solid #f0f0f0; }
+        .status-menu-item:last-child { border-bottom: none; }
+        .status-menu-item.yarin { color: #1565c0; font-weight: 600; }
+        .status-menu-item.adi { color: #7b1fa2; font-weight: 600; }
+        .status-menu-item.clear { color: #888; }
+        .status-menu-item.cancel { color: #aaa; font-size: 14px; }
+        .status-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.3); z-index: 199; }
 
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #aaa;
-            font-size: 16px;
-        }
+        .empty-state { text-align: center; padding: 40px 20px; color: #aaa; font-size: 15px; }
+        .loading { text-align: center; padding: 40px; color: #888; }
+        .loading-spinner { width: 32px; height: 32px; border: 3px solid #eee; border-top-color: #1a1a2e; border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 12px; }
+        @keyframes spin { to { transform: rotate(360deg); } }
 
-        .loading {
-            text-align: center;
-            padding: 60px;
-            color: #888;
-        }
-
-        .loading-spinner {
-            width: 40px;
-            height: 40px;
-            border: 3px solid #eee;
-            border-top-color: #1a1a2e;
-            border-radius: 50%;
-            animation: spin 0.8s linear infinite;
-            margin: 0 auto 16px;
-        }
-
-        @keyframes spin {
-            to { transform: rotate(360deg); }
-        }
-
-        .auto-refresh-indicator {
-            display: inline-block;
-            width: 8px;
-            height: 8px;
-            background: #4caf50;
-            border-radius: 50%;
-            margin-left: 8px;
-            animation: pulse 2s infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: 0.4; }
-        }
-
-        @media (max-width: 768px) {
-            html, body { overflow-x: hidden; max-width: 100vw; }
-            .header { padding: 16px; }
-            .header h1 { font-size: 22px; }
-            .stats-bar { padding: 12px 16px; gap: 8px; }
-            .stat-card { min-width: 70px; padding: 10px 12px; }
-            .stat-card .stat-number { font-size: 22px; }
-            .stat-card .stat-label { font-size: 11px; }
-            .controls { padding: 0 16px 12px; }
-            .table-container { padding: 0 8px 16px; }
-            .search-box { width: 100%; }
-            th { padding: 8px 6px; font-size: 11px; }
-            td { padding: 10px 6px; font-size: 13px; }
-            .phone-cell { font-size: 12px; }
-            .job-badge { font-size: 11px; padding: 3px 8px; }
-            .platform-icon { font-size: 10px; padding: 2px 6px; }
-            .date-cell { font-size: 11px; }
-            .name-cell { font-size: 13px; }
+        @media (min-width: 768px) {
+            .header { padding: 20px 32px; }
+            .header h1 { font-size: 28px; }
+            .stats-bar { padding: 16px 32px; gap: 12px; }
+            .stat-card { padding: 16px; }
+            .stat-card .stat-number { font-size: 28px; }
+            .stat-card .stat-label { font-size: 12px; }
+            .controls { padding: 8px 32px; }
+            .filters { padding: 0 32px 12px; }
+            .leads-list { padding: 0 32px 32px; max-width: 800px; }
+            .lead-card { padding: 18px; }
         }
     </style>
 </head>
@@ -385,40 +91,24 @@
             <h1>PASEO</h1>
             <div class="header-subtitle">דשבורד לידים - גיוס עובדים</div>
         </div>
-        <div class="header-actions">
-            <div>
-                <span class="auto-refresh-indicator"></span>
-                <span class="last-update" id="lastUpdate">טוען...</span>
-            </div>
-            <button class="refresh-btn" onclick="loadData()">רענן</button>
+        <div style="text-align:left">
+            <div><span class="auto-refresh-indicator"></span><span class="last-update" id="lastUpdate">טוען...</span></div>
+            <button class="refresh-btn" onclick="loadData()" style="margin-top:4px">רענן</button>
         </div>
     </div>
 
     <div class="stats-bar">
-        <div class="stat-card">
-            <div class="stat-number" id="totalLeads">-</div>
-            <div class="stat-label">סה"כ לידים</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number" id="todayLeads">-</div>
-            <div class="stat-label">היום</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number" id="igLeads">-</div>
-            <div class="stat-label">אינסטגרם</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number" id="fbLeads">-</div>
-            <div class="stat-label">פייסבוק</div>
-        </div>
-        <div class="stat-card">
-            <div class="stat-number" id="newLeads">-</div>
-            <div class="stat-label">טרם טופלו</div>
-        </div>
+        <div class="stat-card"><div class="stat-number" id="totalLeads">-</div><div class="stat-label">סה"כ</div></div>
+        <div class="stat-card"><div class="stat-number" id="newLeads">-</div><div class="stat-label">חדשים</div></div>
+        <div class="stat-card"><div class="stat-number" id="todayLeads">-</div><div class="stat-label">היום</div></div>
+        <div class="stat-card"><div class="stat-number" id="igLeads">-</div><div class="stat-label">IG</div></div>
+        <div class="stat-card"><div class="stat-number" id="fbLeads">-</div><div class="stat-label">FB</div></div>
     </div>
 
     <div class="controls">
-        <input type="text" class="search-box" id="searchBox" placeholder="חיפוש לפי שם, טלפון או משרה..." oninput="renderTable()">
+        <input type="text" class="search-box" id="searchBox" placeholder="חיפוש לפי שם, טלפון או משרה..." oninput="renderCards()">
+    </div>
+    <div class="filters">
         <button class="filter-btn active" data-filter="all" onclick="setFilter(this)">הכל</button>
         <button class="filter-btn" data-filter="new" onclick="setFilter(this)">חדשים</button>
         <button class="filter-btn" data-filter="מטבח" onclick="setFilter(this)">מטבח</button>
@@ -427,20 +117,52 @@
         <button class="filter-btn" data-filter="בר" onclick="setFilter(this)">בר</button>
     </div>
 
-    <div class="table-container">
-        <div id="tableArea">
-            <div class="loading">
-                <div class="loading-spinner"></div>
-                טוען לידים...
-            </div>
-        </div>
+    <div class="leads-list" id="leadsArea">
+        <div class="loading"><div class="loading-spinner"></div>טוען לידים...</div>
     </div>
 
     <script>
         const SHEET_ID = '1PwASsf8j8BmbZKSGCDXWNevfkR7hgLMQKL5-Jk0ncz4';
+        const SUPABASE_URL = 'https://vzeowbriddhvhpishmhn.supabase.co';
+        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ6ZW93YnJpZGRodmhwaXNobWhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MTAyNDUsImV4cCI6MjA4ODM4NjI0NX0.PWvjFj41l0wB9awroZdDsMhCJ0yJXdrf1-k-45n0Rwk';
 
         let allLeads = [];
         let currentFilter = 'all';
+        let leadStatuses = {};
+
+        const nameMap = {
+            'yarin':'ירין','adi':'עדי','noa':'נועה','noga':'נוגה','shaked':'שקד',
+            'eden':'עדן','amit':'עמית','rotem':'רותם','tal':'טל','mor':'מור',
+            'lihi':'ליהי','stav':'סתיו','maayan':'מעיין','shelly':'שלי',
+            'inbar':'ענבר','romi':'רומי','leon':'ליאון','itay':'איתי',
+            'lotem':'לוטם','karin':'קרין','noam':'נועם','lior':'ליאור',
+            'tomer':'תומר','omer':'עומר','yael':'יעל','maya':'מאיה',
+            'daniel':'דניאל','david':'דויד','michael':'מיכאל','sarah':'שרה',
+            'rachel':'רחל','tamar':'תמר','shir':'שיר','noy':'נוי',
+            'guy':'גיא','alon':'אלון','ilan':'אילן','ran':'רן',
+            'gal':'גל','bar':'בר','ori':'אורי','yonatan':'יונתן',
+            'jonathan':'יונתן','ben':'בן','tom':'תום','lia':'ליה',
+            'ofir':'אופיר','shahar':'שחר','lian':'ליאן','agam':'אגם',
+            'yuval':'יובל','eyal':'אייל','oren':'אורן','zoey':'זואי',
+            'zoe':'זואי','hadar':'הדר','rina':'רינה','dor':'דור',
+            'ron':'רון','shay':'שי','shai':'שי','dana':'דנה',
+            'lena':'לנה','ella':'אלה','alma':'אלמה','neta':'נטע',
+        };
+
+        function hebrewName(name) {
+            if (!name) return '';
+            if (/[\u0590-\u05FF]/.test(name)) {
+                // Already Hebrew - return only first name
+                return name.trim().split(/\s+/)[0];
+            }
+            var parts = name.trim().split(/\s+/);
+            var firstName = parts[0].toLowerCase().replace(/[^a-z]/g, '');
+            if (nameMap[firstName]) return nameMap[firstName];
+            var fullLower = name.toLowerCase().trim();
+            if (nameMap[fullLower]) return nameMap[fullLower];
+            // Return only first name for English too
+            return parts[0];
+        }
 
         function getJobClass(job) {
             if (!job) return 'job-other';
@@ -456,257 +178,26 @@
             if (!dateStr) return '';
             try {
                 const d = new Date(dateStr);
-                return d.toLocaleDateString('he-IL', { day: '2-digit', month: '2-digit', year: '2-digit' }) +
-                    ' ' + d.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
-            } catch {
-                return dateStr;
-            }
+                return d.toLocaleDateString('he-IL', { day: '2-digit', month: '2-digit' }) + ' ' + d.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
+            } catch { return dateStr; }
         }
 
         function isToday(dateStr) {
             if (!dateStr) return false;
-            try {
-                const d = new Date(dateStr);
-                const today = new Date();
-                return d.toDateString() === today.toDateString();
-            } catch {
-                return false;
-            }
+            try { return new Date(dateStr).toDateString() === new Date().toDateString(); } catch { return false; }
         }
 
         function formatPhone(phone) {
             if (!phone) return '';
             let p = phone.replace(/[^\d+]/g, '');
-            if (p.startsWith('+972')) {
-                p = '0' + p.slice(4);
-            }
-            if (p.length === 10 && p.startsWith('0')) {
-                return p.slice(0, 3) + '-' + p.slice(3, 6) + '-' + p.slice(6);
-            }
+            if (p.startsWith('+972')) p = '0' + p.slice(4);
+            if (p.length === 10 && p.startsWith('0')) return p.slice(0,3) + '-' + p.slice(3,6) + '-' + p.slice(6);
             return p;
         }
 
-        // Use JSONP approach - works from file:// and any origin
-        function loadData() {
-            // Remove previous callback script if exists
-            const oldScript = document.getElementById('gsheet-loader');
-            if (oldScript) oldScript.remove();
+        function escapeHtml(t) { var d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
 
-            // Define global callback
-            window.__gsheetCallback = function(response) {
-                try {
-                    if (!response || !response.table) {
-                        throw new Error('No data');
-                    }
-
-                    // Try to find columns by label first, fall back to known positions
-                    const cols = response.table.cols.map(c => (c.label || '').toLowerCase().trim());
-                    let nameIdx = cols.indexOf('full_name');
-                    let phoneIdx = cols.indexOf('phone');
-                    let jobIdx = cols.indexOf('job_title');
-                    let dateIdx = cols.indexOf('created_time');
-                    let platformIdx = cols.indexOf('platform');
-
-                    // If labels are empty, detect from first row or use known positions
-                    if (nameIdx === -1) {
-                        // Check if first row contains headers
-                        const firstRow = response.table.rows[0];
-                        if (firstRow && firstRow.c) {
-                            const firstVals = firstRow.c.map(c => (c && c.v || '').toString().toLowerCase().trim());
-                            const headerNameIdx = firstVals.indexOf('full_name');
-                            if (headerNameIdx !== -1) {
-                                // First row is headers
-                                nameIdx = headerNameIdx;
-                                phoneIdx = firstVals.indexOf('phone');
-                                jobIdx = firstVals.indexOf('job_title');
-                                dateIdx = firstVals.indexOf('created_time');
-                                platformIdx = firstVals.indexOf('platform');
-                                // Remove header row
-                                response.table.rows.shift();
-                            } else {
-                                // Use known fixed positions from the sheet structure
-                                nameIdx = 12;   // M: full_name
-                                phoneIdx = 13;  // N: phone
-                                jobIdx = 14;    // O: job_title
-                                dateIdx = 1;    // B: created_time
-                                platformIdx = 11; // L: platform
-                            }
-                        }
-                    }
-
-                    function cellVal(cells, idx) {
-                        if (idx < 0 || idx >= cells.length || !cells[idx]) return '';
-                        return String(cells[idx].v || '');
-                    }
-
-                    function cleanPhone(raw) {
-                        // Remove "p:" prefix that Meta adds
-                        return raw.replace(/^p:/, '').trim();
-                    }
-
-                    allLeads = [];
-                    for (const row of response.table.rows) {
-                        const cells = row.c || [];
-                        const name = cellVal(cells, nameIdx);
-                        const phone = cleanPhone(cellVal(cells, phoneIdx));
-                        if (!name && !phone) continue;
-
-                        allLeads.push({
-                            name: name,
-                            phone: phone,
-                            job: cellVal(cells, jobIdx),
-                            date: cellVal(cells, dateIdx),
-                            platform: cellVal(cells, platformIdx)
-                        });
-                    }
-
-                    // Sort by date descending (newest first)
-                    allLeads.sort((a, b) => {
-                        try { return new Date(b.date) - new Date(a.date); }
-                        catch { return 0; }
-                    });
-
-                    updateStats();
-                    renderTable();
-
-                    const now = new Date();
-                    document.getElementById('lastUpdate').textContent =
-                        'עדכון אחרון: ' + now.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
-
-                } catch (err) {
-                    document.getElementById('tableArea').innerHTML =
-                        '<div class="empty-state">שגיאה בטעינת הנתונים.</div>';
-                    console.error(err);
-                }
-            };
-
-            // Also try fetch approach as primary method
-            const jsonUrl = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=out:json`;
-            fetch(jsonUrl)
-                .then(r => r.text())
-                .then(text => {
-                    // Response is: /*O_o*/\ngoogle.visualization.Query.setResponse({...});
-                    const jsonStr = text.match(/google\.visualization\.Query\.setResponse\(({.*})\)/s);
-                    if (jsonStr && jsonStr[1]) {
-                        const data = JSON.parse(jsonStr[1]);
-                        window.__gsheetCallback(data);
-                    } else {
-                        throw new Error('Could not parse response');
-                    }
-                })
-                .catch(err => {
-                    console.log('Fetch failed, trying JSONP...', err);
-                    // Fallback: JSONP via script tag
-                    const script = document.createElement('script');
-                    script.id = 'gsheet-loader';
-                    script.src = `https://docs.google.com/spreadsheets/d/${SHEET_ID}/gviz/tq?tqx=responseHandler:__gsheetCallback`;
-                    script.onerror = function() {
-                        document.getElementById('tableArea').innerHTML =
-                            '<div class="empty-state">שגיאה בטעינת הנתונים. וודא שהגיליון משותף לצפייה.</div>';
-                    };
-                    document.body.appendChild(script);
-                });
-        }
-
-        function updateStats() {
-            document.getElementById('totalLeads').textContent = allLeads.length;
-            document.getElementById('todayLeads').textContent = allLeads.filter(l => isToday(l.date)).length;
-            document.getElementById('igLeads').textContent = allLeads.filter(l => l.platform === 'ig').length;
-            document.getElementById('fbLeads').textContent = allLeads.filter(l => l.platform === 'fb').length;
-            const untouched = allLeads.filter(l => {
-                const key = (l.name + '_' + l.phone).replace(/\s/g, '_');
-                return !getLeadStatus(key);
-            }).length;
-            document.getElementById('newLeads').textContent = untouched;
-        }
-
-        function setFilter(btn) {
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            currentFilter = btn.dataset.filter;
-            renderTable();
-        }
-
-        function renderTable() {
-            const search = document.getElementById('searchBox').value.toLowerCase();
-
-            let filtered = allLeads.filter(lead => {
-                if (currentFilter === 'new') {
-                    const leadKey = (lead.name + '_' + lead.phone).replace(/\s/g, '_');
-                    if (getLeadStatus(leadKey)) return false;
-                } else if (currentFilter !== 'all') {
-                    const j = lead.job.toLowerCase();
-                    if (currentFilter === 'מלצר') {
-                        if (!j.includes('מלצר') && !j.includes('שירות')) return false;
-                    } else if (!j.includes(currentFilter)) return false;
-                }
-                if (search) {
-                    const text = (lead.name + ' ' + lead.phone + ' ' + lead.job).toLowerCase();
-                    if (!text.includes(search)) return false;
-                }
-                return true;
-            });
-
-            if (filtered.length === 0) {
-                document.getElementById('tableArea').innerHTML =
-                    '<div class="empty-state">לא נמצאו לידים</div>';
-                return;
-            }
-
-            let html = `<table>
-                <thead>
-                    <tr>
-                        <th>#</th>
-                        <th>שם</th>
-                        <th>טלפון</th>
-                        <th>משרה</th>
-                        <th>תאריך</th>
-                        <th>סטטוס</th>
-                    </tr>
-                </thead>
-                <tbody>`;
-
-            filtered.forEach((lead, i) => {
-                const phoneFormatted = formatPhone(lead.phone);
-                const phoneClean = lead.phone.replace(/[^\d+]/g, '');
-                let waPhone = phoneClean;
-                if (waPhone.startsWith('0')) waPhone = '972' + waPhone.slice(1);
-                else if (waPhone.startsWith('+')) waPhone = waPhone.slice(1);
-                const displayName = hebrewName(lead.name);
-                const waMsg = encodeURIComponent('היי ' + displayName + ' מה שלומך? ראיתי שהשארת פרטים בנוגע למשרה בפסאו.');
-                const leadKey = (lead.name + '_' + lead.phone).replace(/\s/g, '_');
-                const status = getLeadStatus(leadKey);
-                const statusClass = status === 'ירין' ? 'contacted-yarin' : status === 'עדי' ? 'contacted-adi' : '';
-                const statusLabel = status || 'חדש';
-
-                html += `<tr>
-                    <td style="color:#aaa; font-size:13px;">${i + 1}</td>
-                    <td class="name-cell">${escapeHtml(displayName)}</td>
-                    <td class="phone-cell">
-                        <div class="phone-actions">
-                            <span class="phone-num">${phoneFormatted}</span>
-                            <a class="btn-call" href="tel:${phoneClean}" title="התקשר">📞</a>
-                            <a class="btn-wa" href="https://wa.me/${waPhone}?text=${waMsg}" target="_blank" title="וואטסאפ">💬</a>
-                        </div>
-                    </td>
-                    <td><span class="job-badge ${getJobClass(lead.job)}">${escapeHtml(lead.job)}</span></td>
-                    <td class="date-cell">${formatDate(lead.date)}</td>
-                    <td class="status-cell">
-                        <button class="status-btn ${statusClass}" onclick="toggleStatus(event, '${leadKey}')">${statusLabel}</button>
-                    </td>
-                </tr>`;
-            });
-
-            html += '</tbody></table>';
-            document.getElementById('tableArea').innerHTML = html;
-        }
-
-        // Supabase config
-        const SUPABASE_URL = 'https://vzeowbriddhvhpishmhn.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ6ZW93YnJpZGRodmhwaXNobWhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MTAyNDUsImV4cCI6MjA4ODM4NjI0NX0.PWvjFj41l0wB9awroZdDsMhCJ0yJXdrf1-k-45n0Rwk';
-        var leadStatuses = {};
-
-        // Load all statuses from Supabase
+        // Supabase status management
         async function loadStatuses() {
             try {
                 const resp = await fetch(SUPABASE_URL + '/rest/v1/lead_statuses?select=lead_key,handled_by', {
@@ -714,129 +205,176 @@
                 });
                 const data = await resp.json();
                 leadStatuses = {};
-                for (var i = 0; i < data.length; i++) {
-                    leadStatuses[data[i].lead_key] = data[i].handled_by;
-                }
-            } catch(e) { console.error('Failed to load statuses', e); }
+                data.forEach(r => { leadStatuses[r.lead_key] = r.handled_by; });
+            } catch(e) { console.error(e); }
         }
 
-        function getLeadStatus(key) {
-            return leadStatuses[key] || '';
-        }
+        function getLeadStatus(key) { return leadStatuses[key] || ''; }
 
         async function setLeadStatus(key, value) {
             try {
                 if (value) {
-                    // Upsert
                     await fetch(SUPABASE_URL + '/rest/v1/lead_statuses', {
                         method: 'POST',
-                        headers: {
-                            'apikey': SUPABASE_KEY,
-                            'Authorization': 'Bearer ' + SUPABASE_KEY,
-                            'Content-Type': 'application/json',
-                            'Prefer': 'resolution=merge-duplicates'
-                        },
+                        headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates' },
                         body: JSON.stringify({ lead_key: key, handled_by: value })
                     });
                     leadStatuses[key] = value;
                 } else {
-                    // Delete
                     await fetch(SUPABASE_URL + '/rest/v1/lead_statuses?lead_key=eq.' + encodeURIComponent(key), {
                         method: 'DELETE',
                         headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
                     });
                     delete leadStatuses[key];
                 }
-            } catch(e) { console.error('Failed to save status', e); }
+            } catch(e) { console.error(e); }
         }
 
-        function toggleStatus(event, key) {
-            event.stopPropagation();
+        function openStatusMenu(key) {
             closeStatusMenu();
-            const btn = event.target;
-            const rect = btn.getBoundingClientRect();
+            const overlay = document.createElement('div');
+            overlay.className = 'status-overlay';
+            overlay.id = 'statusOverlay';
+            overlay.onclick = closeStatusMenu;
+            document.body.appendChild(overlay);
+
             const menu = document.createElement('div');
             menu.className = 'status-menu';
             menu.id = 'statusMenu';
-            menu.style.top = (rect.bottom + window.scrollY + 4) + 'px';
-            menu.style.left = (rect.left + window.scrollX) + 'px';
-            menu.innerHTML = `
-                <div class="status-menu-item yarin" onclick="selectStatus('${key}', '\u05d9\u05e8\u05d9\u05df')">ירין טיפל</div>
-                <div class="status-menu-item adi" onclick="selectStatus('${key}', '\u05e2\u05d3\u05d9')">עדי טיפל/ה</div>
-                <div class="status-menu-item clear" onclick="selectStatus('${key}', '')">סמן כחדש</div>
-            `;
+            menu.innerHTML = '<div class="status-menu-item yarin" onclick="selectStatus(\'' + key + '\', \'ירין\')">ירין טיפל</div>' +
+                '<div class="status-menu-item adi" onclick="selectStatus(\'' + key + '\', \'עדי\')">עדי טיפל/ה</div>' +
+                '<div class="status-menu-item clear" onclick="selectStatus(\'' + key + '\', \'\')">סמן כחדש</div>' +
+                '<div class="status-menu-item cancel" onclick="closeStatusMenu()">ביטול</div>';
             document.body.appendChild(menu);
         }
 
         async function selectStatus(key, value) {
             closeStatusMenu();
             await setLeadStatus(key, value);
-            renderTable();
+            renderCards();
             updateStats();
         }
 
         function closeStatusMenu() {
-            const m = document.getElementById('statusMenu');
-            if (m) m.remove();
+            var m = document.getElementById('statusMenu'); if (m) m.remove();
+            var o = document.getElementById('statusOverlay'); if (o) o.remove();
         }
 
-        document.addEventListener('click', closeStatusMenu);
+        // Data loading
+        function loadData() {
+            const jsonUrl = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:json';
+            fetch(jsonUrl).then(r => r.text()).then(text => {
+                const m = text.match(/google\.visualization\.Query\.setResponse\(({.*})\)/s);
+                if (m && m[1]) processData(JSON.parse(m[1]));
+                else throw new Error('parse');
+            }).catch(() => {
+                const s = document.createElement('script');
+                s.src = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=responseHandler:__gsheetCB';
+                document.body.appendChild(s);
+            });
+        }
+        window.__gsheetCB = function(r) { processData(r); };
 
-        // Translate common English first names to Hebrew
-        const nameMap = {
-            'yarin': 'ירין', 'adi': 'עדי', 'noa': 'נועה', 'noga': 'נוגה', 'shaked': 'שקד',
-            'eden': 'עדן', 'amit': 'עמית', 'rotem': 'רותם', 'tal': 'טל', 'mor': 'מור',
-            'lihi': 'ליהי', 'stav': 'סתיו', 'maayan': 'מעיין', 'shelly': 'שלי',
-            'inbar': 'ענבר', 'romi': 'רומי', 'leon': 'ליאון', 'itay': 'איתי',
-            'lotem': 'לוטם', 'karin': 'קרין', 'noam': 'נועם', 'lior': 'ליאור',
-            'tomer': 'תומר', 'omer': 'עומר', 'yael': 'יעל', 'maya': 'מאיה',
-            'daniel': 'דניאל', 'david': 'דויד', 'michael': 'מיכאל', 'sarah': 'שרה',
-            'rachel': 'רחל', 'tamar': 'תמר', 'shir': 'שיר', 'noy': 'נוי',
-            'guy': 'גיא', 'alon': 'אלון', 'ilan': 'אילן', 'ran': 'רן',
-            'gal': 'גל', 'bar': 'בר', 'ori': 'אורי', 'yonatan': 'יונתן',
-            'jonathan': 'יונתן', 'ben': 'בן', 'tom': 'תום', 'lia': 'ליה',
-            'ofir': 'אופיר', 'shahar': 'שחר', 'lian': 'ליאן', 'agam': 'אגם',
-            'yuval': 'יובל', 'eyal': 'אייל', 'oren': 'אורן', 'zoey': 'זואי',
-            'zoe': 'זואי', 'hadar': 'הדר', 'rina': 'רינה', 'dor': 'דור',
-            'ron': 'רון', 'shay': 'שי', 'shai': 'שי', 'dana': 'דנה',
-            'lena': 'לנה', 'ella': 'אלה', 'alma': 'אלמה', 'neta': 'נטע',
-        };
-
-        function hebrewName(name) {
-            if (!name) return '';
-            // If already has Hebrew chars, return as-is
-            if (/[\u0590-\u05FF]/.test(name)) return name;
-            // Try to translate first name
-            var parts = name.trim().split(/\s+/);
-            var firstName = parts[0].toLowerCase().replace(/[^a-z]/g, '');
-            if (nameMap[firstName]) {
-                parts[0] = nameMap[firstName];
-                return parts.join(' ');
+        function processData(response) {
+            if (!response || !response.table) return;
+            const cols = response.table.cols.map(c => (c.label || '').toLowerCase().trim());
+            let ni = cols.indexOf('full_name'), pi = cols.indexOf('phone'), ji = cols.indexOf('job_title'), di = cols.indexOf('created_time'), pli = cols.indexOf('platform');
+            if (ni === -1) {
+                const fr = response.table.rows[0];
+                if (fr && fr.c) {
+                    const vs = fr.c.map(c => (c && c.v || '').toString().toLowerCase().trim());
+                    if (vs.indexOf('full_name') !== -1) {
+                        ni = vs.indexOf('full_name'); pi = vs.indexOf('phone'); ji = vs.indexOf('job_title'); di = vs.indexOf('created_time'); pli = vs.indexOf('platform');
+                        response.table.rows.shift();
+                    } else { ni = 12; pi = 13; ji = 14; di = 1; pli = 11; }
+                }
             }
-            // Check full name lowercase match
-            var fullLower = name.toLowerCase().trim();
-            if (nameMap[fullLower]) return nameMap[fullLower];
-            return name;
+            function cv(cells, idx) { if (idx < 0 || idx >= cells.length || !cells[idx]) return ''; return String(cells[idx].v || ''); }
+            allLeads = [];
+            for (const row of response.table.rows) {
+                const c = row.c || [];
+                const name = cv(c, ni);
+                const phone = cv(c, pi).replace(/^p:/, '').trim();
+                if (!name && !phone) continue;
+                allLeads.push({ name, phone, job: cv(c, ji), date: cv(c, di), platform: cv(c, pli) });
+            }
+            allLeads.sort((a, b) => { try { return new Date(b.date) - new Date(a.date); } catch { return 0; } });
+            updateStats();
+            renderCards();
+            document.getElementById('lastUpdate').textContent = 'עדכון: ' + new Date().toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
         }
 
-        function escapeHtml(text) {
-            const div = document.createElement('div');
-            div.textContent = text;
-            return div.innerHTML;
+        function updateStats() {
+            document.getElementById('totalLeads').textContent = allLeads.length;
+            document.getElementById('todayLeads').textContent = allLeads.filter(l => isToday(l.date)).length;
+            document.getElementById('igLeads').textContent = allLeads.filter(l => l.platform === 'ig').length;
+            document.getElementById('fbLeads').textContent = allLeads.filter(l => l.platform === 'fb').length;
+            document.getElementById('newLeads').textContent = allLeads.filter(l => !getLeadStatus((l.name + '_' + l.phone).replace(/\s/g, '_'))).length;
         }
 
-        // Load on start
+        function setFilter(btn) {
+            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            currentFilter = btn.dataset.filter;
+            renderCards();
+        }
+
+        function renderCards() {
+            const search = document.getElementById('searchBox').value.toLowerCase();
+            let filtered = allLeads.filter(lead => {
+                const leadKey = (lead.name + '_' + lead.phone).replace(/\s/g, '_');
+                if (currentFilter === 'new') { if (getLeadStatus(leadKey)) return false; }
+                else if (currentFilter !== 'all') {
+                    const j = lead.job.toLowerCase();
+                    if (currentFilter === 'מלצר') { if (!j.includes('מלצר') && !j.includes('שירות')) return false; }
+                    else if (!j.includes(currentFilter)) return false;
+                }
+                if (search) { if (!(lead.name + ' ' + lead.phone + ' ' + lead.job).toLowerCase().includes(search)) return false; }
+                return true;
+            });
+
+            if (filtered.length === 0) { document.getElementById('leadsArea').innerHTML = '<div class="empty-state">לא נמצאו לידים</div>'; return; }
+
+            let html = '';
+            filtered.forEach((lead, i) => {
+                const displayName = hebrewName(lead.name);
+                const phoneFormatted = formatPhone(lead.phone);
+                const phoneClean = lead.phone.replace(/[^\d+]/g, '');
+                let waPhone = phoneClean;
+                if (waPhone.startsWith('0')) waPhone = '972' + waPhone.slice(1);
+                else if (waPhone.startsWith('+')) waPhone = waPhone.slice(1);
+                const waMsg = encodeURIComponent('היי ' + displayName + ' מה שלומך? ראיתי שהשארת פרטים בנוגע למשרה בפסאו.');
+                const leadKey = (lead.name + '_' + lead.phone).replace(/\s/g, '_');
+                const status = getLeadStatus(leadKey);
+                const statusClass = status === 'ירין' ? 'contacted-yarin' : status === 'עדי' ? 'contacted-adi' : '';
+                const statusLabel = status ? (status === 'ירין' ? '✓ ירין' : '✓ עדי') : 'סמן טיפול';
+                const plc = lead.platform === 'ig' ? 'platform-ig' : 'platform-fb';
+                const pll = lead.platform === 'ig' ? 'IG' : 'FB';
+
+                html += '<div class="lead-card">' +
+                    '<div class="lead-top">' +
+                        '<div><span class="lead-name">' + escapeHtml(displayName) + '</span> <span class="lead-phone">' + phoneFormatted + '</span></div>' +
+                        '<div class="lead-meta"><span class="platform-badge ' + plc + '">' + pll + '</span><span class="lead-date">' + formatDate(lead.date) + '</span></div>' +
+                    '</div>' +
+                    '<div><span class="lead-job ' + getJobClass(lead.job) + '">' + escapeHtml(lead.job) + '</span></div>' +
+                    '<div class="lead-actions">' +
+                        '<a class="action-btn action-call" href="tel:' + phoneClean + '">📞 התקשר</a>' +
+                        '<a class="action-btn action-wa" href="https://wa.me/' + waPhone + '?text=' + waMsg + '" target="_blank">💬 וואטסאפ</a>' +
+                        '<button class="action-btn action-status ' + statusClass + '" onclick="openStatusMenu(\'' + leadKey + '\')">' + statusLabel + '</button>' +
+                    '</div>' +
+                '</div>';
+            });
+
+            document.getElementById('leadsArea').innerHTML = html;
+        }
+
+        // Init
         async function init() {
             await loadStatuses();
             loadData();
         }
         init();
-
-        // Auto-refresh every 2 minutes (including statuses)
-        setInterval(async function() {
-            await loadStatuses();
-            loadData();
-        }, 2 * 60 * 1000);
+        setInterval(async function() { await loadStatuses(); loadData(); }, 2 * 60 * 1000);
     </script>
 </body>
 </html>
