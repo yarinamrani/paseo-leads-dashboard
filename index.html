@@ -299,6 +299,8 @@
                 allLeads.push({ name, phone, job: cv(c, ji), date: cv(c, di), platform: cv(c, pli) });
             }
             allLeads.sort((a, b) => { try { return new Date(b.date) - new Date(a.date); } catch { return 0; } });
+            // Filter: only show leads from March 2026 onwards
+            allLeads = allLeads.filter(l => { try { return new Date(l.date) >= new Date('2026-03-01'); } catch { return false; } });
             updateStats();
             renderCards();
             document.getElementById('lastUpdate').textContent = 'עדכון: ' + new Date().toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
