@@ -25,12 +25,44 @@
         .controls { padding: 8px 10px; }
         .search-box { padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; width: 100%; direction: rtl; }
         .search-box:focus { outline: none; border-color: #1a1a2e; }
-        .filters { display: flex; gap: 4px; flex-wrap: wrap; padding: 0 10px 8px; }
+        .filters { display: flex; gap: 4px; flex-wrap: wrap; padding: 0 10px 10px; }
         .filter-btn { padding: 6px 10px; border: 1px solid #ddd; border-radius: 6px; background: white; cursor: pointer; font-size: 11px; }
         .filter-btn.active { background: #1a1a2e; color: white; border-color: #1a1a2e; }
 
-        .section-label { font-size: 11px; font-weight: 600; color: #aaa; letter-spacing: 0.5px; text-transform: uppercase; padding: 12px 10px 4px; }
+        /* ===== CALENDAR WIDGET ===== */
+        .calendar-widget { margin: 0 10px 14px; background: white; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); overflow: hidden; }
+        .calendar-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px 10px; cursor: pointer; user-select: none; border-bottom: 1px solid #f0f0f0; }
+        .calendar-header-title { font-size: 13px; font-weight: 600; color: #1a1a2e; display: flex; align-items: center; gap: 6px; }
+        .calendar-toggle-icon { font-size: 11px; color: #aaa; transition: transform 0.2s; }
+        .calendar-toggle-icon.open { transform: rotate(180deg); }
+        .calendar-body { padding: 12px; }
+        .cal-month-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+        .cal-nav-btn { background: none; border: 1px solid #eee; border-radius: 6px; padding: 4px 12px; cursor: pointer; font-size: 14px; color: #555; }
+        .cal-nav-btn:hover { background: #f5f5f5; }
+        .cal-month-title { font-size: 13px; font-weight: 600; color: #1a1a2e; }
+        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; margin-bottom: 10px; }
+        .cal-day-label { text-align: center; font-size: 10px; color: #aaa; font-weight: 600; padding: 2px 0 4px; }
+        .cal-day { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 7px; font-size: 12px; position: relative; }
+        .cal-day.today { background: #1a1a2e; color: white; font-weight: 700; }
+        .cal-day.has-iv { background: #e8f5e9; color: #2e7d32; font-weight: 700; cursor: pointer; }
+        .cal-day.has-iv:hover { background: #c8e6c9; }
+        .cal-day.today.has-iv { background: #2e7d32; color: white; }
+        .cal-dot { width: 4px; height: 4px; border-radius: 50%; margin-top: 1px; background: #2e7d32; }
+        .cal-day.today .cal-dot { background: white; }
+        .cal-day.today.has-iv .cal-dot { background: rgba(255,255,255,0.7); }
+        .cal-interviews { border-top: 1px solid #f0f0f0; padding-top: 10px; }
+        .cal-iv-title { font-size: 11px; font-weight: 600; color: #aaa; margin-bottom: 6px; }
+        .cal-iv-row { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 1px solid #f9f9f9; }
+        .cal-iv-row:last-child { border-bottom: none; }
+        .cal-date-chip { background: #e8f5e9; color: #2e7d32; border-radius: 6px; padding: 3px 8px; font-size: 11px; font-weight: 600; white-space: nowrap; min-width: 68px; text-align: center; }
+        .cal-date-chip.is-today { background: #2e7d32; color: white; }
+        .cal-date-chip.is-past { background: #f5f5f5; color: #aaa; }
+        .cal-iv-name { font-size: 13px; font-weight: 600; color: #1a1a2e; flex: 1; }
+        .cal-iv-time { font-size: 12px; color: #888; white-space: nowrap; }
+        .cal-iv-job { font-size: 11px; padding: 2px 7px; border-radius: 10px; white-space: nowrap; }
+        .cal-empty { text-align: center; color: #ccc; font-size: 13px; padding: 12px 0; }
 
+        .section-label { font-size: 11px; font-weight: 600; color: #aaa; letter-spacing: 0.5px; padding: 10px 10px 4px; }
         .leads-list { padding: 0 10px 20px; }
 
         .lead-card { background: white; border-radius: 12px; padding: 14px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
@@ -61,15 +93,12 @@
         .handle-label { font-size: 11px; color: #aaa; margin-bottom: 6px; }
         .handle-btns { display: flex; gap: 8px; }
         .handle-btn { flex: 1; padding: 8px; border-radius: 8px; border: 1px solid #ddd; background: #fafafa; font-size: 13px; font-weight: 500; cursor: pointer; text-align: center; }
-        .handle-btn.sel-yarin { background: #e3f2fd; color: #1565c0; border-color: #90caf9; }
-        .handle-btn.sel-adi { background: #f3e5f5; color: #7b1fa2; border-color: #ce93d8; }
 
         .handler-badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; }
         .handler-badge.yarin { background: #e3f2fd; color: #1565c0; }
         .handler-badge.adi { background: #f3e5f5; color: #7b1fa2; }
 
-        .next-section { margin-top: 8px; }
-        .next-btns { display: flex; gap: 8px; }
+        .next-btns { display: flex; gap: 8px; margin-top: 8px; }
         .next-btn { flex: 1; padding: 9px; border-radius: 8px; border: 1px solid #ddd; background: #fafafa; font-size: 13px; font-weight: 500; cursor: pointer; text-align: center; }
         .next-btn.btn-meeting { color: #2e7d32; }
         .next-btn.btn-not-relevant { color: #c62828; }
@@ -83,12 +112,10 @@
         .interview-info { margin-top: 8px; padding: 10px 12px; background: #e8f5e9; border: 1px solid #a5d6a7; border-radius: 10px; font-size: 14px; color: #2e7d32; font-weight: 500; display: flex; justify-content: space-between; align-items: center; }
         .interview-info .int-edit { font-size: 12px; color: #888; cursor: pointer; text-decoration: underline; }
 
-        /* Not relevant with hide button */
-        .not-relevant-badge { margin-top: 8px; padding: 8px 12px; background: #ffebee; border: 1px solid #ef9a9a; border-radius: 10px; font-size: 13px; color: #c62828; font-weight: 500; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+        .not-relevant-badge { margin-top: 8px; padding: 10px 12px; background: #ffebee; border: 1px solid #ef9a9a; border-radius: 10px; font-size: 13px; color: #c62828; font-weight: 500; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
         .nr-actions { display: flex; gap: 10px; align-items: center; }
-        .nr-hide-btn { background: #c62828; color: white; border: none; border-radius: 6px; padding: 4px 10px; font-size: 12px; cursor: pointer; font-weight: 600; }
+        .nr-hide-btn { background: #c62828; color: white; border: none; border-radius: 6px; padding: 6px 14px; font-size: 13px; cursor: pointer; font-weight: 600; }
         .nr-undo { font-size: 12px; color: #888; cursor: pointer; text-decoration: underline; }
-
         .reset-link { font-size: 11px; color: #bbb; cursor: pointer; margin-top: 6px; display: inline-block; }
 
         .empty-state { text-align: center; padding: 40px 20px; color: #aaa; font-size: 15px; }
@@ -104,9 +131,10 @@
             .stat-card .stat-number { font-size: 28px; }
             .stat-card .stat-label { font-size: 12px; }
             .controls { padding: 8px 32px; }
-            .filters { padding: 0 32px 12px; }
+            .filters { padding: 0 32px 10px; }
+            .calendar-widget { margin: 0 32px 14px; }
             .leads-list { padding: 0 32px 32px; max-width: 800px; }
-            .section-label { padding: 12px 32px 4px; }
+            .section-label { padding: 10px 32px 4px; }
             .lead-card { padding: 18px; }
         }
     </style>
@@ -145,6 +173,23 @@
         <button class="filter-btn" data-filter="not_relevant" onclick="setFilter(this)">לא רלוונטי</button>
     </div>
 
+    <!-- Calendar Widget -->
+    <div class="calendar-widget" id="calendarWidget">
+        <div class="calendar-header" onclick="toggleCalendar()">
+            <div class="calendar-header-title">📅 ראיונות קרובים</div>
+            <span class="calendar-toggle-icon open" id="calToggleIcon">▲</span>
+        </div>
+        <div class="calendar-body" id="calendarBody">
+            <div class="cal-month-nav">
+                <button class="cal-nav-btn" onclick="changeMonth(-1);event.stopPropagation()">◀</button>
+                <span class="cal-month-title" id="calMonthTitle"></span>
+                <button class="cal-nav-btn" onclick="changeMonth(1);event.stopPropagation()">▶</button>
+            </div>
+            <div class="cal-grid" id="calGrid"></div>
+            <div class="cal-interviews" id="calInterviews"></div>
+        </div>
+    </div>
+
     <div id="leadsArea">
         <div class="loading"><div class="loading-spinner"></div>טוען לידים...</div>
     </div>
@@ -158,6 +203,12 @@
         let currentFilter = 'all';
         let leadStatuses = {};
         let openInterviewForms = {};
+        let calendarOpen = true;
+        let calViewDate = new Date();
+
+        const HE_DAYS = ['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
+        const HE_MONTHS = ['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
+        const DAY_LABELS = ['א','ב','ג','ד','ה','ו','ש'];
 
         const nameMap = {
             'yarin':'ירין','adi':'עדי','noa':'נועה','noga':'נוגה','shaked':'שקד',
@@ -183,8 +234,7 @@
             if (/[\u0590-\u05FF]/.test(name)) return name.trim().split(/\s+/)[0];
             var parts = name.trim().split(/\s+/);
             var firstName = parts[0].toLowerCase().replace(/[^a-z]/g, '');
-            if (nameMap[firstName]) return nameMap[firstName];
-            return parts[0];
+            return nameMap[firstName] || parts[0];
         }
 
         function getJobClass(job) {
@@ -217,16 +267,107 @@
 
         function escapeHtml(t) { var d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
 
-        const hebrewDays = ['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
         function formatInterview(dateStr, timeStr) {
             if (!dateStr) return '';
             const d = new Date(dateStr + 'T00:00:00');
-            const day = hebrewDays[d.getDay()];
-            const dateF = d.toLocaleDateString('he-IL', { day:'2-digit', month:'2-digit' });
-            return 'יום ' + day + ' ' + dateF + (timeStr ? ' בשעה ' + timeStr.slice(0,5) : '');
+            return 'יום ' + HE_DAYS[d.getDay()] + ' ' + d.toLocaleDateString('he-IL', { day:'2-digit', month:'2-digit' }) + (timeStr ? ' בשעה ' + timeStr.slice(0,5) : '');
         }
 
-        // --- Supabase ---
+        // ===== CALENDAR =====
+        function toggleCalendar() {
+            calendarOpen = !calendarOpen;
+            document.getElementById('calendarBody').style.display = calendarOpen ? 'block' : 'none';
+            const icon = document.getElementById('calToggleIcon');
+            icon.textContent = calendarOpen ? '▲' : '▼';
+            icon.classList.toggle('open', calendarOpen);
+        }
+
+        function changeMonth(delta) {
+            calViewDate = new Date(calViewDate.getFullYear(), calViewDate.getMonth() + delta, 1);
+            renderCalendar();
+        }
+
+        function getInterviewsMap() {
+            const map = {};
+            Object.entries(leadStatuses).forEach(([key, info]) => {
+                if (info.status === 'meeting' && info.interview_date) {
+                    if (!map[info.interview_date]) map[info.interview_date] = [];
+                    // Find lead name from key
+                    const lead = allLeads.find(l => (l.name + '_' + l.phone).replace(/\s/g,'_') === key);
+                    map[info.interview_date].push({ key, info, lead });
+                }
+            });
+            return map;
+        }
+
+        function renderCalendar() {
+            const ivMap = getInterviewsMap();
+            const today = new Date();
+            const todayStr = today.toISOString().substring(0,10);
+            const y = calViewDate.getFullYear();
+            const m = calViewDate.getMonth();
+
+            document.getElementById('calMonthTitle').textContent = HE_MONTHS[m] + ' ' + y;
+
+            // Grid
+            const firstDay = new Date(y, m, 1).getDay(); // 0=sun
+            const daysInMonth = new Date(y, m+1, 0).getDate();
+            let gridHtml = DAY_LABELS.map(l => '<div class="cal-day-label">' + l + '</div>').join('');
+
+            for (let i = 0; i < firstDay; i++) gridHtml += '<div class="cal-day empty"></div>';
+
+            for (let d = 1; d <= daysInMonth; d++) {
+                const dateStr = y + '-' + String(m+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
+                const hasIv = !!ivMap[dateStr];
+                const isTod = dateStr === todayStr;
+                let cls = 'cal-day';
+                if (isTod) cls += ' today';
+                if (hasIv) cls += ' has-iv';
+                const dot = hasIv ? '<div class="cal-dot"></div>' : '';
+                const onclick = hasIv ? ' onclick="scrollToDate(\'' + dateStr + '\')"' : '';
+                gridHtml += '<div class="' + cls + '"' + onclick + '>' + d + dot + '</div>';
+            }
+            document.getElementById('calGrid').innerHTML = gridHtml;
+
+            // Interview list — all months, sorted
+            const allIvDates = Object.keys(ivMap).sort();
+            if (allIvDates.length === 0) {
+                document.getElementById('calInterviews').innerHTML = '<div class="cal-empty">אין ראיונות קבועים</div>';
+                return;
+            }
+
+            let listHtml = '<div class="cal-iv-title">כל הראיונות הקבועים</div>';
+            allIvDates.forEach(dateStr => {
+                ivMap[dateStr].forEach(({ info, lead }) => {
+                    const d = new Date(dateStr + 'T00:00:00');
+                    const dayName = HE_DAYS[d.getDay()];
+                    const dateF = d.toLocaleDateString('he-IL', { day:'2-digit', month:'2-digit' });
+                    const isPast = dateStr < todayStr;
+                    const isTod = dateStr === todayStr;
+                    let chipCls = 'cal-date-chip';
+                    if (isTod) chipCls += ' is-today';
+                    else if (isPast) chipCls += ' is-past';
+                    const name = lead ? hebrewName(lead.name) : info.key.split('_')[0];
+                    const job = lead ? lead.job : '';
+                    const time = info.interview_time ? info.interview_time.slice(0,5) : '';
+                    listHtml += '<div class="cal-iv-row">' +
+                        '<div class="' + chipCls + '">יום ' + dayName + '<br>' + dateF + '</div>' +
+                        '<div class="cal-iv-name">' + escapeHtml(name) + '</div>' +
+                        (time ? '<div class="cal-iv-time">' + time + '</div>' : '') +
+                        (job ? '<div class="cal-iv-job ' + getJobClass(job) + '">' + escapeHtml(job) + '</div>' : '') +
+                    '</div>';
+                });
+            });
+            document.getElementById('calInterviews').innerHTML = listHtml;
+        }
+
+        function scrollToDate(dateStr) {
+            // Switch filter to meetings and scroll
+            const btn = document.querySelector('[data-filter="meeting"]');
+            if (btn) setFilter(btn);
+        }
+
+        // ===== SUPABASE =====
         async function loadStatuses() {
             try {
                 const resp = await fetch(SUPABASE_URL + '/rest/v1/lead_statuses?select=lead_key,handled_by,status,interview_date,interview_time,hidden', {
@@ -235,13 +376,7 @@
                 const data = await resp.json();
                 leadStatuses = {};
                 if (Array.isArray(data)) data.forEach(r => {
-                    leadStatuses[r.lead_key] = {
-                        handled_by: r.handled_by || '',
-                        status: r.status || 'new',
-                        interview_date: r.interview_date || null,
-                        interview_time: r.interview_time || null,
-                        hidden: r.hidden || false
-                    };
+                    leadStatuses[r.lead_key] = { handled_by: r.handled_by||'', status: r.status||'new', interview_date: r.interview_date||null, interview_time: r.interview_time||null, hidden: r.hidden||false };
                 });
             } catch(e) { console.error(e); }
         }
@@ -253,7 +388,7 @@
                     headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates' },
                     body: JSON.stringify({ lead_key: key, ...data })
                 });
-                if (!leadStatuses[key]) leadStatuses[key] = { handled_by: '', status: 'new', interview_date: null, interview_time: null, hidden: false };
+                if (!leadStatuses[key]) leadStatuses[key] = { handled_by:'', status:'new', interview_date:null, interview_time:null, hidden:false };
                 Object.assign(leadStatuses[key], data);
             } catch(e) { console.error(e); }
         }
@@ -261,17 +396,16 @@
         async function clearLeadData(key) {
             try {
                 await fetch(SUPABASE_URL + '/rest/v1/lead_statuses?lead_key=eq.' + encodeURIComponent(key), {
-                    method: 'DELETE',
-                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+                    method: 'DELETE', headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
                 });
                 delete leadStatuses[key];
             } catch(e) { console.error(e); }
         }
 
-        // --- Actions ---
+        // ===== ACTIONS =====
         async function setHandler(key, who) {
             await saveLeadData(key, { handled_by: who });
-            renderCards(); updateStats();
+            renderCards(); updateStats(); renderCalendar();
         }
 
         async function setMeetingStatus(key) {
@@ -281,9 +415,9 @@
 
         async function setNotRelevant(key) {
             const info = leadStatuses[key] || {};
-            await saveLeadData(key, { status: 'not_relevant', handled_by: info.handled_by || '', interview_date: null, interview_time: null, hidden: false });
+            await saveLeadData(key, { status:'not_relevant', handled_by:info.handled_by||'', interview_date:null, interview_time:null, hidden:false });
             delete openInterviewForms[key];
-            renderCards(); updateStats();
+            renderCards(); updateStats(); renderCalendar();
         }
 
         async function hideLead(key) {
@@ -296,23 +430,20 @@
             const timeEl = document.getElementById('int-time-' + key);
             if (!dateEl || !dateEl.value) { alert('נא לבחור תאריך'); return; }
             const info = leadStatuses[key] || {};
-            await saveLeadData(key, { status: 'meeting', interview_date: dateEl.value, interview_time: timeEl.value || null, handled_by: info.handled_by || '' });
+            await saveLeadData(key, { status:'meeting', interview_date:dateEl.value, interview_time:timeEl.value||null, handled_by:info.handled_by||'' });
             delete openInterviewForms[key];
-            renderCards(); updateStats();
+            renderCards(); updateStats(); renderCalendar();
         }
 
-        function editInterview(key) {
-            openInterviewForms[key] = true;
-            renderCards();
-        }
+        function editInterview(key) { openInterviewForms[key] = true; renderCards(); }
 
         async function resetLead(key) {
             await clearLeadData(key);
             delete openInterviewForms[key];
-            renderCards(); updateStats();
+            renderCards(); updateStats(); renderCalendar();
         }
 
-        // --- Data loading ---
+        // ===== DATA =====
         function loadData() {
             const jsonUrl = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:json';
             fetch(jsonUrl).then(r => r.text()).then(text => {
@@ -329,57 +460,44 @@
 
         function processData(response) {
             if (!response || !response.table) return;
-            const cols = response.table.cols.map(c => (c.label || '').toLowerCase().trim());
+            const cols = response.table.cols.map(c => (c.label||'').toLowerCase().trim());
             let ni = cols.indexOf('full_name'), pi = cols.indexOf('phone'), ji = cols.indexOf('job_title'), di = cols.indexOf('created_time'), pli = cols.indexOf('platform');
             if (ni === -1) {
                 const fr = response.table.rows[0];
                 if (fr && fr.c) {
-                    const vs = fr.c.map(c => (c && c.v || '').toString().toLowerCase().trim());
-                    if (vs.indexOf('full_name') !== -1) {
-                        ni = vs.indexOf('full_name'); pi = vs.indexOf('phone'); ji = vs.indexOf('job_title'); di = vs.indexOf('created_time'); pli = vs.indexOf('platform');
-                        response.table.rows.shift();
-                    } else { ni = 12; pi = 13; ji = 14; di = 1; pli = 11; }
+                    const vs = fr.c.map(c => (c && c.v||'').toString().toLowerCase().trim());
+                    if (vs.indexOf('full_name') !== -1) { ni=vs.indexOf('full_name'); pi=vs.indexOf('phone'); ji=vs.indexOf('job_title'); di=vs.indexOf('created_time'); pli=vs.indexOf('platform'); response.table.rows.shift(); }
+                    else { ni=12; pi=13; ji=14; di=1; pli=11; }
                 }
             }
-            function cv(cells, idx) { if (idx < 0 || idx >= cells.length || !cells[idx]) return ''; return String(cells[idx].v || ''); }
+            function cv(cells,idx) { if (idx<0||idx>=cells.length||!cells[idx]) return ''; return String(cells[idx].v||''); }
             allLeads = [];
             for (const row of response.table.rows) {
-                const c = row.c || [];
-                const name = cv(c, ni);
-                const phone = cv(c, pi).replace(/^p:/, '').trim();
+                const c = row.c||[];
+                const name = cv(c,ni), phone = cv(c,pi).replace(/^p:/,'').trim();
                 if (!name && !phone) continue;
-                allLeads.push({ name, phone, job: cv(c, ji), date: cv(c, di), platform: cv(c, pli) });
+                allLeads.push({ name, phone, job:cv(c,ji), date:cv(c,di), platform:cv(c,pli) });
             }
-            allLeads.sort((a, b) => { try { return new Date(b.date) - new Date(a.date); } catch { return 0; } });
+            allLeads.sort((a,b) => { try { return new Date(b.date)-new Date(a.date); } catch { return 0; } });
             allLeads = allLeads.filter(l => { try { return new Date(l.date) >= new Date('2026-03-01'); } catch { return false; } });
-            updateStats();
-            renderCards();
-            document.getElementById('lastUpdate').textContent = 'עדכון: ' + new Date().toLocaleTimeString('he-IL', { hour:'2-digit', minute:'2-digit' });
+            updateStats(); renderCards(); renderCalendar();
+            document.getElementById('lastUpdate').textContent = 'עדכון: ' + new Date().toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
         }
 
         function getLeadSort(info) {
-            if (!info || info.status === 'new' && !info.handled_by) return 0;  // חדש
-            if (info.status === 'meeting') return 1;                            // ריאיון
-            if (info.status === 'not_relevant') return 3;                       // לא רלוונטי
-            return 2;                                                           // שאר (ירין/עדי טיפלו)
+            if (!info || (!info.handled_by && info.status === 'new')) return 0;
+            if (info.status === 'meeting') return 1;
+            if (info.status === 'not_relevant') return 3;
+            return 2;
         }
 
         function updateStats() {
-            const visible = allLeads.filter(l => {
-                const info = leadStatuses[(l.name + '_' + l.phone).replace(/\s/g,'_')];
-                return !info || !info.hidden;
-            });
+            const visible = allLeads.filter(l => { const info = leadStatuses[(l.name+'_'+l.phone).replace(/\s/g,'_')]; return !info||!info.hidden; });
             document.getElementById('totalLeads').textContent = visible.length;
             document.getElementById('todayLeads').textContent = visible.filter(l => isToday(l.date)).length;
-            document.getElementById('igLeads').textContent = visible.filter(l => l.platform === 'ig').length;
-            document.getElementById('newLeads').textContent = visible.filter(l => {
-                const info = leadStatuses[(l.name + '_' + l.phone).replace(/\s/g,'_')];
-                return !info || (!info.handled_by && info.status === 'new');
-            }).length;
-            document.getElementById('meetingLeads').textContent = allLeads.filter(l => {
-                const info = leadStatuses[(l.name + '_' + l.phone).replace(/\s/g,'_')];
-                return info && info.status === 'meeting';
-            }).length;
+            document.getElementById('igLeads').textContent = visible.filter(l => l.platform==='ig').length;
+            document.getElementById('newLeads').textContent = visible.filter(l => { const info=leadStatuses[(l.name+'_'+l.phone).replace(/\s/g,'_')]; return !info||(!info.handled_by&&info.status==='new'); }).length;
+            document.getElementById('meetingLeads').textContent = allLeads.filter(l => { const info=leadStatuses[(l.name+'_'+l.phone).replace(/\s/g,'_')]; return info&&info.status==='meeting'; }).length;
         }
 
         function setFilter(btn) {
@@ -392,155 +510,95 @@
         function buildCard(lead) {
             const displayName = hebrewName(lead.name);
             const phoneFormatted = formatPhone(lead.phone);
-            const phoneClean = lead.phone.replace(/[^\d+]/g, '');
+            const phoneClean = lead.phone.replace(/[^\d+]/g,'');
             let waPhone = phoneClean;
-            if (waPhone.startsWith('0')) waPhone = '972' + waPhone.slice(1);
+            if (waPhone.startsWith('0')) waPhone = '972'+waPhone.slice(1);
             else if (waPhone.startsWith('+')) waPhone = waPhone.slice(1);
-            const waMsg = encodeURIComponent('היי ' + displayName + ' מה שלומך? ראיתי שהשארת פרטים בנוגע למשרה בפסאו.');
-            const lk = (lead.name + '_' + lead.phone).replace(/\s/g, '_');
+            const waMsg = encodeURIComponent('היי '+displayName+' מה שלומך? ראיתי שהשארת פרטים בנוגע למשרה בפסאו.');
+            const lk = (lead.name+'_'+lead.phone).replace(/\s/g,'_');
             const info = leadStatuses[lk];
-            const handledBy = info?.handled_by || '';
-            const status = info?.status || 'new';
-            const isNotRelevant = status === 'not_relevant';
-            const isMeeting = status === 'meeting';
-            const plc = lead.platform === 'ig' ? 'platform-ig' : 'platform-fb';
-            const pll = lead.platform === 'ig' ? 'IG' : 'FB';
+            const handledBy = info?.handled_by||'';
+            const status = info?.status||'new';
+            const isNotRelevant = status==='not_relevant';
+            const isMeeting = status==='meeting';
+            const plc = lead.platform==='ig'?'platform-ig':'platform-fb';
+            const pll = lead.platform==='ig'?'IG':'FB';
 
-            let html = '<div class="lead-card' + (isNotRelevant ? ' card-not-relevant' : '') + '">';
-
-            html += '<div class="lead-top">' +
-                '<div><span class="lead-name">' + escapeHtml(displayName) + '</span> <span class="lead-phone">' + phoneFormatted + '</span></div>' +
-                '<div class="lead-meta"><span class="platform-badge ' + plc + '">' + pll + '</span><span class="lead-date">' + formatDate(lead.date) + '</span></div>' +
-            '</div>';
-
-            html += '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">';
-            html += '<span class="lead-job ' + getJobClass(lead.job) + '">' + escapeHtml(lead.job) + '</span>';
-            if (handledBy) {
-                const hClass = handledBy === 'ירין' ? 'yarin' : 'adi';
-                html += '<span class="handler-badge ' + hClass + '">' + handledBy + ' מטפל/ת</span>';
-            }
+            let html = '<div class="lead-card'+(isNotRelevant?' card-not-relevant':'')+'">';
+            html += '<div class="lead-top"><div><span class="lead-name">'+escapeHtml(displayName)+'</span> <span class="lead-phone">'+phoneFormatted+'</span></div><div class="lead-meta"><span class="platform-badge '+plc+'">'+pll+'</span><span class="lead-date">'+formatDate(lead.date)+'</span></div></div>';
+            html += '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span class="lead-job '+getJobClass(lead.job)+'">'+escapeHtml(lead.job)+'</span>';
+            if (handledBy) { const hc=handledBy==='ירין'?'yarin':'adi'; html+='<span class="handler-badge '+hc+'">'+handledBy+' מטפל/ת</span>'; }
             html += '</div>';
+            html += '<div class="lead-actions"><a class="action-btn action-call" href="tel:'+phoneClean+'">📞 התקשר</a><a class="action-btn action-wa" href="https://wa.me/'+waPhone+'?text='+waMsg+'" target="_blank">💬 וואטסאפ</a></div>';
 
-            html += '<div class="lead-actions">' +
-                '<a class="action-btn action-call" href="tel:' + phoneClean + '">📞 התקשר</a>' +
-                '<a class="action-btn action-wa" href="https://wa.me/' + waPhone + '?text=' + waMsg + '" target="_blank">💬 וואטסאפ</a>' +
-            '</div>';
-
-            // Step 1: no handler
             if (!handledBy) {
-                html += '<div class="handle-section">' +
-                    '<div class="handle-label">מי מטפל בליד?</div>' +
-                    '<div class="handle-btns">' +
-                        '<div class="handle-btn" onclick="setHandler(\'' + lk + '\',\'ירין\')">ירין</div>' +
-                        '<div class="handle-btn" onclick="setHandler(\'' + lk + '\',\'עדי\')">עדי</div>' +
-                    '</div></div>';
-            }
-            // Step 2: handler set, still new
-            else if (status === 'new') {
-                html += '<div class="handle-section"><div class="handle-label">מה הסטטוס?</div>' +
-                    '<div class="next-btns">' +
-                        '<div class="next-btn btn-meeting" onclick="setMeetingStatus(\'' + lk + '\')">📅 נקבע ריאיון</div>' +
-                        '<div class="next-btn btn-not-relevant" onclick="setNotRelevant(\'' + lk + '\')">לא רלוונטי</div>' +
-                    '</div></div>';
+                html += '<div class="handle-section"><div class="handle-label">מי מטפל בליד?</div><div class="handle-btns"><div class="handle-btn" onclick="setHandler(\''+lk+'\',\'ירין\')">ירין</div><div class="handle-btn" onclick="setHandler(\''+lk+'\',\'עדי\')">עדי</div></div></div>';
+            } else if (status==='new') {
+                html += '<div class="handle-section"><div class="handle-label">מה הסטטוס?</div><div class="next-btns"><div class="next-btn btn-meeting" onclick="setMeetingStatus(\''+lk+'\')">📅 נקבע ריאיון</div><div class="next-btn btn-not-relevant" onclick="setNotRelevant(\''+lk+'\')">לא רלוונטי</div></div></div>';
             }
 
-            // Interview form or confirmed
-            if ((status === 'new' || isMeeting) && openInterviewForms[lk]) {
-                const existDate = info?.interview_date || '';
-                const existTime = info?.interview_time?.slice(0,5) || '';
-                html += '<div class="interview-inline">' +
-                    '<label>תאריך ריאיון</label>' +
-                    '<input type="date" id="int-date-' + lk + '" value="' + existDate + '">' +
-                    '<label>שעה</label>' +
-                    '<input type="time" id="int-time-' + lk + '" value="' + existTime + '">' +
-                    '<button class="int-save-btn" onclick="saveInterview(\'' + lk + '\')">שמור ריאיון</button>' +
-                '</div>';
+            if ((status==='new'||isMeeting) && openInterviewForms[lk]) {
+                const ed = info?.interview_date||'', et = info?.interview_time?.slice(0,5)||'';
+                html += '<div class="interview-inline"><label>תאריך ריאיון</label><input type="date" id="int-date-'+lk+'" value="'+ed+'"><label>שעה</label><input type="time" id="int-time-'+lk+'" value="'+et+'"><button class="int-save-btn" onclick="saveInterview(\''+lk+'\')">שמור ריאיון</button></div>';
             } else if (isMeeting && info?.interview_date) {
-                html += '<div class="interview-info">' +
-                    '<span>📅 ' + formatInterview(info.interview_date, info.interview_time) + '</span>' +
-                    '<span class="int-edit" onclick="editInterview(\'' + lk + '\')">ערוך</span>' +
-                '</div>';
+                html += '<div class="interview-info"><span>📅 '+formatInterview(info.interview_date,info.interview_time)+'</span><span class="int-edit" onclick="editInterview(\''+lk+'\')">ערוך</span></div>';
             }
 
-            // Not relevant — show hide button
             if (isNotRelevant) {
-                html += '<div class="not-relevant-badge">' +
-                    '<span>❌ לא רלוונטי</span>' +
-                    '<div class="nr-actions">' +
-                        '<button class="nr-hide-btn" onclick="hideLead(\'' + lk + '\')">הסתר</button>' +
-                        '<span class="nr-undo" onclick="resetLead(\'' + lk + '\')">בטל</span>' +
-                    '</div>' +
-                '</div>';
+                html += '<div class="not-relevant-badge"><span>❌ לא רלוונטי</span><div class="nr-actions"><button class="nr-hide-btn" onclick="hideLead(\''+lk+'\')">הסתר</button><span class="nr-undo" onclick="resetLead(\''+lk+'\')">בטל</span></div></div>';
             }
 
-            if (handledBy && !isNotRelevant) {
-                html += '<div class="reset-link" onclick="resetLead(\'' + lk + '\')">איפוס</div>';
-            }
-
+            if (handledBy && !isNotRelevant) html += '<div class="reset-link" onclick="resetLead(\''+lk+'\')">איפוס</div>';
             html += '</div>';
             return html;
         }
 
         function renderCards() {
             const search = document.getElementById('searchBox').value.toLowerCase();
-            const isNotRelFilter = currentFilter === 'not_relevant';
+            const isNotRelFilter = currentFilter==='not_relevant';
 
             let filtered = allLeads.filter(lead => {
-                const lk = (lead.name + '_' + lead.phone).replace(/\s/g, '_');
+                const lk = (lead.name+'_'+lead.phone).replace(/\s/g,'_');
                 const info = leadStatuses[lk];
-                const status = info?.status || 'new';
-                const hidden = info?.hidden || false;
+                const status = info?.status||'new';
+                const hidden = info?.hidden||false;
 
-                // פילטר לא רלוונטי — הצג הכל כולל מוסתרים
-                if (isNotRelFilter) {
-                    if (status !== 'not_relevant') return false;
-                } else {
-                    // בכל שאר הפילטרים — הסתר מוסתרים
-                    if (hidden) return false;
-
-                    if (currentFilter === 'new') { if (info && (info.handled_by || status !== 'new')) return false; }
-                    else if (currentFilter === 'meeting') { if (status !== 'meeting') return false; }
-                    else if (currentFilter !== 'all') {
-                        const j = lead.job.toLowerCase();
-                        if (currentFilter === 'מלצר') { if (!j.includes('מלצר') && !j.includes('שירות')) return false; }
-                        else if (!j.includes(currentFilter)) return false;
-                    }
+                if (isNotRelFilter) return status==='not_relevant';
+                if (hidden) return false;
+                if (currentFilter==='new') { if (info&&(info.handled_by||status!=='new')) return false; }
+                else if (currentFilter==='meeting') { if (status!=='meeting') return false; }
+                else if (currentFilter!=='all') {
+                    const j = lead.job.toLowerCase();
+                    if (currentFilter==='מלצר') { if (!j.includes('מלצר')&&!j.includes('שירות')) return false; }
+                    else if (!j.includes(currentFilter)) return false;
                 }
-
-                if (search) { if (!(lead.name + ' ' + lead.phone + ' ' + lead.job).toLowerCase().includes(search)) return false; }
+                if (search) { if (!(lead.name+' '+lead.phone+' '+lead.job).toLowerCase().includes(search)) return false; }
                 return true;
             });
 
-            if (filtered.length === 0) {
-                document.getElementById('leadsArea').innerHTML = '<div class="leads-list"><div class="empty-state">לא נמצאו לידים</div></div>';
-                return;
-            }
+            if (filtered.length===0) { document.getElementById('leadsArea').innerHTML='<div class="leads-list"><div class="empty-state">לא נמצאו לידים</div></div>'; return; }
 
-            // מיון: חדשים → ראיונות → שאר → לא רלוונטי
             if (!isNotRelFilter) {
-                filtered.sort((a, b) => {
-                    const ia = leadStatuses[(a.name + '_' + a.phone).replace(/\s/g,'_')];
-                    const ib = leadStatuses[(b.name + '_' + b.phone).replace(/\s/g,'_')];
-                    const sa = getLeadSort(ia);
-                    const sb = getLeadSort(ib);
-                    if (sa !== sb) return sa - sb;
-                    // בתוך כל קבוצה — חדש לישן
-                    try { return new Date(b.date) - new Date(a.date); } catch { return 0; }
+                filtered.sort((a,b) => {
+                    const ia=leadStatuses[(a.name+'_'+a.phone).replace(/\s/g,'_')];
+                    const ib=leadStatuses[(b.name+'_'+b.phone).replace(/\s/g,'_')];
+                    const sa=getLeadSort(ia), sb=getLeadSort(ib);
+                    if (sa!==sb) return sa-sb;
+                    try { return new Date(b.date)-new Date(a.date); } catch { return 0; }
                 });
             }
 
-            // בנה עם כותרות סקשן
+            const sectionLabels = {0:'🆕 חדשים',1:'📅 נקבע ריאיון',2:'בטיפול',3:'❌ לא רלוונטי'};
             let html = '<div class="leads-list">';
             let lastSection = null;
-            const sectionLabels = { 0: '🆕 חדשים', 1: '📅 נקבע ריאיון', 2: 'בטיפול', 3: '❌ לא רלוונטי' };
 
             filtered.forEach(lead => {
-                const lk = (lead.name + '_' + lead.phone).replace(/\s/g,'_');
+                const lk = (lead.name+'_'+lead.phone).replace(/\s/g,'_');
                 const info = leadStatuses[lk];
                 const section = isNotRelFilter ? 3 : getLeadSort(info);
-
-                if (!isNotRelFilter && section !== lastSection) {
-                    html += '</div><div class="section-label">' + (sectionLabels[section] || '') + '</div><div class="leads-list">';
+                if (!isNotRelFilter && section!==lastSection) {
+                    if (lastSection!==null) html += '</div>';
+                    html += '</div><div class="section-label">'+sectionLabels[section]+'</div><div class="leads-list">';
                     lastSection = section;
                 }
                 html += buildCard(lead);
@@ -552,10 +610,11 @@
 
         async function init() {
             await loadStatuses();
+            renderCalendar();
             loadData();
         }
         init();
-        setInterval(async function() { await loadStatuses(); loadData(); }, 2 * 60 * 1000);
+        setInterval(async function() { await loadStatuses(); loadData(); renderCalendar(); }, 2*60*1000);
     </script>
 </body>
 </html>
