@@ -414,8 +414,8 @@
             html += '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span class="lead-job '+getJobClass(lead.job)+'">'+escapeHtml(lead.job)+'</span>';
             if (handledBy) { const hc=handledBy==='ירין'?'yarin':'adi'; html+='<span class="handler-badge '+hc+'">'+handledBy+'</span>'; }
             // sub_status badge
-            const subLabels = { sent:'📨 נשלחה הודעה', call:'📞 ניסיון התקשרות', replied:'💬 ענה/תה', no_ans:'🔇 אין מענה', later:'⏰ יחזור מאוחר יותר', hired:'✅ התקבל/ה' };
-            const subColors = { sent:'#e3f2fd', call:'#fff3e0', replied:'#e8f5e9', no_ans:'#f5f5f5', later:'#f3e5f5', hired:'#c8e6c9' };
+            const subLabels = { sent:'📨 נשלחה הודעה', call:'📞 ניסיון התקשרות', replied:'💬 ענה/תה', no_ans:'🔇 אין מענה', later:'⏰ יחזור/תדחה מאוחר יותר', hired:'✅ התקבל/ה', cancel:'❌ ביטל/ה', confirm:'✅ אישר/ה הגעה', arrived:'🎉 הגיע/ה לריאיון' };
+            const subColors = { sent:'#e3f2fd', call:'#fff3e0', replied:'#e8f5e9', no_ans:'#f5f5f5', later:'#f3e5f5', hired:'#c8e6c9', cancel:'#ffebee', confirm:'#e8f5e9', arrived:'#c8e6c9' };
             const curSub = info?.sub_status||null;
             if (curSub && subLabels[curSub]) html += '<span class="sub-status-badge" style="background:'+subColors[curSub]+'">'+subLabels[curSub]+'</span>';
             html += '</div>';
@@ -450,6 +450,23 @@
                 html += '<div class="interview-inline"><label>תאריך ריאיון</label><input type="date" id="int-date-'+lk+'" value="'+ed+'"><label>שעה</label><input type="time" id="int-time-'+lk+'" value="'+et+'"><button class="int-save-btn" onclick="saveInterview(\''+lk+'\')">שמור ריאיון</button></div>';
             } else if (isMeeting && info?.interview_date) {
                 html += '<div class="interview-info"><span>📅 '+formatInterview(info.interview_date,info.interview_time)+'</span><span class="int-edit" onclick="editInterview(\''+lk+'\')">ערוך</span></div>';
+            }
+
+            // סטטוס טיפול גם על ראיונות קבועים
+            if (isMeeting) {
+                const sub = info?.sub_status||null;
+                const meetingSubBtns = [
+                    { val:'sent',    label:'📨 נשלחה הודעה',    cls:'sub-sent'    },
+                    { val:'no_ans',  label:'🔇 אין מענה',       cls:'sub-no-ans'  },
+                    { val:'cancel',  label:'❌ ביטל/ה',         cls:'sub-call'    },
+                    { val:'confirm', label:'✅ אישר/ה הגעה',    cls:'sub-replied' },
+                    { val:'later',   label:'⏰ דחה/תה תאריך',   cls:'sub-later'   },
+                    { val:'arrived', label:'🎉 הגיע/ה לריאיון', cls:'sub-hired'   },
+                ].map(b => {
+                    const isActive = sub === b.val ? ' active-sub' : '';
+                    return '<div class="sub-btn '+b.cls+isActive+'" onclick="setSubStatus(\''+lk+'\',\''+b.val+'\')">'+b.label+'</div>';
+                }).join('');
+                html += '<div class="sub-status-section"><div class="sub-status-label">סטטוס ריאיון</div><div class="sub-status-grid">'+meetingSubBtns+'</div></div>';
             }
 
             if (isNotRelevant) {
