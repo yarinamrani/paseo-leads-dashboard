@@ -25,42 +25,9 @@
         .controls { padding: 8px 10px; }
         .search-box { padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; width: 100%; direction: rtl; }
         .search-box:focus { outline: none; border-color: #1a1a2e; }
-        .filters { display: flex; gap: 4px; flex-wrap: wrap; padding: 0 10px 10px; }
+        .filters { display: flex; gap: 4px; flex-wrap: wrap; padding: 0 10px 8px; }
         .filter-btn { padding: 6px 10px; border: 1px solid #ddd; border-radius: 6px; background: white; cursor: pointer; font-size: 11px; }
         .filter-btn.active { background: #1a1a2e; color: white; border-color: #1a1a2e; }
-
-        /* ===== CALENDAR WIDGET ===== */
-        .calendar-widget { margin: 0 10px 14px; background: white; border-radius: 12px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); overflow: hidden; }
-        .calendar-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px 10px; cursor: pointer; user-select: none; border-bottom: 1px solid #f0f0f0; }
-        .calendar-header-title { font-size: 13px; font-weight: 600; color: #1a1a2e; display: flex; align-items: center; gap: 6px; }
-        .calendar-toggle-icon { font-size: 11px; color: #aaa; transition: transform 0.2s; }
-        .calendar-toggle-icon.open { transform: rotate(180deg); }
-        .calendar-body { padding: 12px; }
-        .cal-month-nav { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-        .cal-nav-btn { background: none; border: 1px solid #eee; border-radius: 6px; padding: 4px 12px; cursor: pointer; font-size: 14px; color: #555; }
-        .cal-nav-btn:hover { background: #f5f5f5; }
-        .cal-month-title { font-size: 13px; font-weight: 600; color: #1a1a2e; }
-        .cal-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; margin-bottom: 10px; }
-        .cal-day-label { text-align: center; font-size: 10px; color: #aaa; font-weight: 600; padding: 2px 0 4px; }
-        .cal-day { aspect-ratio: 1; display: flex; flex-direction: column; align-items: center; justify-content: center; border-radius: 7px; font-size: 12px; position: relative; }
-        .cal-day.today { background: #1a1a2e; color: white; font-weight: 700; }
-        .cal-day.has-iv { background: #e8f5e9; color: #2e7d32; font-weight: 700; cursor: pointer; }
-        .cal-day.has-iv:hover { background: #c8e6c9; }
-        .cal-day.today.has-iv { background: #2e7d32; color: white; }
-        .cal-dot { width: 4px; height: 4px; border-radius: 50%; margin-top: 1px; background: #2e7d32; }
-        .cal-day.today .cal-dot { background: white; }
-        .cal-day.today.has-iv .cal-dot { background: rgba(255,255,255,0.7); }
-        .cal-interviews { border-top: 1px solid #f0f0f0; padding-top: 10px; }
-        .cal-iv-title { font-size: 11px; font-weight: 600; color: #aaa; margin-bottom: 6px; }
-        .cal-iv-row { display: flex; align-items: center; gap: 8px; padding: 7px 0; border-bottom: 1px solid #f9f9f9; }
-        .cal-iv-row:last-child { border-bottom: none; }
-        .cal-date-chip { background: #e8f5e9; color: #2e7d32; border-radius: 6px; padding: 3px 8px; font-size: 11px; font-weight: 600; white-space: nowrap; min-width: 68px; text-align: center; }
-        .cal-date-chip.is-today { background: #2e7d32; color: white; }
-        .cal-date-chip.is-past { background: #f5f5f5; color: #aaa; }
-        .cal-iv-name { font-size: 13px; font-weight: 600; color: #1a1a2e; flex: 1; }
-        .cal-iv-time { font-size: 12px; color: #888; white-space: nowrap; }
-        .cal-iv-job { font-size: 11px; padding: 2px 7px; border-radius: 10px; white-space: nowrap; }
-        .cal-empty { text-align: center; color: #ccc; font-size: 13px; padding: 12px 0; }
 
         .section-label { font-size: 11px; font-weight: 600; color: #aaa; letter-spacing: 0.5px; padding: 10px 10px 4px; }
         .leads-list { padding: 0 10px 20px; }
@@ -131,8 +98,7 @@
             .stat-card .stat-number { font-size: 28px; }
             .stat-card .stat-label { font-size: 12px; }
             .controls { padding: 8px 32px; }
-            .filters { padding: 0 32px 10px; }
-            .calendar-widget { margin: 0 32px 14px; }
+            .filters { padding: 0 32px 8px; }
             .leads-list { padding: 0 32px 32px; max-width: 800px; }
             .section-label { padding: 10px 32px 4px; }
             .lead-card { padding: 18px; }
@@ -173,23 +139,6 @@
         <button class="filter-btn" data-filter="not_relevant" onclick="setFilter(this)">לא רלוונטי</button>
     </div>
 
-    <!-- Calendar Widget -->
-    <div class="calendar-widget" id="calendarWidget">
-        <div class="calendar-header" onclick="toggleCalendar()">
-            <div class="calendar-header-title">📅 ראיונות קרובים</div>
-            <span class="calendar-toggle-icon open" id="calToggleIcon">▲</span>
-        </div>
-        <div class="calendar-body" id="calendarBody">
-            <div class="cal-month-nav">
-                <button class="cal-nav-btn" onclick="changeMonth(-1);event.stopPropagation()">◀</button>
-                <span class="cal-month-title" id="calMonthTitle"></span>
-                <button class="cal-nav-btn" onclick="changeMonth(1);event.stopPropagation()">▶</button>
-            </div>
-            <div class="cal-grid" id="calGrid"></div>
-            <div class="cal-interviews" id="calInterviews"></div>
-        </div>
-    </div>
-
     <div id="leadsArea">
         <div class="loading"><div class="loading-spinner"></div>טוען לידים...</div>
     </div>
@@ -203,12 +152,8 @@
         let currentFilter = 'all';
         let leadStatuses = {};
         let openInterviewForms = {};
-        let calendarOpen = true;
-        let calViewDate = new Date();
 
         const HE_DAYS = ['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
-        const HE_MONTHS = ['ינואר','פברואר','מרץ','אפריל','מאי','יוני','יולי','אוגוסט','ספטמבר','אוקטובר','נובמבר','דצמבר'];
-        const DAY_LABELS = ['א','ב','ג','ד','ה','ו','ש'];
 
         const nameMap = {
             'yarin':'ירין','adi':'עדי','noa':'נועה','noga':'נוגה','shaked':'שקד',
@@ -273,101 +218,7 @@
             return 'יום ' + HE_DAYS[d.getDay()] + ' ' + d.toLocaleDateString('he-IL', { day:'2-digit', month:'2-digit' }) + (timeStr ? ' בשעה ' + timeStr.slice(0,5) : '');
         }
 
-        // ===== CALENDAR =====
-        function toggleCalendar() {
-            calendarOpen = !calendarOpen;
-            document.getElementById('calendarBody').style.display = calendarOpen ? 'block' : 'none';
-            const icon = document.getElementById('calToggleIcon');
-            icon.textContent = calendarOpen ? '▲' : '▼';
-            icon.classList.toggle('open', calendarOpen);
-        }
-
-        function changeMonth(delta) {
-            calViewDate = new Date(calViewDate.getFullYear(), calViewDate.getMonth() + delta, 1);
-            renderCalendar();
-        }
-
-        function getInterviewsMap() {
-            const map = {};
-            Object.entries(leadStatuses).forEach(([key, info]) => {
-                if (info.status === 'meeting' && info.interview_date) {
-                    if (!map[info.interview_date]) map[info.interview_date] = [];
-                    // Find lead name from key
-                    const lead = allLeads.find(l => (l.name + '_' + l.phone).replace(/\s/g,'_') === key);
-                    map[info.interview_date].push({ key, info, lead });
-                }
-            });
-            return map;
-        }
-
-        function renderCalendar() {
-            const ivMap = getInterviewsMap();
-            const today = new Date();
-            const todayStr = today.toISOString().substring(0,10);
-            const y = calViewDate.getFullYear();
-            const m = calViewDate.getMonth();
-
-            document.getElementById('calMonthTitle').textContent = HE_MONTHS[m] + ' ' + y;
-
-            // Grid
-            const firstDay = new Date(y, m, 1).getDay(); // 0=sun
-            const daysInMonth = new Date(y, m+1, 0).getDate();
-            let gridHtml = DAY_LABELS.map(l => '<div class="cal-day-label">' + l + '</div>').join('');
-
-            for (let i = 0; i < firstDay; i++) gridHtml += '<div class="cal-day empty"></div>';
-
-            for (let d = 1; d <= daysInMonth; d++) {
-                const dateStr = y + '-' + String(m+1).padStart(2,'0') + '-' + String(d).padStart(2,'0');
-                const hasIv = !!ivMap[dateStr];
-                const isTod = dateStr === todayStr;
-                let cls = 'cal-day';
-                if (isTod) cls += ' today';
-                if (hasIv) cls += ' has-iv';
-                const dot = hasIv ? '<div class="cal-dot"></div>' : '';
-                const onclick = hasIv ? ' onclick="scrollToDate(\'' + dateStr + '\')"' : '';
-                gridHtml += '<div class="' + cls + '"' + onclick + '>' + d + dot + '</div>';
-            }
-            document.getElementById('calGrid').innerHTML = gridHtml;
-
-            // Interview list — all months, sorted
-            const allIvDates = Object.keys(ivMap).sort();
-            if (allIvDates.length === 0) {
-                document.getElementById('calInterviews').innerHTML = '<div class="cal-empty">אין ראיונות קבועים</div>';
-                return;
-            }
-
-            let listHtml = '<div class="cal-iv-title">כל הראיונות הקבועים</div>';
-            allIvDates.forEach(dateStr => {
-                ivMap[dateStr].forEach(({ info, lead }) => {
-                    const d = new Date(dateStr + 'T00:00:00');
-                    const dayName = HE_DAYS[d.getDay()];
-                    const dateF = d.toLocaleDateString('he-IL', { day:'2-digit', month:'2-digit' });
-                    const isPast = dateStr < todayStr;
-                    const isTod = dateStr === todayStr;
-                    let chipCls = 'cal-date-chip';
-                    if (isTod) chipCls += ' is-today';
-                    else if (isPast) chipCls += ' is-past';
-                    const name = lead ? hebrewName(lead.name) : info.key.split('_')[0];
-                    const job = lead ? lead.job : '';
-                    const time = info.interview_time ? info.interview_time.slice(0,5) : '';
-                    listHtml += '<div class="cal-iv-row">' +
-                        '<div class="' + chipCls + '">יום ' + dayName + '<br>' + dateF + '</div>' +
-                        '<div class="cal-iv-name">' + escapeHtml(name) + '</div>' +
-                        (time ? '<div class="cal-iv-time">' + time + '</div>' : '') +
-                        (job ? '<div class="cal-iv-job ' + getJobClass(job) + '">' + escapeHtml(job) + '</div>' : '') +
-                    '</div>';
-                });
-            });
-            document.getElementById('calInterviews').innerHTML = listHtml;
-        }
-
-        function scrollToDate(dateStr) {
-            // Switch filter to meetings and scroll
-            const btn = document.querySelector('[data-filter="meeting"]');
-            if (btn) setFilter(btn);
-        }
-
-        // ===== SUPABASE =====
+        // Supabase
         async function loadStatuses() {
             try {
                 const resp = await fetch(SUPABASE_URL + '/rest/v1/lead_statuses?select=lead_key,handled_by,status,interview_date,interview_time,hidden', {
@@ -402,10 +253,10 @@
             } catch(e) { console.error(e); }
         }
 
-        // ===== ACTIONS =====
+        // Actions
         async function setHandler(key, who) {
             await saveLeadData(key, { handled_by: who });
-            renderCards(); updateStats(); renderCalendar();
+            renderCards(); updateStats();
         }
 
         async function setMeetingStatus(key) {
@@ -417,7 +268,7 @@
             const info = leadStatuses[key] || {};
             await saveLeadData(key, { status:'not_relevant', handled_by:info.handled_by||'', interview_date:null, interview_time:null, hidden:false });
             delete openInterviewForms[key];
-            renderCards(); updateStats(); renderCalendar();
+            renderCards(); updateStats();
         }
 
         async function hideLead(key) {
@@ -432,7 +283,7 @@
             const info = leadStatuses[key] || {};
             await saveLeadData(key, { status:'meeting', interview_date:dateEl.value, interview_time:timeEl.value||null, handled_by:info.handled_by||'' });
             delete openInterviewForms[key];
-            renderCards(); updateStats(); renderCalendar();
+            renderCards(); updateStats();
         }
 
         function editInterview(key) { openInterviewForms[key] = true; renderCards(); }
@@ -440,10 +291,10 @@
         async function resetLead(key) {
             await clearLeadData(key);
             delete openInterviewForms[key];
-            renderCards(); updateStats(); renderCalendar();
+            renderCards(); updateStats();
         }
 
-        // ===== DATA =====
+        // Data
         function loadData() {
             const jsonUrl = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:json';
             fetch(jsonUrl).then(r => r.text()).then(text => {
@@ -466,8 +317,10 @@
                 const fr = response.table.rows[0];
                 if (fr && fr.c) {
                     const vs = fr.c.map(c => (c && c.v||'').toString().toLowerCase().trim());
-                    if (vs.indexOf('full_name') !== -1) { ni=vs.indexOf('full_name'); pi=vs.indexOf('phone'); ji=vs.indexOf('job_title'); di=vs.indexOf('created_time'); pli=vs.indexOf('platform'); response.table.rows.shift(); }
-                    else { ni=12; pi=13; ji=14; di=1; pli=11; }
+                    if (vs.indexOf('full_name') !== -1) {
+                        ni=vs.indexOf('full_name'); pi=vs.indexOf('phone'); ji=vs.indexOf('job_title'); di=vs.indexOf('created_time'); pli=vs.indexOf('platform');
+                        response.table.rows.shift();
+                    } else { ni=12; pi=13; ji=14; di=1; pli=11; }
                 }
             }
             function cv(cells,idx) { if (idx<0||idx>=cells.length||!cells[idx]) return ''; return String(cells[idx].v||''); }
@@ -480,7 +333,7 @@
             }
             allLeads.sort((a,b) => { try { return new Date(b.date)-new Date(a.date); } catch { return 0; } });
             allLeads = allLeads.filter(l => { try { return new Date(l.date) >= new Date('2026-03-01'); } catch { return false; } });
-            updateStats(); renderCards(); renderCalendar();
+            updateStats(); renderCards();
             document.getElementById('lastUpdate').textContent = 'עדכון: ' + new Date().toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
         }
 
@@ -538,7 +391,7 @@
             }
 
             if ((status==='new'||isMeeting) && openInterviewForms[lk]) {
-                const ed = info?.interview_date||'', et = info?.interview_time?.slice(0,5)||'';
+                const ed=info?.interview_date||'', et=info?.interview_time?.slice(0,5)||'';
                 html += '<div class="interview-inline"><label>תאריך ריאיון</label><input type="date" id="int-date-'+lk+'" value="'+ed+'"><label>שעה</label><input type="time" id="int-time-'+lk+'" value="'+et+'"><button class="int-save-btn" onclick="saveInterview(\''+lk+'\')">שמור ריאיון</button></div>';
             } else if (isMeeting && info?.interview_date) {
                 html += '<div class="interview-info"><span>📅 '+formatInterview(info.interview_date,info.interview_time)+'</span><span class="int-edit" onclick="editInterview(\''+lk+'\')">ערוך</span></div>';
@@ -610,11 +463,10 @@
 
         async function init() {
             await loadStatuses();
-            renderCalendar();
             loadData();
         }
         init();
-        setInterval(async function() { await loadStatuses(); loadData(); renderCalendar(); }, 2*60*1000);
+        setInterval(async function() { await loadStatuses(); loadData(); }, 2*60*1000);
     </script>
 </body>
 </html>
