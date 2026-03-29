@@ -70,6 +70,20 @@
         .next-btn.btn-meeting { color: #2e7d32; }
         .next-btn.btn-not-relevant { color: #c62828; }
 
+        .sub-status-section { margin-top: 8px; padding-top: 8px; border-top: 1px solid #f0f0f0; }
+        .sub-status-label { font-size: 11px; color: #aaa; margin-bottom: 6px; }
+        .sub-status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+        .sub-btn { padding: 8px 6px; border-radius: 8px; border: 1px solid #eee; background: #fafafa; font-size: 12px; cursor: pointer; text-align: center; transition: all 0.15s; }
+        .sub-btn:active { transform: scale(0.97); }
+        .sub-btn.active-sub { border-width: 1.5px; font-weight: 600; }
+        .sub-sent    { color: #1565c0; }          .sub-sent.active-sub    { background: #e3f2fd; border-color: #90caf9; }
+        .sub-call    { color: #e65100; }          .sub-call.active-sub    { background: #fff3e0; border-color: #ffb74d; }
+        .sub-replied { color: #2e7d32; }          .sub-replied.active-sub { background: #e8f5e9; border-color: #a5d6a7; }
+        .sub-no-ans  { color: #888; }             .sub-no-ans.active-sub  { background: #f5f5f5; border-color: #bdbdbd; }
+        .sub-later   { color: #7b1fa2; }          .sub-later.active-sub   { background: #f3e5f5; border-color: #ce93d8; }
+        .sub-hired   { color: #1b5e20; }          .sub-hired.active-sub   { background: #c8e6c9; border-color: #66bb6a; }
+        .sub-status-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 10px; font-size: 12px; font-weight: 500; margin-top: 4px; }
+
         .interview-inline { margin-top: 8px; background: #f8fdf5; border: 1px solid #c8e6c9; border-radius: 10px; padding: 12px; }
         .interview-inline label { font-size: 12px; color: #555; display: block; margin-bottom: 3px; font-weight: 500; }
         .interview-inline input { width: 100%; padding: 8px 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; margin-bottom: 8px; direction: ltr; }
@@ -194,7 +208,18 @@
 
         function formatDate(dateStr) {
             if (!dateStr) return '';
-            try { const d = new Date(dateStr); return d.toLocaleDateString('he-IL', { day:'2-digit', month:'2-digit' }) + ' ' + d.toLocaleTimeString('he-IL', { hour:'2-digit', minute:'2-digit' }); } catch { return dateStr; }
+            try {
+                const d = new Date(dateStr);
+                const now = new Date();
+                const diff = Math.floor((now - d) / 1000);
+                if (diff < 60) return 'עכשיו';
+                if (diff < 3600) return 'לפני ' + Math.floor(diff/60) + ' דקות';
+                if (diff < 7200) return 'לפני שעה';
+                if (diff < 86400) return 'לפני ' + Math.floor(diff/3600) + ' שעות';
+                if (diff < 172800) return 'אתמול';
+                if (diff < 604800) return 'לפני ' + Math.floor(diff/86400) + ' ימים';
+                return d.toLocaleDateString('he-IL', { day:'2-digit', month:'2-digit' });
+            } catch { return dateStr; }
         }
 
         function isToday(dateStr) {
@@ -221,13 +246,13 @@
         // Supabase
         async function loadStatuses() {
             try {
-                const resp = await fetch(SUPABASE_URL + '/rest/v1/lead_statuses?select=lead_key,handled_by,status,interview_date,interview_time,hidden', {
+                const resp = await fetch(SUPABASE_URL + '/rest/v1/lead_statuses?select=lead_key,handled_by,status,sub_status,interview_date,interview_time,hidden', {
                     headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
                 });
                 const data = await resp.json();
                 leadStatuses = {};
                 if (Array.isArray(data)) data.forEach(r => {
-                    leadStatuses[r.lead_key] = { handled_by: r.handled_by||'', status: r.status||'new', interview_date: r.interview_date||null, interview_time: r.interview_time||null, hidden: r.hidden||false };
+                    leadStatuses[r.lead_key] = { handled_by: r.handled_by||'', status: r.status||'new', sub_status: r.sub_status||null, interview_date: r.interview_date||null, interview_time: r.interview_time||null, hidden: r.hidden||false };
                 });
             } catch(e) { console.error(e); }
         }
@@ -239,7 +264,7 @@
                     headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates' },
                     body: JSON.stringify({ lead_key: key, ...data })
                 });
-                if (!leadStatuses[key]) leadStatuses[key] = { handled_by:'', status:'new', interview_date:null, interview_time:null, hidden:false };
+                if (!leadStatuses[key]) leadStatuses[key] = { handled_by:'', status:'new', sub_status:null, interview_date:null, interview_time:null, hidden:false };
                 Object.assign(leadStatuses[key], data);
             } catch(e) { console.error(e); }
         }
@@ -254,6 +279,13 @@
         }
 
         // Actions
+        async function setSubStatus(key, val) {
+            const info = leadStatuses[key] || {};
+            const newVal = info.sub_status === val ? null : val; // toggle
+            await saveLeadData(key, { sub_status: newVal });
+            renderCards();
+        }
+
         async function setHandler(key, who) {
             await saveLeadData(key, { handled_by: who });
             renderCards(); updateStats();
@@ -380,14 +412,37 @@
             let html = '<div class="lead-card'+(isNotRelevant?' card-not-relevant':'')+'">';
             html += '<div class="lead-top"><div><span class="lead-name">'+escapeHtml(displayName)+'</span> <span class="lead-phone">'+phoneFormatted+'</span></div><div class="lead-meta"><span class="platform-badge '+plc+'">'+pll+'</span><span class="lead-date">'+formatDate(lead.date)+'</span></div></div>';
             html += '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span class="lead-job '+getJobClass(lead.job)+'">'+escapeHtml(lead.job)+'</span>';
-            if (handledBy) { const hc=handledBy==='ירין'?'yarin':'adi'; html+='<span class="handler-badge '+hc+'">'+handledBy+' מטפל/ת</span>'; }
+            if (handledBy) { const hc=handledBy==='ירין'?'yarin':'adi'; html+='<span class="handler-badge '+hc+'">'+handledBy+'</span>'; }
+            // sub_status badge
+            const subLabels = { sent:'📨 נשלחה הודעה', call:'📞 ניסיון התקשרות', replied:'💬 ענה/תה', no_ans:'🔇 אין מענה', later:'⏰ יחזור מאוחר יותר', hired:'✅ התקבל/ה' };
+            const subColors = { sent:'#e3f2fd', call:'#fff3e0', replied:'#e8f5e9', no_ans:'#f5f5f5', later:'#f3e5f5', hired:'#c8e6c9' };
+            const curSub = info?.sub_status||null;
+            if (curSub && subLabels[curSub]) html += '<span class="sub-status-badge" style="background:'+subColors[curSub]+'">'+subLabels[curSub]+'</span>';
             html += '</div>';
             html += '<div class="lead-actions"><a class="action-btn action-call" href="tel:'+phoneClean+'">📞 התקשר</a><a class="action-btn action-wa" href="https://wa.me/'+waPhone+'?text='+waMsg+'" target="_blank">💬 וואטסאפ</a></div>';
 
             if (!handledBy) {
                 html += '<div class="handle-section"><div class="handle-label">מי מטפל בליד?</div><div class="handle-btns"><div class="handle-btn" onclick="setHandler(\''+lk+'\',\'ירין\')">ירין</div><div class="handle-btn" onclick="setHandler(\''+lk+'\',\'עדי\')">עדי</div></div></div>';
             } else if (status==='new') {
-                html += '<div class="handle-section"><div class="handle-label">מה הסטטוס?</div><div class="next-btns"><div class="next-btn btn-meeting" onclick="setMeetingStatus(\''+lk+'\')">📅 נקבע ריאיון</div><div class="next-btn btn-not-relevant" onclick="setNotRelevant(\''+lk+'\')">לא רלוונטי</div></div></div>';
+                const sub = info?.sub_status||null;
+
+                // sub-status buttons
+                const subBtns = [
+                    { val:'sent',    label:'📨 נשלחה הודעה',      cls:'sub-sent'    },
+                    { val:'call',    label:'📞 ניסיון התקשרות',   cls:'sub-call'    },
+                    { val:'replied', label:'💬 ענה/תה',           cls:'sub-replied' },
+                    { val:'no_ans',  label:'🔇 אין מענה',         cls:'sub-no-ans'  },
+                    { val:'later',   label:'⏰ יחזור מאוחר יותר', cls:'sub-later'   },
+                    { val:'hired',   label:'✅ התקבל/ה',          cls:'sub-hired'   },
+                ].map(b => {
+                    const isActive = sub === b.val ? ' active-sub' : '';
+                    return '<div class="sub-btn '+b.cls+isActive+'" onclick="setSubStatus(\''+lk+'\',\''+b.val+'\')">'+b.label+'</div>';
+                }).join('');
+
+                html += '<div class="sub-status-section"><div class="sub-status-label">סטטוס טיפול</div><div class="sub-status-grid">'+subBtns+'</div></div>';
+
+                // next action buttons
+                html += '<div style="margin-top:8px"><div class="next-btns"><div class="next-btn btn-meeting" onclick="setMeetingStatus(\''+lk+'\')">📅 נקבע ריאיון</div><div class="next-btn btn-not-relevant" onclick="setNotRelevant(\''+lk+'\')">לא רלוונטי</div></div></div>';
             }
 
             if ((status==='new'||isMeeting) && openInterviewForms[lk]) {
