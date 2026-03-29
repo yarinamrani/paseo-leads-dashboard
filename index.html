@@ -259,13 +259,16 @@
 
         async function saveLeadData(key, data) {
             try {
+                // מיזוג עם הנתונים הקיימים כדי שלא יאפסו שדות
+                const existing = leadStatuses[key] || { handled_by:'', status:'new', sub_status:null, interview_date:null, interview_time:null, hidden:false };
+                const full = Object.assign({}, existing, data, { lead_key: key });
                 await fetch(SUPABASE_URL + '/rest/v1/lead_statuses?on_conflict=lead_key', {
                     method: 'POST',
-                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates' },
-                    body: JSON.stringify({ lead_key: key, ...data })
+                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal,resolution=merge-duplicates' },
+                    body: JSON.stringify(full)
                 });
-                if (!leadStatuses[key]) leadStatuses[key] = { handled_by:'', status:'new', sub_status:null, interview_date:null, interview_time:null, hidden:false };
-                Object.assign(leadStatuses[key], data);
+                if (!leadStatuses[key]) leadStatuses[key] = {};
+                Object.assign(leadStatuses[key], full);
             } catch(e) { console.error(e); }
         }
 
