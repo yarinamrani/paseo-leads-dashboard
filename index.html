@@ -1,4 +1,5 @@
 <!DOCTYPE html>
+
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
@@ -9,115 +10,118 @@
         html, body { overflow-x: hidden; width: 100%; max-width: 100vw; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f0f2f5; color: #1a1a2e; min-height: 100vh; }
 
-        .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: white; padding: 16px; display: flex; justify-content: space-between; align-items: center; }
-        .header h1 { font-size: 22px; font-weight: 700; letter-spacing: 2px; }
-        .header-subtitle { font-size: 12px; opacity: 0.7; margin-top: 2px; }
-        .refresh-btn { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: white; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 13px; }
-        .last-update { font-size: 11px; opacity: 0.6; }
-        .auto-refresh-indicator { display: inline-block; width: 6px; height: 6px; background: #4caf50; border-radius: 50%; margin-left: 6px; animation: pulse 2s infinite; }
-        @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+```
+    .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: white; padding: 16px; display: flex; justify-content: space-between; align-items: center; }
+    .header h1 { font-size: 22px; font-weight: 700; letter-spacing: 2px; }
+    .header-subtitle { font-size: 12px; opacity: 0.7; margin-top: 2px; }
+    .refresh-btn { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: white; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 13px; }
+    .last-update { font-size: 11px; opacity: 0.6; }
+    .auto-refresh-indicator { display: inline-block; width: 6px; height: 6px; background: #4caf50; border-radius: 50%; margin-left: 6px; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
 
-        .stats-bar { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; padding: 10px; }
-        .stat-card { background: white; border-radius: 10px; padding: 10px 8px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
-        .stat-card .stat-number { font-size: 20px; font-weight: 700; color: #1a1a2e; }
-        .stat-card .stat-label { font-size: 9px; color: #888; margin-top: 2px; }
+    .stats-bar { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; padding: 10px; }
+    .stat-card { background: white; border-radius: 10px; padding: 10px 8px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    .stat-card .stat-number { font-size: 20px; font-weight: 700; color: #1a1a2e; }
+    .stat-card .stat-label { font-size: 9px; color: #888; margin-top: 2px; }
 
-        .controls { padding: 8px 10px; }
-        .search-box { padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; width: 100%; direction: rtl; }
-        .search-box:focus { outline: none; border-color: #1a1a2e; }
-        .filters { display: flex; gap: 4px; flex-wrap: wrap; padding: 0 10px 8px; }
-        .filter-btn { padding: 6px 10px; border: 1px solid #ddd; border-radius: 6px; background: white; cursor: pointer; font-size: 11px; }
-        .filter-btn.active { background: #1a1a2e; color: white; border-color: #1a1a2e; }
+    .controls { padding: 8px 10px; }
+    .search-box { padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; width: 100%; direction: rtl; }
+    .search-box:focus { outline: none; border-color: #1a1a2e; }
+    .filters { display: flex; gap: 4px; flex-wrap: wrap; padding: 0 10px 8px; }
+    .filter-btn { padding: 6px 10px; border: 1px solid #ddd; border-radius: 6px; background: white; cursor: pointer; font-size: 11px; }
+    .filter-btn.active { background: #1a1a2e; color: white; border-color: #1a1a2e; }
 
-        .section-label { font-size: 11px; font-weight: 600; color: #aaa; letter-spacing: 0.5px; padding: 10px 10px 4px; }
-        .leads-list { padding: 0 10px 20px; }
+    .section-label { font-size: 11px; font-weight: 600; color: #aaa; letter-spacing: 0.5px; padding: 10px 10px 4px; }
+    .leads-list { padding: 0 10px 20px; }
 
-        .lead-card { background: white; border-radius: 12px; padding: 14px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
-        .lead-card.card-not-relevant { opacity: 0.5; }
-        .lead-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
-        .lead-name { font-size: 16px; font-weight: 600; color: #1a1a2e; }
-        .lead-meta { display: flex; gap: 6px; align-items: center; }
-        .lead-date { font-size: 11px; color: #aaa; }
-        .lead-job { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 500; }
-        .lead-phone { font-family: 'SF Mono', Consolas, monospace; font-size: 14px; color: #555; direction: ltr; display: inline; }
+    .lead-card { background: white; border-radius: 12px; padding: 14px; margin-bottom: 8px; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    .lead-card.card-not-relevant { opacity: 0.5; }
+    .lead-top { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 8px; }
+    .lead-name { font-size: 16px; font-weight: 600; color: #1a1a2e; }
+    .lead-meta { display: flex; gap: 6px; align-items: center; }
+    .lead-date { font-size: 11px; color: #aaa; }
+    .lead-job { display: inline-block; padding: 3px 10px; border-radius: 20px; font-size: 12px; font-weight: 500; }
+    .lead-phone { font-family: 'SF Mono', Consolas, monospace; font-size: 14px; color: #555; direction: ltr; display: inline; }
 
-        .lead-actions { display: flex; gap: 8px; margin-top: 10px; }
-        .action-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px; border-radius: 10px; text-decoration: none; font-size: 14px; font-weight: 500; border: none; cursor: pointer; }
-        .action-call { background: #e3f2fd; color: #1565c0; }
-        .action-wa { background: #e8f5e9; color: #25d366; }
+    .lead-actions { display: flex; gap: 8px; margin-top: 10px; }
+    .action-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px; border-radius: 10px; text-decoration: none; font-size: 14px; font-weight: 500; border: none; cursor: pointer; }
+    .action-call { background: #e3f2fd; color: #1565c0; }
+    .action-wa { background: #e8f5e9; color: #25d366; }
 
-        .job-kitchen { background: #fff3e0; color: #e65100; }
-        .job-host { background: #e8f5e9; color: #2e7d32; }
-        .job-waiter { background: #e3f2fd; color: #1565c0; }
-        .job-bar { background: #f3e5f5; color: #7b1fa2; }
-        .job-other { background: #f5f5f5; color: #616161; }
+    .job-kitchen { background: #fff3e0; color: #e65100; }
+    .job-host { background: #e8f5e9; color: #2e7d32; }
+    .job-waiter { background: #e3f2fd; color: #1565c0; }
+    .job-bar { background: #f3e5f5; color: #7b1fa2; }
+    .job-other { background: #f5f5f5; color: #616161; }
 
-        .platform-badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 500; }
-        .platform-ig { background: #fce4ec; color: #c2185b; }
-        .platform-fb { background: #e3f2fd; color: #1565c0; }
+    .platform-badge { font-size: 10px; padding: 2px 6px; border-radius: 4px; font-weight: 500; }
+    .platform-ig { background: #fce4ec; color: #c2185b; }
+    .platform-fb { background: #e3f2fd; color: #1565c0; }
 
-        .handle-section { margin-top: 10px; padding-top: 10px; border-top: 1px solid #f0f0f0; }
-        .handle-label { font-size: 11px; color: #aaa; margin-bottom: 6px; }
-        .handle-btns { display: flex; gap: 8px; }
-        .handle-btn { flex: 1; padding: 8px; border-radius: 8px; border: 1px solid #ddd; background: #fafafa; font-size: 13px; font-weight: 500; cursor: pointer; text-align: center; }
+    .handle-section { margin-top: 10px; padding-top: 10px; border-top: 1px solid #f0f0f0; }
+    .handle-label { font-size: 11px; color: #aaa; margin-bottom: 6px; }
+    .handle-btns { display: flex; gap: 8px; }
+    .handle-btn { flex: 1; padding: 8px; border-radius: 8px; border: 1px solid #ddd; background: #fafafa; font-size: 13px; font-weight: 500; cursor: pointer; text-align: center; }
 
-        .handler-badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; }
-        .handler-badge.yarin { background: #e3f2fd; color: #1565c0; }
-        .handler-badge.adi { background: #f3e5f5; color: #7b1fa2; }
+    .handler-badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; }
+    .handler-badge.yarin { background: #e3f2fd; color: #1565c0; }
+    .handler-badge.adi { background: #f3e5f5; color: #7b1fa2; }
 
-        .next-btns { display: flex; gap: 8px; margin-top: 8px; }
-        .next-btn { flex: 1; padding: 9px; border-radius: 8px; border: 1px solid #ddd; background: #fafafa; font-size: 13px; font-weight: 500; cursor: pointer; text-align: center; }
-        .next-btn.btn-meeting { color: #2e7d32; }
-        .next-btn.btn-not-relevant { color: #c62828; }
+    .next-btns { display: flex; gap: 8px; margin-top: 8px; }
+    .next-btn { flex: 1; padding: 9px; border-radius: 8px; border: 1px solid #ddd; background: #fafafa; font-size: 13px; font-weight: 500; cursor: pointer; text-align: center; }
+    .next-btn.btn-meeting { color: #2e7d32; }
+    .next-btn.btn-not-relevant { color: #c62828; }
 
-        .sub-status-section { margin-top: 8px; padding-top: 8px; border-top: 1px solid #f0f0f0; }
-        .sub-status-label { font-size: 11px; color: #aaa; margin-bottom: 6px; }
-        .sub-status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
-        .sub-btn { padding: 8px 6px; border-radius: 8px; border: 1px solid #eee; background: #fafafa; font-size: 12px; cursor: pointer; text-align: center; transition: all 0.15s; }
-        .sub-btn:active { transform: scale(0.97); }
-        .sub-btn.active-sub { border-width: 1.5px; font-weight: 600; }
-        .sub-sent    { color: #1565c0; }          .sub-sent.active-sub    { background: #e3f2fd; border-color: #90caf9; }
-        .sub-call    { color: #e65100; }          .sub-call.active-sub    { background: #fff3e0; border-color: #ffb74d; }
-        .sub-replied { color: #2e7d32; }          .sub-replied.active-sub { background: #e8f5e9; border-color: #a5d6a7; }
-        .sub-no-ans  { color: #888; }             .sub-no-ans.active-sub  { background: #f5f5f5; border-color: #bdbdbd; }
-        .sub-later   { color: #7b1fa2; }          .sub-later.active-sub   { background: #f3e5f5; border-color: #ce93d8; }
-        .sub-hired   { color: #1b5e20; }          .sub-hired.active-sub   { background: #c8e6c9; border-color: #66bb6a; }
-        .sub-status-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 10px; font-size: 12px; font-weight: 500; margin-top: 4px; }
+    .sub-status-section { margin-top: 8px; padding-top: 8px; border-top: 1px solid #f0f0f0; }
+    .sub-status-label { font-size: 11px; color: #aaa; margin-bottom: 6px; }
+    .sub-status-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .sub-btn { padding: 8px 6px; border-radius: 8px; border: 1px solid #eee; background: #fafafa; font-size: 12px; cursor: pointer; text-align: center; transition: all 0.15s; }
+    .sub-btn:active { transform: scale(0.97); }
+    .sub-btn.active-sub { border-width: 1.5px; font-weight: 600; }
+    .sub-sent    { color: #1565c0; }          .sub-sent.active-sub    { background: #e3f2fd; border-color: #90caf9; }
+    .sub-call    { color: #e65100; }          .sub-call.active-sub    { background: #fff3e0; border-color: #ffb74d; }
+    .sub-replied { color: #2e7d32; }          .sub-replied.active-sub { background: #e8f5e9; border-color: #a5d6a7; }
+    .sub-no-ans  { color: #888; }             .sub-no-ans.active-sub  { background: #f5f5f5; border-color: #bdbdbd; }
+    .sub-later   { color: #7b1fa2; }          .sub-later.active-sub   { background: #f3e5f5; border-color: #ce93d8; }
+    .sub-hired   { color: #1b5e20; }          .sub-hired.active-sub   { background: #c8e6c9; border-color: #66bb6a; }
+    .sub-status-badge { display: inline-flex; align-items: center; gap: 4px; padding: 3px 8px; border-radius: 10px; font-size: 12px; font-weight: 500; margin-top: 4px; }
 
-        .interview-inline { margin-top: 8px; background: #f8fdf5; border: 1px solid #c8e6c9; border-radius: 10px; padding: 12px; }
-        .interview-inline label { font-size: 12px; color: #555; display: block; margin-bottom: 3px; font-weight: 500; }
-        .interview-inline input { width: 100%; padding: 8px 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; margin-bottom: 8px; direction: ltr; }
-        .interview-inline input:focus { outline: none; border-color: #2e7d32; }
-        .int-save-btn { width: 100%; padding: 10px; background: #2e7d32; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
+    .interview-inline { margin-top: 8px; background: #f8fdf5; border: 1px solid #c8e6c9; border-radius: 10px; padding: 12px; }
+    .interview-inline label { font-size: 12px; color: #555; display: block; margin-bottom: 3px; font-weight: 500; }
+    .interview-inline input { width: 100%; padding: 8px 10px; border: 1px solid #ddd; border-radius: 6px; font-size: 14px; margin-bottom: 8px; direction: ltr; }
+    .interview-inline input:focus { outline: none; border-color: #2e7d32; }
+    .int-save-btn { width: 100%; padding: 10px; background: #2e7d32; color: white; border: none; border-radius: 8px; font-size: 14px; font-weight: 600; cursor: pointer; }
 
-        .interview-info { margin-top: 8px; padding: 10px 12px; background: #e8f5e9; border: 1px solid #a5d6a7; border-radius: 10px; font-size: 14px; color: #2e7d32; font-weight: 500; display: flex; justify-content: space-between; align-items: center; }
-        .interview-info .int-edit { font-size: 12px; color: #888; cursor: pointer; text-decoration: underline; }
+    .interview-info { margin-top: 8px; padding: 10px 12px; background: #e8f5e9; border: 1px solid #a5d6a7; border-radius: 10px; font-size: 14px; color: #2e7d32; font-weight: 500; display: flex; justify-content: space-between; align-items: center; }
+    .interview-info .int-edit { font-size: 12px; color: #888; cursor: pointer; text-decoration: underline; }
 
-        .not-relevant-badge { margin-top: 8px; padding: 10px 12px; background: #ffebee; border: 1px solid #ef9a9a; border-radius: 10px; font-size: 13px; color: #c62828; font-weight: 500; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
-        .nr-actions { display: flex; gap: 10px; align-items: center; }
-        .nr-hide-btn { background: #c62828; color: white; border: none; border-radius: 6px; padding: 6px 14px; font-size: 13px; cursor: pointer; font-weight: 600; }
-        .nr-undo { font-size: 12px; color: #888; cursor: pointer; text-decoration: underline; }
-        .reset-link { font-size: 11px; color: #bbb; cursor: pointer; margin-top: 6px; display: inline-block; }
+    .not-relevant-badge { margin-top: 8px; padding: 10px 12px; background: #ffebee; border: 1px solid #ef9a9a; border-radius: 10px; font-size: 13px; color: #c62828; font-weight: 500; display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+    .nr-actions { display: flex; gap: 10px; align-items: center; }
+    .nr-hide-btn { background: #c62828; color: white; border: none; border-radius: 6px; padding: 6px 14px; font-size: 13px; cursor: pointer; font-weight: 600; }
+    .nr-undo { font-size: 12px; color: #888; cursor: pointer; text-decoration: underline; }
+    .reset-link { font-size: 11px; color: #bbb; cursor: pointer; margin-top: 6px; display: inline-block; }
 
-        .empty-state { text-align: center; padding: 40px 20px; color: #aaa; font-size: 15px; }
-        .loading { text-align: center; padding: 40px; color: #888; }
-        .loading-spinner { width: 32px; height: 32px; border: 3px solid #eee; border-top-color: #1a1a2e; border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 12px; }
-        @keyframes spin { to { transform: rotate(360deg); } }
+    .empty-state { text-align: center; padding: 40px 20px; color: #aaa; font-size: 15px; }
+    .loading { text-align: center; padding: 40px; color: #888; }
+    .loading-spinner { width: 32px; height: 32px; border: 3px solid #eee; border-top-color: #1a1a2e; border-radius: 50%; animation: spin .8s linear infinite; margin: 0 auto 12px; }
+    @keyframes spin { to { transform: rotate(360deg); } }
 
-        @media (min-width: 768px) {
-            .header { padding: 20px 32px; }
-            .header h1 { font-size: 28px; }
-            .stats-bar { padding: 16px 32px; gap: 12px; }
-            .stat-card { padding: 16px; }
-            .stat-card .stat-number { font-size: 28px; }
-            .stat-card .stat-label { font-size: 12px; }
-            .controls { padding: 8px 32px; }
-            .filters { padding: 0 32px 8px; }
-            .leads-list { padding: 0 32px 32px; max-width: 800px; }
-            .section-label { padding: 10px 32px 4px; }
-            .lead-card { padding: 18px; }
-        }
-    </style>
+    @media (min-width: 768px) {
+        .header { padding: 20px 32px; }
+        .header h1 { font-size: 28px; }
+        .stats-bar { padding: 16px 32px; gap: 12px; }
+        .stat-card { padding: 16px; }
+        .stat-card .stat-number { font-size: 28px; }
+        .stat-card .stat-label { font-size: 12px; }
+        .controls { padding: 8px 32px; }
+        .filters { padding: 0 32px 8px; }
+        .leads-list { padding: 0 32px 32px; max-width: 800px; }
+        .section-label { padding: 10px 32px 4px; }
+        .lead-card { padding: 18px; }
+    }
+</style>
+```
+
 </head>
 <body>
     <div class="header">
@@ -131,417 +135,423 @@
         </div>
     </div>
 
-    <div class="stats-bar">
-        <div class="stat-card"><div class="stat-number" id="totalLeads">-</div><div class="stat-label">סה"כ</div></div>
-        <div class="stat-card"><div class="stat-number" id="newLeads">-</div><div class="stat-label">חדשים</div></div>
-        <div class="stat-card"><div class="stat-number" id="todayLeads">-</div><div class="stat-label">היום</div></div>
-        <div class="stat-card"><div class="stat-number" id="meetingLeads">-</div><div class="stat-label">ראיונות</div></div>
-        <div class="stat-card"><div class="stat-number" id="igLeads">-</div><div class="stat-label">IG</div></div>
-    </div>
+```
+<div class="stats-bar">
+    <div class="stat-card"><div class="stat-number" id="totalLeads">-</div><div class="stat-label">סה"כ</div></div>
+    <div class="stat-card"><div class="stat-number" id="newLeads">-</div><div class="stat-label">חדשים</div></div>
+    <div class="stat-card"><div class="stat-number" id="todayLeads">-</div><div class="stat-label">היום</div></div>
+    <div class="stat-card"><div class="stat-number" id="meetingLeads">-</div><div class="stat-label">ראיונות</div></div>
+    <div class="stat-card"><div class="stat-number" id="igLeads">-</div><div class="stat-label">IG</div></div>
+</div>
 
-    <div class="controls">
-        <input type="text" class="search-box" id="searchBox" placeholder="חיפוש לפי שם, טלפון או משרה..." oninput="renderCards()">
-    </div>
-    <div class="filters">
-        <button class="filter-btn active" data-filter="all" onclick="setFilter(this)">הכל</button>
-        <button class="filter-btn" data-filter="meeting" onclick="setFilter(this)">📅 ראיונות</button>
-        <button class="filter-btn" data-filter="new" onclick="setFilter(this)">חדשים</button>
-        <button class="filter-btn" data-filter="מלצר" onclick="setFilter(this)">מלצר/ית</button>
-        <button class="filter-btn" data-filter="בר" onclick="setFilter(this)">בר</button>
-        <button class="filter-btn" data-filter="מארחת" onclick="setFilter(this)">מארחת</button>
-        <button class="filter-btn" data-filter="מטבח" onclick="setFilter(this)">מטבח</button>
-        <button class="filter-btn" data-filter="not_relevant" onclick="setFilter(this)">לא רלוונטי</button>
-    </div>
+<div class="controls">
+    <input type="text" class="search-box" id="searchBox" placeholder="חיפוש לפי שם, טלפון או משרה..." oninput="renderCards()">
+</div>
+<div class="filters">
+    <button class="filter-btn active" data-filter="all" onclick="setFilter(this)">הכל</button>
+    <button class="filter-btn" data-filter="meeting" onclick="setFilter(this)">📅 ראיונות</button>
+    <button class="filter-btn" data-filter="new" onclick="setFilter(this)">חדשים</button>
+    <button class="filter-btn" data-filter="מלצר" onclick="setFilter(this)">מלצר/ית</button>
+    <button class="filter-btn" data-filter="בר" onclick="setFilter(this)">בר</button>
+    <button class="filter-btn" data-filter="מארחת" onclick="setFilter(this)">מארחת</button>
+    <button class="filter-btn" data-filter="מטבח" onclick="setFilter(this)">מטבח</button>
+    <button class="filter-btn" data-filter="not_relevant" onclick="setFilter(this)">לא רלוונטי</button>
+</div>
 
-    <div id="leadsArea">
-        <div class="loading"><div class="loading-spinner"></div>טוען לידים...</div>
-    </div>
+<div id="leadsArea">
+    <div class="loading"><div class="loading-spinner"></div>טוען לידים...</div>
+</div>
 
-    <script>
-        const SHEET_ID = '1PwASsf8j8BmbZKSGCDXWNevfkR7hgLMQKL5-Jk0ncz4';
-        const SUPABASE_URL = 'https://vzeowbriddhvhpishmhn.supabase.co';
-        const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ6ZW93YnJpZGRodmhwaXNobWhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MTAyNDUsImV4cCI6MjA4ODM4NjI0NX0.PWvjFj41l0wB9awroZdDsMhCJ0yJXdrf1-k-45n0Rwk';
+<script>
+    const SHEET_ID = '1PwASsf8j8BmbZKSGCDXWNevfkR7hgLMQKL5-Jk0ncz4';
+    const SUPABASE_URL = 'https://vzeowbriddhvhpishmhn.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ6ZW93YnJpZGRodmhwaXNobWhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MTAyNDUsImV4cCI6MjA4ODM4NjI0NX0.PWvjFj41l0wB9awroZdDsMhCJ0yJXdrf1-k-45n0Rwk';
 
-        let allLeads = [];
-        let currentFilter = 'all';
-        let leadStatuses = {};
-        let openInterviewForms = {};
+    let allLeads = [];
+    let currentFilter = 'all';
+    let leadStatuses = {};
+    let openInterviewForms = {};
 
-        const HE_DAYS = ['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
+    const HE_DAYS = ['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
 
-        const nameMap = {
-            'yarin':'ירין','adi':'עדי','noa':'נועה','noga':'נוגה','shaked':'שקד',
-            'eden':'עדן','amit':'עמית','rotem':'רותם','tal':'טל','mor':'מור',
-            'lihi':'ליהי','stav':'סתיו','maayan':'מעיין','shelly':'שלי',
-            'inbar':'ענבר','romi':'רומי','leon':'ליאון','itay':'איתי',
-            'lotem':'לוטם','karin':'קרין','noam':'נועם','lior':'ליאור',
-            'tomer':'תומר','omer':'עומר','yael':'יעל','maya':'מאיה',
-            'daniel':'דניאל','david':'דויד','michael':'מיכאל','sarah':'שרה',
-            'rachel':'רחל','tamar':'תמר','shir':'שיר','noy':'נוי',
-            'guy':'גיא','alon':'אלון','ilan':'אילן','ran':'רן',
-            'gal':'גל','bar':'בר','ori':'אורי','yonatan':'יונתן',
-            'jonathan':'יונתן','ben':'בן','tom':'תום','lia':'ליה',
-            'ofir':'אופיר','shahar':'שחר','lian':'ליאן','agam':'אגם',
-            'yuval':'יובל','eyal':'אייל','oren':'אורן','zoey':'זואי',
-            'zoe':'זואי','hadar':'הדר','rina':'רינה','dor':'דור',
-            'ron':'רון','shay':'שי','shai':'שי','dana':'דנה',
-            'lena':'לנה','ella':'אלה','alma':'אלמה','neta':'נטע',
-        };
+    const nameMap = {
+        'yarin':'ירין','adi':'עדי','noa':'נועה','noga':'נוגה','shaked':'שקד',
+        'eden':'עדן','amit':'עמית','rotem':'רותם','tal':'טל','mor':'מור',
+        'lihi':'ליהי','stav':'סתיו','maayan':'מעיין','shelly':'שלי',
+        'inbar':'ענבר','romi':'רומי','leon':'ליאון','itay':'איתי',
+        'lotem':'לוטם','karin':'קרין','noam':'נועם','lior':'ליאור',
+        'tomer':'תומר','omer':'עומר','yael':'יעל','maya':'מאיה',
+        'daniel':'דניאל','david':'דויד','michael':'מיכאל','sarah':'שרה',
+        'rachel':'רחל','tamar':'תמר','shir':'שיר','noy':'נוי',
+        'guy':'גיא','alon':'אלון','ilan':'אילן','ran':'רן',
+        'gal':'גל','bar':'בר','ori':'אורי','yonatan':'יונתן',
+        'jonathan':'יונתן','ben':'בן','tom':'תום','lia':'ליה',
+        'ofir':'אופיר','shahar':'שחר','lian':'ליאן','agam':'אגם',
+        'yuval':'יובל','eyal':'אייל','oren':'אורן','zoey':'זואי',
+        'zoe':'זואי','hadar':'הדר','rina':'רינה','dor':'דור',
+        'ron':'רון','shay':'שי','shai':'שי','dana':'דנה',
+        'lena':'לנה','ella':'אלה','alma':'אלמה','neta':'נטע',
+    };
 
-        function hebrewName(name) {
-            if (!name) return '';
-            if (/[\u0590-\u05FF]/.test(name)) return name.trim().split(/\s+/)[0];
-            var parts = name.trim().split(/\s+/);
-            var firstName = parts[0].toLowerCase().replace(/[^a-z]/g, '');
-            return nameMap[firstName] || parts[0];
-        }
+    function hebrewName(name) {
+        if (!name) return '';
+        if (/[\u0590-\u05FF]/.test(name)) return name.trim().split(/\s+/)[0];
+        var parts = name.trim().split(/\s+/);
+        var firstName = parts[0].toLowerCase().replace(/[^a-z]/g, '');
+        return nameMap[firstName] || parts[0];
+    }
 
-        function getJobClass(job) {
-            if (!job) return 'job-other';
-            const j = job.toLowerCase();
-            if (j.includes('מטבח') || j.includes('טבח') || j.includes('שף')) return 'job-kitchen';
-            if (j.includes('מארח') || j.includes('הוסט')) return 'job-host';
-            if (j.includes('מלצר') || j.includes('שירות')) return 'job-waiter';
-            if (j.includes('בר') || j.includes('ברמן') || j.includes('ברמנ')) return 'job-bar';
-            return 'job-other';
-        }
+    function getJobClass(job) {
+        if (!job) return 'job-other';
+        const j = job.toLowerCase();
+        if (j.includes('מטבח') || j.includes('טבח') || j.includes('שף')) return 'job-kitchen';
+        if (j.includes('מארח') || j.includes('הוסט')) return 'job-host';
+        if (j.includes('מלצר') || j.includes('שירות')) return 'job-waiter';
+        if (j.includes('בר') || j.includes('ברמן') || j.includes('ברמנ')) return 'job-bar';
+        return 'job-other';
+    }
 
-        function formatDate(dateStr) {
-            if (!dateStr) return '';
-            try {
-                const d = new Date(dateStr);
-                const now = new Date();
-                const diff = Math.floor((now - d) / 1000);
-                if (diff < 60) return 'עכשיו';
-                if (diff < 3600) return 'לפני ' + Math.floor(diff/60) + ' דקות';
-                if (diff < 7200) return 'לפני שעה';
-                if (diff < 86400) return 'לפני ' + Math.floor(diff/3600) + ' שעות';
-                if (diff < 172800) return 'אתמול';
-                if (diff < 604800) return 'לפני ' + Math.floor(diff/86400) + ' ימים';
-                return d.toLocaleDateString('he-IL', { day:'2-digit', month:'2-digit' });
-            } catch { return dateStr; }
-        }
+    function getJobLabel(job) {
+        if (!job) return 'משרה';
+        const j = job.toLowerCase();
+        if (j.includes('מטבח') || j.includes('טבח') || j.includes('שף')) return 'מטבח';
+        if (j.includes('מארח') || j.includes('הוסט')) return 'מארחת';
+        if (j.includes('מלצר') || j.includes('שירות')) return 'מלצרות';
+        if (j.includes('בר') || j.includes('ברמן') || j.includes('ברמנ')) return 'בר';
+        return job || 'משרה';
+    }
 
-        function isToday(dateStr) {
-            if (!dateStr) return false;
-            try { return new Date(dateStr).toDateString() === new Date().toDateString(); } catch { return false; }
-        }
+    function formatDate(dateStr) {
+        if (!dateStr) return '';
+        try {
+            const d = new Date(dateStr);
+            const now = new Date();
+            const diff = Math.floor((now - d) / 1000);
+            if (diff < 60) return 'עכשיו';
+            if (diff < 3600) return 'לפני ' + Math.floor(diff/60) + ' דקות';
+            if (diff < 7200) return 'לפני שעה';
+            if (diff < 86400) return 'לפני ' + Math.floor(diff/3600) + ' שעות';
+            if (diff < 172800) return 'אתמול';
+            if (diff < 604800) return 'לפני ' + Math.floor(diff/86400) + ' ימים';
+            return d.toLocaleDateString('he-IL', { day:'2-digit', month:'2-digit' });
+        } catch { return dateStr; }
+    }
 
-        function formatPhone(phone) {
-            if (!phone) return '';
-            let p = phone.replace(/[^\d+]/g, '');
-            if (p.startsWith('+972')) p = '0' + p.slice(4);
-            if (p.length === 10 && p.startsWith('0')) return p.slice(0,3) + '-' + p.slice(3,6) + '-' + p.slice(6);
-            return p;
-        }
+    function isToday(dateStr) {
+        if (!dateStr) return false;
+        try { return new Date(dateStr).toDateString() === new Date().toDateString(); } catch { return false; }
+    }
 
-        function escapeHtml(t) { var d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
+    function formatPhone(phone) {
+        if (!phone) return '';
+        let p = phone.replace(/[^\d+]/g, '');
+        if (p.startsWith('+972')) p = '0' + p.slice(4);
+        if (p.length === 10 && p.startsWith('0')) return p.slice(0,3) + '-' + p.slice(3,6) + '-' + p.slice(6);
+        return p;
+    }
 
-        function formatInterview(dateStr, timeStr) {
-            if (!dateStr) return '';
-            const d = new Date(dateStr + 'T00:00:00');
-            return 'יום ' + HE_DAYS[d.getDay()] + ' ' + d.toLocaleDateString('he-IL', { day:'2-digit', month:'2-digit' }) + (timeStr ? ' בשעה ' + timeStr.slice(0,5) : '');
-        }
+    function escapeHtml(t) { var d = document.createElement('div'); d.textContent = t; return d.innerHTML; }
 
-        // Supabase
-        async function loadStatuses() {
-            try {
-                const resp = await fetch(SUPABASE_URL + '/rest/v1/lead_statuses?select=lead_key,handled_by,status,sub_status,interview_date,interview_time,hidden', {
-                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
-                });
-                const data = await resp.json();
-                leadStatuses = {};
-                if (Array.isArray(data)) data.forEach(r => {
-                    leadStatuses[r.lead_key] = { handled_by: r.handled_by||'', status: r.status||'new', sub_status: r.sub_status||null, interview_date: r.interview_date||null, interview_time: r.interview_time||null, hidden: r.hidden||false };
-                });
-            } catch(e) { console.error(e); }
-        }
+    function formatInterview(dateStr, timeStr) {
+        if (!dateStr) return '';
+        const d = new Date(dateStr + 'T00:00:00');
+        return 'יום ' + HE_DAYS[d.getDay()] + ' ' + d.toLocaleDateString('he-IL', { day:'2-digit', month:'2-digit' }) + (timeStr ? ' בשעה ' + timeStr.slice(0,5) : '');
+    }
 
-        async function saveLeadData(key, data) {
-            try {
-                // מיזוג עם הנתונים הקיימים כדי שלא יאפסו שדות
-                const existing = leadStatuses[key] || { handled_by:'', status:'new', sub_status:null, interview_date:null, interview_time:null, hidden:false };
-                const full = Object.assign({}, existing, data, { lead_key: key });
-                await fetch(SUPABASE_URL + '/rest/v1/lead_statuses?on_conflict=lead_key', {
-                    method: 'POST',
-                    headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal,resolution=merge-duplicates' },
-                    body: JSON.stringify(full)
-                });
-                if (!leadStatuses[key]) leadStatuses[key] = {};
-                Object.assign(leadStatuses[key], full);
-            } catch(e) { console.error(e); }
-        }
-
-        async function clearLeadData(key) {
-            try {
-                await fetch(SUPABASE_URL + '/rest/v1/lead_statuses?lead_key=eq.' + encodeURIComponent(key), {
-                    method: 'DELETE', headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
-                });
-                delete leadStatuses[key];
-            } catch(e) { console.error(e); }
-        }
-
-        // Actions
-        async function setSubStatus(key, val) {
-            const info = leadStatuses[key] || {};
-            const newVal = info.sub_status === val ? null : val; // toggle
-            await saveLeadData(key, { sub_status: newVal });
-            renderCards();
-        }
-
-        async function setHandler(key, who) {
-            await saveLeadData(key, { handled_by: who });
-            renderCards(); updateStats();
-        }
-
-        async function setMeetingStatus(key) {
-            openInterviewForms[key] = true;
-            renderCards();
-        }
-
-        async function setNotRelevant(key) {
-            const info = leadStatuses[key] || {};
-            await saveLeadData(key, { status:'not_relevant', handled_by:info.handled_by||'', interview_date:null, interview_time:null, hidden:false });
-            delete openInterviewForms[key];
-            renderCards(); updateStats();
-        }
-
-        async function hideLead(key) {
-            await saveLeadData(key, { hidden: true });
-            renderCards(); updateStats();
-        }
-
-        async function saveInterview(key) {
-            const dateEl = document.getElementById('int-date-' + key);
-            const timeEl = document.getElementById('int-time-' + key);
-            if (!dateEl || !dateEl.value) { alert('נא לבחור תאריך'); return; }
-            const info = leadStatuses[key] || {};
-            await saveLeadData(key, { status:'meeting', interview_date:dateEl.value, interview_time:timeEl.value||null, handled_by:info.handled_by||'' });
-            delete openInterviewForms[key];
-            renderCards(); updateStats();
-        }
-
-        function editInterview(key) { openInterviewForms[key] = true; renderCards(); }
-
-        async function resetLead(key) {
-            await clearLeadData(key);
-            delete openInterviewForms[key];
-            renderCards(); updateStats();
-        }
-
-        // Data
-        function loadData() {
-            const jsonUrl = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:json';
-            fetch(jsonUrl).then(r => r.text()).then(text => {
-                const m = text.match(/google\.visualization\.Query\.setResponse\(({.*})\)/s);
-                if (m && m[1]) processData(JSON.parse(m[1]));
-                else throw new Error('parse');
-            }).catch(() => {
-                const s = document.createElement('script');
-                s.src = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=responseHandler:__gsheetCB';
-                document.body.appendChild(s);
+    // Supabase
+    async function loadStatuses() {
+        try {
+            const resp = await fetch(SUPABASE_URL + '/rest/v1/lead_statuses?select=lead_key,handled_by,status,sub_status,interview_date,interview_time,hidden', {
+                headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
             });
-        }
-        window.__gsheetCB = function(r) { processData(r); };
+            const data = await resp.json();
+            leadStatuses = {};
+            if (Array.isArray(data)) data.forEach(r => {
+                leadStatuses[r.lead_key] = { handled_by: r.handled_by||'', status: r.status||'new', sub_status: r.sub_status||null, interview_date: r.interview_date||null, interview_time: r.interview_time||null, hidden: r.hidden||false };
+            });
+        } catch(e) { console.error(e); }
+    }
 
-        function processData(response) {
-            if (!response || !response.table) return;
-            const cols = response.table.cols.map(c => (c.label||'').toLowerCase().trim());
-            let ni = cols.indexOf('full_name'), pi = cols.indexOf('phone'), ji = cols.indexOf('job_title'), di = cols.indexOf('created_time'), pli = cols.indexOf('platform');
-            if (ni === -1) {
-                const fr = response.table.rows[0];
-                if (fr && fr.c) {
-                    const vs = fr.c.map(c => (c && c.v||'').toString().toLowerCase().trim());
-                    if (vs.indexOf('full_name') !== -1) {
-                        ni=vs.indexOf('full_name'); pi=vs.indexOf('phone'); ji=vs.indexOf('job_title'); di=vs.indexOf('created_time'); pli=vs.indexOf('platform');
-                        response.table.rows.shift();
-                    } else { ni=12; pi=13; ji=14; di=1; pli=11; }
-                }
+    async function saveLeadData(key, data) {
+        try {
+            const existing = leadStatuses[key] || { handled_by:'', status:'new', sub_status:null, interview_date:null, interview_time:null, hidden:false };
+            const full = Object.assign({}, existing, data, { lead_key: key });
+            await fetch(SUPABASE_URL + '/rest/v1/lead_statuses?on_conflict=lead_key', {
+                method: 'POST',
+                headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal,resolution=merge-duplicates' },
+                body: JSON.stringify(full)
+            });
+            if (!leadStatuses[key]) leadStatuses[key] = {};
+            Object.assign(leadStatuses[key], full);
+        } catch(e) { console.error(e); }
+    }
+
+    async function clearLeadData(key) {
+        try {
+            await fetch(SUPABASE_URL + '/rest/v1/lead_statuses?lead_key=eq.' + encodeURIComponent(key), {
+                method: 'DELETE', headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY }
+            });
+            delete leadStatuses[key];
+        } catch(e) { console.error(e); }
+    }
+
+    // Actions
+    async function setSubStatus(key, val) {
+        const info = leadStatuses[key] || {};
+        const newVal = info.sub_status === val ? null : val;
+        await saveLeadData(key, { sub_status: newVal });
+        renderCards();
+    }
+
+    async function setHandler(key, who) {
+        await saveLeadData(key, { handled_by: who });
+        renderCards(); updateStats();
+    }
+
+    async function setMeetingStatus(key) {
+        openInterviewForms[key] = true;
+        renderCards();
+    }
+
+    async function setNotRelevant(key) {
+        const info = leadStatuses[key] || {};
+        await saveLeadData(key, { status:'not_relevant', handled_by:info.handled_by||'', interview_date:null, interview_time:null, hidden:false });
+        delete openInterviewForms[key];
+        renderCards(); updateStats();
+    }
+
+    async function hideLead(key) {
+        await saveLeadData(key, { hidden: true });
+        renderCards(); updateStats();
+    }
+
+    async function saveInterview(key) {
+        const dateEl = document.getElementById('int-date-' + key);
+        const timeEl = document.getElementById('int-time-' + key);
+        if (!dateEl || !dateEl.value) { alert('נא לבחור תאריך'); return; }
+        const info = leadStatuses[key] || {};
+        await saveLeadData(key, { status:'meeting', interview_date:dateEl.value, interview_time:timeEl.value||null, handled_by:info.handled_by||'' });
+        delete openInterviewForms[key];
+        renderCards(); updateStats();
+    }
+
+    function editInterview(key) { openInterviewForms[key] = true; renderCards(); }
+
+    async function resetLead(key) {
+        await clearLeadData(key);
+        delete openInterviewForms[key];
+        renderCards(); updateStats();
+    }
+
+    // Data
+    function loadData() {
+        const jsonUrl = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=out:json';
+        fetch(jsonUrl).then(r => r.text()).then(text => {
+            const m = text.match(/google\.visualization\.Query\.setResponse\(({.*})\)/s);
+            if (m && m[1]) processData(JSON.parse(m[1]));
+            else throw new Error('parse');
+        }).catch(() => {
+            const s = document.createElement('script');
+            s.src = 'https://docs.google.com/spreadsheets/d/' + SHEET_ID + '/gviz/tq?tqx=responseHandler:__gsheetCB';
+            document.body.appendChild(s);
+        });
+    }
+    window.__gsheetCB = function(r) { processData(r); };
+
+    function processData(response) {
+        if (!response || !response.table) return;
+        const cols = response.table.cols.map(c => (c.label||'').toLowerCase().trim());
+        let ni = cols.indexOf('full_name'), pi = cols.indexOf('phone'), ji = cols.indexOf('job_title'), di = cols.indexOf('created_time'), pli = cols.indexOf('platform');
+        if (ni === -1) {
+            const fr = response.table.rows[0];
+            if (fr && fr.c) {
+                const vs = fr.c.map(c => (c && c.v||'').toString().toLowerCase().trim());
+                if (vs.indexOf('full_name') !== -1) {
+                    ni=vs.indexOf('full_name'); pi=vs.indexOf('phone'); ji=vs.indexOf('job_title'); di=vs.indexOf('created_time'); pli=vs.indexOf('platform');
+                    response.table.rows.shift();
+                } else { ni=12; pi=13; ji=14; di=1; pli=11; }
             }
-            function cv(cells,idx) { if (idx<0||idx>=cells.length||!cells[idx]) return ''; return String(cells[idx].v||''); }
-            allLeads = [];
-            for (const row of response.table.rows) {
-                const c = row.c||[];
-                const name = cv(c,ni), phone = cv(c,pi).replace(/^p:/,'').trim();
-                if (!name && !phone) continue;
-                allLeads.push({ name, phone, job:cv(c,ji), date:cv(c,di), platform:cv(c,pli) });
-            }
-            allLeads.sort((a,b) => { try { return new Date(b.date)-new Date(a.date); } catch { return 0; } });
-            allLeads = allLeads.filter(l => { try { return new Date(l.date) >= new Date('2026-03-01'); } catch { return false; } });
-            updateStats(); renderCards();
-            document.getElementById('lastUpdate').textContent = 'עדכון: ' + new Date().toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
+        }
+        function cv(cells,idx) { if (idx<0||idx>=cells.length||!cells[idx]) return ''; return String(cells[idx].v||''); }
+        allLeads = [];
+        for (const row of response.table.rows) {
+            const c = row.c||[];
+            const name = cv(c,ni), phone = cv(c,pi).replace(/^p:/,'').trim();
+            if (!name && !phone) continue;
+            allLeads.push({ name, phone, job:cv(c,ji), date:cv(c,di), platform:cv(c,pli) });
+        }
+        allLeads.sort((a,b) => { try { return new Date(b.date)-new Date(a.date); } catch { return 0; } });
+        allLeads = allLeads.filter(l => { try { return new Date(l.date) >= new Date('2026-03-01'); } catch { return false; } });
+        updateStats(); renderCards();
+        document.getElementById('lastUpdate').textContent = 'עדכון: ' + new Date().toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
+    }
+
+    function getLeadSort(info) {
+        if (!info || (!info.handled_by && info.status === 'new')) return 0;
+        if (info.status === 'meeting') return 1;
+        if (info.status === 'not_relevant') return 3;
+        return 2;
+    }
+
+    function updateStats() {
+        const visible = allLeads.filter(l => { const info = leadStatuses[(l.name+'_'+l.phone).replace(/\s/g,'_')]; return !info||!info.hidden; });
+        document.getElementById('totalLeads').textContent = visible.length;
+        document.getElementById('todayLeads').textContent = visible.filter(l => isToday(l.date)).length;
+        document.getElementById('igLeads').textContent = visible.filter(l => l.platform==='ig').length;
+        document.getElementById('newLeads').textContent = visible.filter(l => { const info=leadStatuses[(l.name+'_'+l.phone).replace(/\s/g,'_')]; return !info||(!info.handled_by&&info.status==='new'); }).length;
+        document.getElementById('meetingLeads').textContent = allLeads.filter(l => { const info=leadStatuses[(l.name+'_'+l.phone).replace(/\s/g,'_')]; return info&&info.status==='meeting'; }).length;
+    }
+
+    function setFilter(btn) {
+        document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+        currentFilter = btn.dataset.filter;
+        renderCards();
+    }
+
+    function buildCard(lead) {
+        const displayName = hebrewName(lead.name);
+        const phoneFormatted = formatPhone(lead.phone);
+        const phoneClean = lead.phone.replace(/[^\d+]/g,'');
+        let waPhone = phoneClean;
+        if (waPhone.startsWith('0')) waPhone = '972'+waPhone.slice(1);
+        else if (waPhone.startsWith('+')) waPhone = waPhone.slice(1);
+        const jobLabel = getJobLabel(lead.job);
+        const waMsg = encodeURIComponent('היי '+displayName+' מה שלומך? ראיתי שהשארת פרטים בנוגע למשרת '+jobLabel+' בפסאו.');
+        const lk = (lead.name+'_'+lead.phone).replace(/\s/g,'_');
+        const info = leadStatuses[lk];
+        const handledBy = info?.handled_by||'';
+        const status = info?.status||'new';
+        const isNotRelevant = status==='not_relevant';
+        const isMeeting = status==='meeting';
+        const plc = lead.platform==='ig'?'platform-ig':'platform-fb';
+        const pll = lead.platform==='ig'?'IG':'FB';
+
+        let html = '<div class="lead-card'+(isNotRelevant?' card-not-relevant':'')+'">';
+        html += '<div class="lead-top"><div><span class="lead-name">'+escapeHtml(displayName)+'</span> <span class="lead-phone">'+phoneFormatted+'</span></div><div class="lead-meta"><span class="platform-badge '+plc+'">'+pll+'</span><span class="lead-date">'+formatDate(lead.date)+'</span></div></div>';
+        html += '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span class="lead-job '+getJobClass(lead.job)+'">'+escapeHtml(lead.job)+'</span>';
+        if (handledBy) { const hc=handledBy==='ירין'?'yarin':'adi'; html+='<span class="handler-badge '+hc+'">'+handledBy+'</span>'; }
+        const subLabels = { sent:'📨 נשלחה הודעה', call:'📞 ניסיון התקשרות', replied:'💬 ענה/תה', no_ans:'🔇 אין מענה', later:'⏰ יחזור/תדחה מאוחר יותר', hired:'✅ התקבל/ה', cancel:'❌ ביטל/ה', confirm:'✅ אישר/ה הגעה', arrived:'🎉 הגיע/ה לריאיון' };
+        const subColors = { sent:'#e3f2fd', call:'#fff3e0', replied:'#e8f5e9', no_ans:'#f5f5f5', later:'#f3e5f5', hired:'#c8e6c9', cancel:'#ffebee', confirm:'#e8f5e9', arrived:'#c8e6c9' };
+        const curSub = info?.sub_status||null;
+        if (curSub && subLabels[curSub]) html += '<span class="sub-status-badge" style="background:'+subColors[curSub]+'">'+subLabels[curSub]+'</span>';
+        html += '</div>';
+        html += '<div class="lead-actions"><a class="action-btn action-call" href="tel:'+phoneClean+'">📞 התקשר</a><a class="action-btn action-wa" href="https://wa.me/'+waPhone+'?text='+waMsg+'" target="_blank">💬 וואטסאפ</a></div>';
+
+        if (!handledBy) {
+            html += '<div class="handle-section"><div class="handle-label">מי מטפל בליד?</div><div class="handle-btns"><div class="handle-btn" onclick="setHandler(\''+lk+'\',\'ירין\')">ירין</div><div class="handle-btn" onclick="setHandler(\''+lk+'\',\'עדי\')">עדי</div></div></div>';
+        } else if (status==='new') {
+            const sub = info?.sub_status||null;
+            const subBtns = [
+                { val:'sent',    label:'📨 נשלחה הודעה',      cls:'sub-sent'    },
+                { val:'call',    label:'📞 ניסיון התקשרות',   cls:'sub-call'    },
+                { val:'replied', label:'💬 ענה/תה',           cls:'sub-replied' },
+                { val:'no_ans',  label:'🔇 אין מענה',         cls:'sub-no-ans'  },
+                { val:'later',   label:'⏰ יחזור מאוחר יותר', cls:'sub-later'   },
+                { val:'hired',   label:'✅ התקבל/ה',          cls:'sub-hired'   },
+            ].map(b => {
+                const isActive = sub === b.val ? ' active-sub' : '';
+                return '<div class="sub-btn '+b.cls+isActive+'" onclick="setSubStatus(\''+lk+'\',\''+b.val+'\')">'+b.label+'</div>';
+            }).join('');
+            html += '<div class="sub-status-section"><div class="sub-status-label">סטטוס טיפול</div><div class="sub-status-grid">'+subBtns+'</div></div>';
+            html += '<div style="margin-top:8px"><div class="next-btns"><div class="next-btn btn-meeting" onclick="setMeetingStatus(\''+lk+'\')">📅 נקבע ריאיון</div><div class="next-btn btn-not-relevant" onclick="setNotRelevant(\''+lk+'\')">לא רלוונטי</div></div></div>';
         }
 
-        function getLeadSort(info) {
-            if (!info || (!info.handled_by && info.status === 'new')) return 0;
-            if (info.status === 'meeting') return 1;
-            if (info.status === 'not_relevant') return 3;
-            return 2;
+        if ((status==='new'||isMeeting) && openInterviewForms[lk]) {
+            const ed=info?.interview_date||'', et=info?.interview_time?.slice(0,5)||'';
+            html += '<div class="interview-inline"><label>תאריך ריאיון</label><input type="date" id="int-date-'+lk+'" value="'+ed+'"><label>שעה</label><input type="time" id="int-time-'+lk+'" value="'+et+'"><button class="int-save-btn" onclick="saveInterview(\''+lk+'\')">שמור ריאיון</button></div>';
+        } else if (isMeeting && info?.interview_date) {
+            html += '<div class="interview-info"><span>📅 '+formatInterview(info.interview_date,info.interview_time)+'</span><span class="int-edit" onclick="editInterview(\''+lk+'\')">ערוך</span></div>';
         }
 
-        function updateStats() {
-            const visible = allLeads.filter(l => { const info = leadStatuses[(l.name+'_'+l.phone).replace(/\s/g,'_')]; return !info||!info.hidden; });
-            document.getElementById('totalLeads').textContent = visible.length;
-            document.getElementById('todayLeads').textContent = visible.filter(l => isToday(l.date)).length;
-            document.getElementById('igLeads').textContent = visible.filter(l => l.platform==='ig').length;
-            document.getElementById('newLeads').textContent = visible.filter(l => { const info=leadStatuses[(l.name+'_'+l.phone).replace(/\s/g,'_')]; return !info||(!info.handled_by&&info.status==='new'); }).length;
-            document.getElementById('meetingLeads').textContent = allLeads.filter(l => { const info=leadStatuses[(l.name+'_'+l.phone).replace(/\s/g,'_')]; return info&&info.status==='meeting'; }).length;
+        if (isMeeting) {
+            const sub = info?.sub_status||null;
+            const meetingSubBtns = [
+                { val:'sent',    label:'📨 נשלחה הודעה',    cls:'sub-sent'    },
+                { val:'no_ans',  label:'🔇 אין מענה',       cls:'sub-no-ans'  },
+                { val:'cancel',  label:'❌ ביטל/ה',         cls:'sub-call'    },
+                { val:'confirm', label:'✅ אישר/ה הגעה',    cls:'sub-replied' },
+                { val:'later',   label:'⏰ דחה/תה תאריך',   cls:'sub-later'   },
+                { val:'arrived', label:'🎉 הגיע/ה לריאיון', cls:'sub-hired'   },
+            ].map(b => {
+                const isActive = sub === b.val ? ' active-sub' : '';
+                return '<div class="sub-btn '+b.cls+isActive+'" onclick="setSubStatus(\''+lk+'\',\''+b.val+'\')">'+b.label+'</div>';
+            }).join('');
+            html += '<div class="sub-status-section"><div class="sub-status-label">סטטוס ריאיון</div><div class="sub-status-grid">'+meetingSubBtns+'</div></div>';
         }
 
-        function setFilter(btn) {
-            document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
-            btn.classList.add('active');
-            currentFilter = btn.dataset.filter;
-            renderCards();
+        if (isNotRelevant) {
+            html += '<div class="not-relevant-badge"><span>❌ לא רלוונטי</span><div class="nr-actions"><button class="nr-hide-btn" onclick="hideLead(\''+lk+'\')">הסתר</button><span class="nr-undo" onclick="resetLead(\''+lk+'\')">בטל</span></div></div>';
         }
 
-        function buildCard(lead) {
-            const displayName = hebrewName(lead.name);
-            const phoneFormatted = formatPhone(lead.phone);
-            const phoneClean = lead.phone.replace(/[^\d+]/g,'');
-            let waPhone = phoneClean;
-            if (waPhone.startsWith('0')) waPhone = '972'+waPhone.slice(1);
-            else if (waPhone.startsWith('+')) waPhone = waPhone.slice(1);
-            const waMsg = encodeURIComponent('היי '+displayName+' מה שלומך? ראיתי שהשארת פרטים בנוגע למשרה בפסאו.');
+        if (handledBy && !isNotRelevant) html += '<div class="reset-link" onclick="resetLead(\''+lk+'\')">איפוס</div>';
+        html += '</div>';
+        return html;
+    }
+
+    function renderCards() {
+        const search = document.getElementById('searchBox').value.toLowerCase();
+        const isNotRelFilter = currentFilter==='not_relevant';
+
+        let filtered = allLeads.filter(lead => {
             const lk = (lead.name+'_'+lead.phone).replace(/\s/g,'_');
             const info = leadStatuses[lk];
-            const handledBy = info?.handled_by||'';
             const status = info?.status||'new';
-            const isNotRelevant = status==='not_relevant';
-            const isMeeting = status==='meeting';
-            const plc = lead.platform==='ig'?'platform-ig':'platform-fb';
-            const pll = lead.platform==='ig'?'IG':'FB';
+            const hidden = info?.hidden||false;
 
-            let html = '<div class="lead-card'+(isNotRelevant?' card-not-relevant':'')+'">';
-            html += '<div class="lead-top"><div><span class="lead-name">'+escapeHtml(displayName)+'</span> <span class="lead-phone">'+phoneFormatted+'</span></div><div class="lead-meta"><span class="platform-badge '+plc+'">'+pll+'</span><span class="lead-date">'+formatDate(lead.date)+'</span></div></div>';
-            html += '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span class="lead-job '+getJobClass(lead.job)+'">'+escapeHtml(lead.job)+'</span>';
-            if (handledBy) { const hc=handledBy==='ירין'?'yarin':'adi'; html+='<span class="handler-badge '+hc+'">'+handledBy+'</span>'; }
-            // sub_status badge
-            const subLabels = { sent:'📨 נשלחה הודעה', call:'📞 ניסיון התקשרות', replied:'💬 ענה/תה', no_ans:'🔇 אין מענה', later:'⏰ יחזור/תדחה מאוחר יותר', hired:'✅ התקבל/ה', cancel:'❌ ביטל/ה', confirm:'✅ אישר/ה הגעה', arrived:'🎉 הגיע/ה לריאיון' };
-            const subColors = { sent:'#e3f2fd', call:'#fff3e0', replied:'#e8f5e9', no_ans:'#f5f5f5', later:'#f3e5f5', hired:'#c8e6c9', cancel:'#ffebee', confirm:'#e8f5e9', arrived:'#c8e6c9' };
-            const curSub = info?.sub_status||null;
-            if (curSub && subLabels[curSub]) html += '<span class="sub-status-badge" style="background:'+subColors[curSub]+'">'+subLabels[curSub]+'</span>';
-            html += '</div>';
-            html += '<div class="lead-actions"><a class="action-btn action-call" href="tel:'+phoneClean+'">📞 התקשר</a><a class="action-btn action-wa" href="https://wa.me/'+waPhone+'?text='+waMsg+'" target="_blank">💬 וואטסאפ</a></div>';
-
-            if (!handledBy) {
-                html += '<div class="handle-section"><div class="handle-label">מי מטפל בליד?</div><div class="handle-btns"><div class="handle-btn" onclick="setHandler(\''+lk+'\',\'ירין\')">ירין</div><div class="handle-btn" onclick="setHandler(\''+lk+'\',\'עדי\')">עדי</div></div></div>';
-            } else if (status==='new') {
-                const sub = info?.sub_status||null;
-
-                // sub-status buttons
-                const subBtns = [
-                    { val:'sent',    label:'📨 נשלחה הודעה',      cls:'sub-sent'    },
-                    { val:'call',    label:'📞 ניסיון התקשרות',   cls:'sub-call'    },
-                    { val:'replied', label:'💬 ענה/תה',           cls:'sub-replied' },
-                    { val:'no_ans',  label:'🔇 אין מענה',         cls:'sub-no-ans'  },
-                    { val:'later',   label:'⏰ יחזור מאוחר יותר', cls:'sub-later'   },
-                    { val:'hired',   label:'✅ התקבל/ה',          cls:'sub-hired'   },
-                ].map(b => {
-                    const isActive = sub === b.val ? ' active-sub' : '';
-                    return '<div class="sub-btn '+b.cls+isActive+'" onclick="setSubStatus(\''+lk+'\',\''+b.val+'\')">'+b.label+'</div>';
-                }).join('');
-
-                html += '<div class="sub-status-section"><div class="sub-status-label">סטטוס טיפול</div><div class="sub-status-grid">'+subBtns+'</div></div>';
-
-                // next action buttons
-                html += '<div style="margin-top:8px"><div class="next-btns"><div class="next-btn btn-meeting" onclick="setMeetingStatus(\''+lk+'\')">📅 נקבע ריאיון</div><div class="next-btn btn-not-relevant" onclick="setNotRelevant(\''+lk+'\')">לא רלוונטי</div></div></div>';
+            if (isNotRelFilter) return status==='not_relevant';
+            if (hidden) return false;
+            if (currentFilter==='new') { if (info&&(info.handled_by||status!=='new')) return false; }
+            else if (currentFilter==='meeting') { if (status!=='meeting') return false; }
+            else if (currentFilter!=='all') {
+                const j = lead.job.toLowerCase();
+                if (currentFilter==='מלצר') { if (!j.includes('מלצר')&&!j.includes('שירות')) return false; }
+                else if (!j.includes(currentFilter)) return false;
             }
+            if (search) { if (!(lead.name+' '+lead.phone+' '+lead.job).toLowerCase().includes(search)) return false; }
+            return true;
+        });
 
-            if ((status==='new'||isMeeting) && openInterviewForms[lk]) {
-                const ed=info?.interview_date||'', et=info?.interview_time?.slice(0,5)||'';
-                html += '<div class="interview-inline"><label>תאריך ריאיון</label><input type="date" id="int-date-'+lk+'" value="'+ed+'"><label>שעה</label><input type="time" id="int-time-'+lk+'" value="'+et+'"><button class="int-save-btn" onclick="saveInterview(\''+lk+'\')">שמור ריאיון</button></div>';
-            } else if (isMeeting && info?.interview_date) {
-                html += '<div class="interview-info"><span>📅 '+formatInterview(info.interview_date,info.interview_time)+'</span><span class="int-edit" onclick="editInterview(\''+lk+'\')">ערוך</span></div>';
-            }
+        if (filtered.length===0) { document.getElementById('leadsArea').innerHTML='<div class="leads-list"><div class="empty-state">לא נמצאו לידים</div></div>'; return; }
 
-            // סטטוס טיפול גם על ראיונות קבועים
-            if (isMeeting) {
-                const sub = info?.sub_status||null;
-                const meetingSubBtns = [
-                    { val:'sent',    label:'📨 נשלחה הודעה',    cls:'sub-sent'    },
-                    { val:'no_ans',  label:'🔇 אין מענה',       cls:'sub-no-ans'  },
-                    { val:'cancel',  label:'❌ ביטל/ה',         cls:'sub-call'    },
-                    { val:'confirm', label:'✅ אישר/ה הגעה',    cls:'sub-replied' },
-                    { val:'later',   label:'⏰ דחה/תה תאריך',   cls:'sub-later'   },
-                    { val:'arrived', label:'🎉 הגיע/ה לריאיון', cls:'sub-hired'   },
-                ].map(b => {
-                    const isActive = sub === b.val ? ' active-sub' : '';
-                    return '<div class="sub-btn '+b.cls+isActive+'" onclick="setSubStatus(\''+lk+'\',\''+b.val+'\')">'+b.label+'</div>';
-                }).join('');
-                html += '<div class="sub-status-section"><div class="sub-status-label">סטטוס ריאיון</div><div class="sub-status-grid">'+meetingSubBtns+'</div></div>';
-            }
-
-            if (isNotRelevant) {
-                html += '<div class="not-relevant-badge"><span>❌ לא רלוונטי</span><div class="nr-actions"><button class="nr-hide-btn" onclick="hideLead(\''+lk+'\')">הסתר</button><span class="nr-undo" onclick="resetLead(\''+lk+'\')">בטל</span></div></div>';
-            }
-
-            if (handledBy && !isNotRelevant) html += '<div class="reset-link" onclick="resetLead(\''+lk+'\')">איפוס</div>';
-            html += '</div>';
-            return html;
-        }
-
-        function renderCards() {
-            const search = document.getElementById('searchBox').value.toLowerCase();
-            const isNotRelFilter = currentFilter==='not_relevant';
-
-            let filtered = allLeads.filter(lead => {
-                const lk = (lead.name+'_'+lead.phone).replace(/\s/g,'_');
-                const info = leadStatuses[lk];
-                const status = info?.status||'new';
-                const hidden = info?.hidden||false;
-
-                if (isNotRelFilter) return status==='not_relevant';
-                if (hidden) return false;
-                if (currentFilter==='new') { if (info&&(info.handled_by||status!=='new')) return false; }
-                else if (currentFilter==='meeting') { if (status!=='meeting') return false; }
-                else if (currentFilter!=='all') {
-                    const j = lead.job.toLowerCase();
-                    if (currentFilter==='מלצר') { if (!j.includes('מלצר')&&!j.includes('שירות')) return false; }
-                    else if (!j.includes(currentFilter)) return false;
-                }
-                if (search) { if (!(lead.name+' '+lead.phone+' '+lead.job).toLowerCase().includes(search)) return false; }
-                return true;
+        if (!isNotRelFilter) {
+            filtered.sort((a,b) => {
+                const ia=leadStatuses[(a.name+'_'+a.phone).replace(/\s/g,'_')];
+                const ib=leadStatuses[(b.name+'_'+b.phone).replace(/\s/g,'_')];
+                const sa=getLeadSort(ia), sb=getLeadSort(ib);
+                if (sa!==sb) return sa-sb;
+                try { return new Date(b.date)-new Date(a.date); } catch { return 0; }
             });
+        }
 
-            if (filtered.length===0) { document.getElementById('leadsArea').innerHTML='<div class="leads-list"><div class="empty-state">לא נמצאו לידים</div></div>'; return; }
+        const sectionLabels = {0:'🆕 חדשים',1:'📅 נקבע ריאיון',2:'בטיפול',3:'❌ לא רלוונטי'};
+        let html = '<div class="leads-list">';
+        let lastSection = null;
 
-            if (!isNotRelFilter) {
-                filtered.sort((a,b) => {
-                    const ia=leadStatuses[(a.name+'_'+a.phone).replace(/\s/g,'_')];
-                    const ib=leadStatuses[(b.name+'_'+b.phone).replace(/\s/g,'_')];
-                    const sa=getLeadSort(ia), sb=getLeadSort(ib);
-                    if (sa!==sb) return sa-sb;
-                    try { return new Date(b.date)-new Date(a.date); } catch { return 0; }
-                });
+        filtered.forEach(lead => {
+            const lk = (lead.name+'_'+lead.phone).replace(/\s/g,'_');
+            const info = leadStatuses[lk];
+            const section = isNotRelFilter ? 3 : getLeadSort(info);
+            if (!isNotRelFilter && section!==lastSection) {
+                if (lastSection!==null) html += '</div>';
+                html += '</div><div class="section-label">'+sectionLabels[section]+'</div><div class="leads-list">';
+                lastSection = section;
             }
+            html += buildCard(lead);
+        });
 
-            const sectionLabels = {0:'🆕 חדשים',1:'📅 נקבע ריאיון',2:'בטיפול',3:'❌ לא רלוונטי'};
-            let html = '<div class="leads-list">';
-            let lastSection = null;
+        html += '</div>';
+        document.getElementById('leadsArea').innerHTML = html;
+    }
 
-            filtered.forEach(lead => {
-                const lk = (lead.name+'_'+lead.phone).replace(/\s/g,'_');
-                const info = leadStatuses[lk];
-                const section = isNotRelFilter ? 3 : getLeadSort(info);
-                if (!isNotRelFilter && section!==lastSection) {
-                    if (lastSection!==null) html += '</div>';
-                    html += '</div><div class="section-label">'+sectionLabels[section]+'</div><div class="leads-list">';
-                    lastSection = section;
-                }
-                html += buildCard(lead);
-            });
+    async function init() {
+        await loadStatuses();
+        loadData();
+    }
+    init();
+    setInterval(async function() { await loadStatuses(); loadData(); }, 2*60*1000);
+</script>
+```
 
-            html += '</div>';
-            document.getElementById('leadsArea').innerHTML = html;
-        }
-
-        async function init() {
-            await loadStatuses();
-            loadData();
-        }
-        init();
-        setInterval(async function() { await loadStatuses(); loadData(); }, 2*60*1000);
-    </script>
 </body>
 </html>
