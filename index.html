@@ -66,6 +66,7 @@
     .handler-badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 12px; font-weight: 500; }
     .handler-badge.yarin { background: #e3f2fd; color: #1565c0; }
     .handler-badge.adi { background: #f3e5f5; color: #7b1fa2; }
+    .handler-badge.tomer { background: #fff8e1; color: #f57f17; }
 
     .next-btns { display: flex; gap: 8px; margin-top: 8px; }
     .next-btn { flex: 1; padding: 9px; border-radius: 8px; border: 1px solid #ddd; background: #fafafa; font-size: 13px; font-weight: 500; cursor: pointer; text-align: center; }
@@ -151,6 +152,9 @@
     <button class="filter-btn active" data-filter="all" onclick="setFilter(this)">הכל</button>
     <button class="filter-btn" data-filter="meeting" onclick="setFilter(this)">📅 ראיונות</button>
     <button class="filter-btn" data-filter="new" onclick="setFilter(this)">חדשים</button>
+    <button class="filter-btn" data-filter="handler_ירין" onclick="setFilter(this)">ירין</button>
+    <button class="filter-btn" data-filter="handler_עדי" onclick="setFilter(this)">עדי</button>
+    <button class="filter-btn" data-filter="handler_תומר" onclick="setFilter(this)">תומר</button>
     <button class="filter-btn" data-filter="מלצר" onclick="setFilter(this)">מלצר/ית</button>
     <button class="filter-btn" data-filter="בר" onclick="setFilter(this)">בר</button>
     <button class="filter-btn" data-filter="מארחת" onclick="setFilter(this)">מארחת</button>
@@ -211,16 +215,6 @@
         return 'job-other';
     }
 
-    function getJobLabel(job) {
-        if (!job) return 'משרה';
-        const j = job.toLowerCase();
-        if (j.includes('מטבח') || j.includes('טבח') || j.includes('שף')) return 'מטבח';
-        if (j.includes('מארח') || j.includes('הוסט')) return 'מארחת';
-        if (j.includes('מלצר') || j.includes('שירות')) return 'מלצרות';
-        if (j.includes('בר') || j.includes('ברמן') || j.includes('ברמנ')) return 'בר';
-        return job || 'משרה';
-    }
-
     function formatDate(dateStr) {
         if (!dateStr) return '';
         try {
@@ -276,11 +270,14 @@
         try {
             const existing = leadStatuses[key] || { handled_by:'', status:'new', sub_status:null, interview_date:null, interview_time:null, hidden:false };
             const full = Object.assign({}, existing, data, { lead_key: key });
-            await fetch(SUPABASE_URL + '/rest/v1/lead_statuses?on_conflict=lead_key', {
+            // נקה שדות undefined
+            Object.keys(full).forEach(k => { if (full[k] === undefined) full[k] = null; });
+            const resp = await fetch(SUPABASE_URL + '/rest/v1/lead_statuses?on_conflict=lead_key', {
                 method: 'POST',
-                headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'return=minimal,resolution=merge-duplicates' },
+                headers: { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY, 'Content-Type': 'application/json', 'Prefer': 'resolution=merge-duplicates' },
                 body: JSON.stringify(full)
             });
+            if (!resp.ok) { console.error('save error', resp.status, await resp.text()); return; }
             if (!leadStatuses[key]) leadStatuses[key] = {};
             Object.assign(leadStatuses[key], full);
         } catch(e) { console.error(e); }
@@ -298,7 +295,7 @@
     // Actions
     async function setSubStatus(key, val) {
         const info = leadStatuses[key] || {};
-        const newVal = info.sub_status === val ? null : val;
+        const newVal = info.sub_status === val ? null : val; // toggle
         await saveLeadData(key, { sub_status: newVal });
         renderCards();
     }
@@ -416,8 +413,7 @@
         let waPhone = phoneClean;
         if (waPhone.startsWith('0')) waPhone = '972'+waPhone.slice(1);
         else if (waPhone.startsWith('+')) waPhone = waPhone.slice(1);
-        const jobLabel = getJobLabel(lead.job);
-        const waMsg = encodeURIComponent('היי '+displayName+' מה שלומך? ראיתי שהשארת פרטים בנוגע למשרת '+jobLabel+' בפסאו.');
+        const waMsg = encodeURIComponent('היי '+displayName+' מה שלומך? ראיתי שהשארת פרטים בנוגע למשרה בפסאו.');
         const lk = (lead.name+'_'+lead.phone).replace(/\s/g,'_');
         const info = leadStatuses[lk];
         const handledBy = info?.handled_by||'';
@@ -430,7 +426,8 @@
         let html = '<div class="lead-card'+(isNotRelevant?' card-not-relevant':'')+'">';
         html += '<div class="lead-top"><div><span class="lead-name">'+escapeHtml(displayName)+'</span> <span class="lead-phone">'+phoneFormatted+'</span></div><div class="lead-meta"><span class="platform-badge '+plc+'">'+pll+'</span><span class="lead-date">'+formatDate(lead.date)+'</span></div></div>';
         html += '<div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap"><span class="lead-job '+getJobClass(lead.job)+'">'+escapeHtml(lead.job)+'</span>';
-        if (handledBy) { const hc=handledBy==='ירין'?'yarin':'adi'; html+='<span class="handler-badge '+hc+'">'+handledBy+'</span>'; }
+        if (handledBy) { const hc=handledBy==='ירין'?'yarin':handledBy==='עדי'?'adi':'tomer'; html+='<span class="handler-badge '+hc+'">'+handledBy+'</span>'; }
+        // sub_status badge
         const subLabels = { sent:'📨 נשלחה הודעה', call:'📞 ניסיון התקשרות', replied:'💬 ענה/תה', no_ans:'🔇 אין מענה', later:'⏰ יחזור/תדחה מאוחר יותר', hired:'✅ התקבל/ה', cancel:'❌ ביטל/ה', confirm:'✅ אישר/ה הגעה', arrived:'🎉 הגיע/ה לריאיון' };
         const subColors = { sent:'#e3f2fd', call:'#fff3e0', replied:'#e8f5e9', no_ans:'#f5f5f5', later:'#f3e5f5', hired:'#c8e6c9', cancel:'#ffebee', confirm:'#e8f5e9', arrived:'#c8e6c9' };
         const curSub = info?.sub_status||null;
@@ -439,9 +436,11 @@
         html += '<div class="lead-actions"><a class="action-btn action-call" href="tel:'+phoneClean+'">📞 התקשר</a><a class="action-btn action-wa" href="https://wa.me/'+waPhone+'?text='+waMsg+'" target="_blank">💬 וואטסאפ</a></div>';
 
         if (!handledBy) {
-            html += '<div class="handle-section"><div class="handle-label">מי מטפל בליד?</div><div class="handle-btns"><div class="handle-btn" onclick="setHandler(\''+lk+'\',\'ירין\')">ירין</div><div class="handle-btn" onclick="setHandler(\''+lk+'\',\'עדי\')">עדי</div></div></div>';
+            html += '<div class="handle-section"><div class="handle-label">מי מטפל בליד?</div><div class="handle-btns"><div class="handle-btn" onclick="setHandler(\''+lk+'\',\'ירין\')">ירין</div><div class="handle-btn" onclick="setHandler(\''+lk+'\',\'עדי\')">עדי</div><div class="handle-btn" onclick="setHandler(\''+lk+'\',\'תומר\')">תומר</div></div></div>';
         } else if (status==='new') {
             const sub = info?.sub_status||null;
+
+            // sub-status buttons
             const subBtns = [
                 { val:'sent',    label:'📨 נשלחה הודעה',      cls:'sub-sent'    },
                 { val:'call',    label:'📞 ניסיון התקשרות',   cls:'sub-call'    },
@@ -453,7 +452,10 @@
                 const isActive = sub === b.val ? ' active-sub' : '';
                 return '<div class="sub-btn '+b.cls+isActive+'" onclick="setSubStatus(\''+lk+'\',\''+b.val+'\')">'+b.label+'</div>';
             }).join('');
+
             html += '<div class="sub-status-section"><div class="sub-status-label">סטטוס טיפול</div><div class="sub-status-grid">'+subBtns+'</div></div>';
+
+            // next action buttons
             html += '<div style="margin-top:8px"><div class="next-btns"><div class="next-btn btn-meeting" onclick="setMeetingStatus(\''+lk+'\')">📅 נקבע ריאיון</div><div class="next-btn btn-not-relevant" onclick="setNotRelevant(\''+lk+'\')">לא רלוונטי</div></div></div>';
         }
 
@@ -464,6 +466,7 @@
             html += '<div class="interview-info"><span>📅 '+formatInterview(info.interview_date,info.interview_time)+'</span><span class="int-edit" onclick="editInterview(\''+lk+'\')">ערוך</span></div>';
         }
 
+        // סטטוס טיפול גם על ראיונות קבועים
         if (isMeeting) {
             const sub = info?.sub_status||null;
             const meetingSubBtns = [
@@ -503,6 +506,10 @@
             if (hidden) return false;
             if (currentFilter==='new') { if (info&&(info.handled_by||status!=='new')) return false; }
             else if (currentFilter==='meeting') { if (status!=='meeting') return false; }
+            else if (currentFilter.startsWith('handler_')) {
+                const who = currentFilter.replace('handler_','');
+                if (!info || info.handled_by !== who) return false;
+            }
             else if (currentFilter!=='all') {
                 const j = lead.job.toLowerCase();
                 if (currentFilter==='מלצר') { if (!j.includes('מלצר')&&!j.includes('שירות')) return false; }
