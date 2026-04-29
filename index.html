@@ -2,1488 +2,551 @@
 
 <html lang="he" dir="rtl">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="theme-color" content="#0a0a0a">
-<title>סיכום משמרת — אומינו</title>
-<link rel="manifest" href="manifest.json">
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&family=Noto+Serif+JP:wght@400;700&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-<style>
-  :root {
-    --bg: #0a0a0a;
-    --bg-elev: #161616;
-    --bg-card: #1c1c1c;
-    --line: #2a2a2a;
-    --line-strong: #3a3a3a;
-    --ink: #f4f1ea;
-    --ink-dim: #a8a8a8;
-    --ink-faint: #6a6a6a;
-    --accent: #c0392b;       /* אדום יפני */
-    --accent-2: #d4af37;     /* זהב עתיק */
-    --ok: #4ade80;
-    --warn: #fbbf24;
-    --err: #ef4444;
-    --radius: 14px;
-  }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>PASEO - דשבורד לידים</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        html, body { overflow-x: hidden; width: 100%; max-width: 100vw; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f0f2f5; color: #1a1a2e; min-height: 100vh; }
 
-- { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
-  html, body { background: var(–bg); color: var(–ink); font-family: ‘Heebo’, system-ui, sans-serif; min-height: 100vh; overscroll-behavior-y: contain; }
-  body { padding: 0 0 120px 0; }
+```
+    .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: white; padding: 16px; display: flex; justify-content: space-between; align-items: center; }
+    .header h1 { font-size: 22px; font-weight: 700; letter-spacing: 2px; }
+    .header-subtitle { font-size: 12px; opacity: 0.7; margin-top: 2px; }
+    .refresh-btn { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: white; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 13px; }
+    .last-update { font-size: 11px; opacity: 0.6; }
+    .auto-refresh-indicator { display: inline-block; width: 6px; height: 6px; background: #4caf50; border-radius: 50%; margin-left: 6px; animation: pulse 2s infinite; }
+    @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
 
-/* Header */
-.header {
-background: linear-gradient(180deg, #1a1a1a 0%, #0a0a0a 100%);
-border-bottom: 1px solid var(–line);
-padding: 18px 16px 14px;
-position: sticky;
-top: 0;
-z-index: 100;
-backdrop-filter: blur(10px);
-}
-.brand-row {
-display: flex; align-items: center; justify-content: space-between; gap: 10px;
-}
-.brand {
-display: flex; align-items: baseline; gap: 8px;
-}
-.brand-jp {
-font-family: ‘Noto Serif JP’, serif;
-font-size: 28px;
-color: var(–accent);
-line-height: 1;
-font-weight: 700;
-}
-.brand-en {
-font-size: 11px;
-letter-spacing: 4px;
-color: var(–ink-faint);
-text-transform: uppercase;
-}
-.header h1 {
-font-size: 13px;
-font-weight: 500;
-color: var(–ink-dim);
-margin-top: 6px;
-letter-spacing: 0.5px;
-}
-.status-pill {
-font-size: 10px;
-padding: 4px 8px;
-border-radius: 999px;
-background: rgba(74, 222, 128, 0.1);
-color: var(–ok);
-border: 1px solid rgba(74, 222, 128, 0.3);
-}
-.status-pill.offline { background: rgba(239, 68, 68, 0.1); color: var(–err); border-color: rgba(239, 68, 68, 0.3); }
+    .stats-bar { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; padding: 10px; }
+    .stat-card { background: white; border-radius: 10px; padding: 10px 8px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
+    .stat-card .stat-number { font-size: 20px; font-weight: 700; color: #1a1a2e; }
+    .stat-card .stat-label { font-size: 9px; color: #888; margin-top: 2px; }
 
-/* Sections */
-.section {
-padding: 18px 16px 8px;
-}
-.section-title {
-font-size: 11px;
-letter-spacing: 2.5px;
-color: var(–ink-faint);
-text-transform: uppercase;
-margin-bottom: 12px;
-font-weight: 600;
-display: flex; align-items: center; gap: 8px;
-}
-.section-title::before {
-content: “”; width: 16px; height: 1px; background: var(–accent);
-}
-.section-num {
-display: inline-block;
-color: var(–accent-2);
-font-family: ‘Noto Serif JP’, serif;
-font-size: 13px;
-margin-left: 4px;
-}
+    .controls { padding: 8px 10px; }
+    .search-box { padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; width: 100%; direction: rtl; }
+    .search-box:focus { outline: none; border-color: #1a1a2e; }
+    .filters { display: flex; gap: 4px; flex-wrap: wrap; padding: 0 10px 8px; }
+    .filter-btn { padding: 6px 10px; border: 1px solid #ddd; border-radius: 6px; background: white; cursor: pointer; font-size: 11px; }
+    .filter-btn.active { background: #1a1a2e; color: white; border-color: #1a1a2e; }
 
-/* Cards & inputs */
-.card {
-background: var(–bg-card);
-border: 1px solid var(–line);
-border-radius: var(–radius);
-padding: 14px;
-margin-bottom: 12px;
-}
-.field {
-margin-bottom: 12px;
-}
-.field:last-child { margin-bottom: 0; }
-label {
-display: block;
-font-size: 13px;
-color: var(–ink);
-margin-bottom: 6px;
-font-weight: 500;
-}
-label .hint {
-color: var(–ink-faint);
-font-weight: 400;
-font-size: 11px;
-margin-right: 4px;
-}
-input[type=“text”], input[type=“number”], input[type=“date”], input[type=“datetime-local”], textarea, select {
-width: 100%;
-background: var(–bg-elev);
-border: 1px solid var(–line);
-border-radius: 10px;
-padding: 12px 14px;
-color: var(–ink);
-font-family: inherit;
-font-size: 16px; /* prevent iOS zoom */
-outline: none;
-transition: border-color 0.15s, background 0.15s;
-}
-input:focus, textarea:focus, select:focus {
-border-color: var(–accent-2);
-background: #1f1f1f;
-}
-textarea {
-resize: vertical;
-min-height: 90px;
-line-height: 1.6;
-}
-textarea.large { min-height: 140px; }
+    /* Week sections */
+    .week-section { margin-bottom: 2px; }
+    .week-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 10px 5px; cursor: pointer; user-select: none; }
+    .week-title { font-size: 11px; font-weight: 700; color: #888; letter-spacing: 0.5px; text-transform: uppercase; }
+    .week-meta { display: flex; align-items: center; gap: 6px; }
+    .week-count { font-size: 11px; color: #aaa; background: #eee; border-radius: 8px; padding: 1px 7px; }
+    .week-toggle { font-size: 10px; color: #ccc; }
+    .week-body { padding: 0 10px 6px; }
+    .week-body.collapsed { display: none; }
 
-.row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
-.row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; }
+    /* Compact lead card */
+    .lead-card { background: white; border-radius: 11px; margin-bottom: 5px; box-shadow: 0 1px 3px rgba(0,0,0,0.07); overflow: hidden; }
+    .lead-card.card-not-relevant { opacity: 0.45; }
 
-/* Numeric prefix */
-.num-input {
-position: relative;
-}
-.num-input .suffix {
-position: absolute;
-left: 14px;
-top: 50%;
-transform: translateY(-50%);
-color: var(–ink-faint);
-font-size: 13px;
-pointer-events: none;
-}
-.num-input input { padding-left: 40px; }
+    .lead-summary { display: flex; align-items: center; padding: 10px 12px; gap: 10px; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+    .lead-avatar { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 13px; font-weight: 700; color: white; flex-shrink: 0; }
+    .lead-main { flex: 1; min-width: 0; }
+    .lead-name-row { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; flex-wrap: wrap; }
+    .lead-name { font-size: 15px; font-weight: 600; color: #1a1a2e; }
+    .lead-time { font-size: 11px; color: #ccc; margin-right: auto; white-space: nowrap; }
+    .lead-sub-row { display: flex; align-items: center; gap: 5px; flex-wrap: wrap; }
+    .lead-phone-sm { font-size: 12px; color: #999; direction: ltr; }
+    .expand-icon { font-size: 11px; color: #ddd; flex-shrink: 0; transition: transform 0.2s; }
+    .expand-icon.open { transform: rotate(180deg); }
 
-/* Floor/kitchen sub-cards */
-.sub-card {
-background: rgba(255,255,255,0.02);
-border: 1px solid var(–line);
-border-radius: 10px;
-padding: 12px;
-margin-bottom: 10px;
-}
-.sub-card-title {
-font-size: 12px;
-color: var(–accent-2);
-margin-bottom: 8px;
-font-weight: 600;
-letter-spacing: 1px;
-}
+    /* Badges */
+    .lead-job { display: inline-block; padding: 2px 7px; border-radius: 8px; font-size: 11px; font-weight: 500; }
+    .job-kitchen { background: #fff3e0; color: #e65100; }
+    .job-host    { background: #e8f5e9; color: #2e7d32; }
+    .job-waiter  { background: #e3f2fd; color: #1565c0; }
+    .job-bar     { background: #f3e5f5; color: #7b1fa2; }
+    .job-other   { background: #f5f5f5; color: #616161; }
+    .platform-badge { font-size: 10px; padding: 1px 5px; border-radius: 4px; font-weight: 500; }
+    .platform-ig { background: #fce4ec; color: #c2185b; }
+    .platform-fb { background: #e3f2fd; color: #1565c0; }
+    .handler-badge { display: inline-block; padding: 1px 7px; border-radius: 8px; font-size: 11px; font-weight: 500; }
+    .handler-badge.yarin  { background: #e3f2fd; color: #1565c0; }
+    .handler-badge.adi    { background: #f3e5f5; color: #7b1fa2; }
+    .handler-badge.tomer  { background: #fff8e1; color: #f57f17; }
+    .sub-status-badge { display: inline-block; padding: 1px 7px; border-radius: 8px; font-size: 11px; }
+    .interview-chip { display: inline-flex; align-items: center; gap: 3px; padding: 1px 7px; border-radius: 8px; font-size: 11px; background: #e8f5e9; color: #2e7d32; font-weight: 500; }
 
-/* Returned dishes */
-.dish-row {
-display: grid;
-grid-template-columns: 1fr 1fr auto;
-gap: 8px;
-margin-bottom: 8px;
-align-items: center;
-}
-.dish-row input { font-size: 14px; padding: 10px; }
-.icon-btn {
-background: rgba(239, 68, 68, 0.1);
-border: 1px solid rgba(239, 68, 68, 0.3);
-color: var(–err);
-width: 38px; height: 38px;
-border-radius: 8px;
-font-size: 18px;
-cursor: pointer;
-display: flex; align-items: center; justify-content: center;
-}
-.add-row-btn {
-width: 100%;
-background: transparent;
-border: 1px dashed var(–line-strong);
-color: var(–ink-dim);
-padding: 10px;
-border-radius: 8px;
-font-family: inherit;
-font-size: 13px;
-cursor: pointer;
-margin-top: 4px;
-}
-.add-row-btn:hover { border-color: var(–accent-2); color: var(–accent-2); }
+    /* Expanded */
+    .lead-details { border-top: 1px solid #f5f5f5; padding: 12px; display: none; }
+    .lead-details.open { display: block; }
+    .action-row { display: flex; gap: 8px; margin-bottom: 10px; }
+    .action-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px; border-radius: 10px; text-decoration: none; font-size: 14px; font-weight: 500; border: none; cursor: pointer; }
+    .action-call { background: #e3f2fd; color: #1565c0; }
+    .action-wa   { background: #e8f5e9; color: #25d366; }
+    .det-label { font-size: 11px; color: #aaa; margin: 10px 0 6px; }
+    .handle-btns { display: flex; gap: 6px; }
+    .handle-btn { flex: 1; padding: 8px; border-radius: 8px; border: 1.5px solid #eee; background: #fafafa; font-size: 13px; font-weight: 500; cursor: pointer; text-align: center; }
+    .handle-btn.h-active.h-yarin  { background: #e3f2fd; color: #1565c0; border-color: #90caf9; }
+    .handle-btn.h-active.h-adi    { background: #f3e5f5; color: #7b1fa2; border-color: #ce93d8; }
+    .handle-btn.h-active.h-tomer  { background: #fff8e1; color: #f57f17; border-color: #ffe082; }
 
-/* Submit bar */
-.submit-bar {
-position: fixed;
-bottom: 0; left: 0; right: 0;
-background: linear-gradient(180deg, rgba(10,10,10,0.6) 0%, var(–bg) 50%);
-padding: 16px 16px calc(16px + env(safe-area-inset-bottom));
-z-index: 200;
-backdrop-filter: blur(12px);
-border-top: 1px solid var(–line);
-}
-.btn-primary {
-width: 100%;
-background: var(–accent);
-color: #fff;
-border: none;
-padding: 16px;
-border-radius: 12px;
-font-family: inherit;
-font-size: 16px;
-font-weight: 700;
-cursor: pointer;
-letter-spacing: 0.5px;
-transition: transform 0.1s, background 0.2s;
-box-shadow: 0 4px 20px rgba(192, 57, 43, 0.3);
-}
-.btn-primary:active { transform: scale(0.98); }
-.btn-primary:disabled {
-background: var(–line-strong); box-shadow: none; cursor: not-allowed;
-}
-.btn-secondary {
-background: transparent;
-color: var(–ink-dim);
-border: 1px solid var(–line-strong);
-padding: 10px 16px;
-border-radius: 10px;
-font-family: inherit;
-font-size: 13px;
-cursor: pointer;
-margin-left: 8px;
-}
+    .sub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
+    .sub-btn { padding: 8px 6px; border-radius: 8px; border: 1px solid #eee; background: #fafafa; font-size: 12px; cursor: pointer; text-align: center; }
+    .sub-btn.active-sub { border-width: 1.5px; font-weight: 600; }
+    .sub-sent    { color:#1565c0; } .sub-sent.active-sub    { background:#e3f2fd; border-color:#90caf9; }
+    .sub-call    { color:#e65100; } .sub-call.active-sub    { background:#fff3e0; border-color:#ffb74d; }
+    .sub-replied { color:#2e7d32; } .sub-replied.active-sub { background:#e8f5e9; border-color:#a5d6a7; }
+    .sub-no-ans  { color:#888;    } .sub-no-ans.active-sub  { background:#f5f5f5; border-color:#bdbdbd; }
+    .sub-later   { color:#7b1fa2; } .sub-later.active-sub   { background:#f3e5f5; border-color:#ce93d8; }
+    .sub-hired   { color:#1b5e20; } .sub-hired.active-sub   { background:#c8e6c9; border-color:#66bb6a; }
+    .sub-cancel  { color:#c62828; } .sub-cancel.active-sub  { background:#ffebee; border-color:#ef9a9a; }
+    .sub-confirm { color:#2e7d32; } .sub-confirm.active-sub { background:#e8f5e9; border-color:#a5d6a7; }
+    .sub-arrived { color:#1b5e20; } .sub-arrived.active-sub { background:#c8e6c9; border-color:#66bb6a; }
 
-/* Toast */
-.toast {
-position: fixed;
-top: 80px;
-left: 50%;
-transform: translateX(-50%) translateY(-20px);
-background: var(–bg-card);
-border: 1px solid var(–line-strong);
-color: var(–ink);
-padding: 12px 18px;
-border-radius: 12px;
-z-index: 1000;
-opacity: 0;
-transition: all 0.3s;
-pointer-events: none;
-max-width: 90vw;
-text-align: center;
-font-size: 14px;
-box-shadow: 0 8px 32px rgba(0,0,0,0.4);
-}
-.toast.show {
-opacity: 1;
-transform: translateX(-50%) translateY(0);
-}
-.toast.ok { border-color: var(–ok); color: var(–ok); }
-.toast.err { border-color: var(–err); color: var(–err); }
+    .next-btns { display: flex; gap: 8px; margin-top: 8px; }
+    .next-btn { flex:1; padding:9px; border-radius:8px; border:1px solid #ddd; background:#fafafa; font-size:13px; font-weight:500; cursor:pointer; text-align:center; }
+    .next-btn.btn-meeting { color:#2e7d32; }
+    .next-btn.btn-not-relevant { color:#c62828; }
 
-/* Modal for review */
-.modal-overlay {
-position: fixed; inset: 0;
-background: rgba(0,0,0,0.7);
-backdrop-filter: blur(4px);
-z-index: 500;
-display: none;
-align-items: flex-end;
-}
-.modal-overlay.show { display: flex; }
-.modal {
-background: var(–bg-elev);
-width: 100%;
-max-height: 80vh;
-border-radius: 20px 20px 0 0;
-border-top: 1px solid var(–line-strong);
-padding: 20px 16px calc(20px + env(safe-area-inset-bottom));
-overflow-y: auto;
-}
-.modal h2 {
-font-size: 18px;
-margin-bottom: 16px;
-color: var(–accent-2);
-text-align: center;
-}
-.preview-text {
-background: var(–bg-card);
-border: 1px solid var(–line);
-border-radius: 10px;
-padding: 14px;
-font-size: 13px;
-line-height: 1.7;
-white-space: pre-wrap;
-color: var(–ink-dim);
-max-height: 50vh;
-overflow-y: auto;
-margin-bottom: 14px;
-font-family: ‘Heebo’, monospace;
-}
-.modal-actions { display: flex; gap: 10px; }
-.modal-actions .btn-primary { flex: 1; }
-.modal-actions .btn-secondary { flex: 0 0 auto; }
+    .interview-inline { margin-top:8px; background:#f8fdf5; border:1px solid #c8e6c9; border-radius:10px; padding:12px; }
+    .interview-inline label { font-size:12px; color:#555; display:block; margin-bottom:3px; font-weight:500; }
+    .interview-inline input { width:100%; padding:8px 10px; border:1px solid #ddd; border-radius:6px; font-size:14px; margin-bottom:8px; direction:ltr; }
+    .int-save-btn { width:100%; padding:10px; background:#2e7d32; color:white; border:none; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer; }
+    .interview-info { margin-top:8px; padding:10px 12px; background:#e8f5e9; border:1px solid #a5d6a7; border-radius:10px; font-size:13px; color:#2e7d32; font-weight:500; display:flex; justify-content:space-between; align-items:center; }
+    .int-edit { font-size:12px; color:#888; cursor:pointer; text-decoration:underline; }
 
-/* Last submission indicator */
-.last-saved {
-text-align: center;
-color: var(–ink-faint);
-font-size: 11px;
-padding: 8px;
-margin-top: 4px;
-}
+    .not-relevant-badge { margin-top:8px; padding:10px 12px; background:#ffebee; border:1px solid #ef9a9a; border-radius:10px; font-size:13px; color:#c62828; display:flex; justify-content:space-between; align-items:center; gap:8px; }
+    .nr-hide-btn { background:#c62828; color:white; border:none; border-radius:6px; padding:6px 14px; font-size:13px; cursor:pointer; font-weight:600; }
+    .nr-undo { font-size:12px; color:#888; cursor:pointer; text-decoration:underline; }
+    .reset-link { font-size:11px; color:#ccc; cursor:pointer; margin-top:8px; display:inline-block; }
 
-/* Share grid (success modal) */
-.share-grid {
-display: grid;
-grid-template-columns: 1fr 1fr;
-gap: 10px;
-margin-bottom: 4px;
-}
-.share-btn {
-background: var(–bg-card);
-border: 1px solid var(–line-strong);
-border-radius: 12px;
-padding: 18px 12px;
-color: var(–ink);
-font-family: inherit;
-font-size: 14px;
-font-weight: 600;
-cursor: pointer;
-display: flex;
-flex-direction: column;
-align-items: center;
-gap: 6px;
-transition: transform 0.1s, border-color 0.2s;
-}
-.share-btn:active { transform: scale(0.97); }
-.share-btn .share-icon { font-size: 26px; line-height: 1; }
-.share-btn .share-label { font-size: 13px; }
-.share-btn.whatsapp { border-color: #25D366; color: #25D366; }
-.share-btn.share { border-color: var(–accent-2); color: var(–accent-2); }
-.share-btn.copy { border-color: var(–ink-dim); }
-.share-btn.copy.copied { border-color: var(–ok); color: var(–ok); background: rgba(74, 222, 128, 0.08); }
-.share-btn.email { border-color: #60a5fa; color: #60a5fa; }
+    .empty-state { text-align:center; padding:40px 20px; color:#aaa; font-size:15px; }
+    .loading { text-align:center; padding:40px; color:#888; }
+    .loading-spinner { width:32px; height:32px; border:3px solid #eee; border-top-color:#1a1a2e; border-radius:50%; animation:spin .8s linear infinite; margin:0 auto 12px; }
+    @keyframes spin { to { transform:rotate(360deg); } }
 
-/* Watermark */
-.watermark {
-position: fixed;
-bottom: 90px;
-left: 16px;
-font-family: ‘Noto Serif JP’, serif;
-font-size: 60px;
-color: rgba(192, 57, 43, 0.04);
-pointer-events: none;
-z-index: 0;
-line-height: 1;
-}
-
-/* Settings link */
-.settings-link {
-color: var(–ink-faint);
-background: none;
-border: none;
-font-size: 18px;
-cursor: pointer;
-padding: 4px 8px;
-}
-
-/* Settings modal specific */
-/* ============== PDF PRINT TEMPLATE ============== */
-/* Hidden off-screen template that gets rendered to canvas, then to PDF */
-#pdfTemplate {
-position: fixed;
-left: -99999px;
-top: 0;
-width: 794px; /* A4 width at 96dpi */
-background: #FDFBF7;
-color: #2C2C2C;
-font-family: ‘Heebo’, sans-serif;
-direction: rtl;
-padding: 60px 56px 60px;
-box-sizing: border-box;
--webkit-font-smoothing: antialiased;
-}
-#pdfTemplate * { box-sizing: border-box; }
-
-.pdf-header {
-text-align: center;
-padding-bottom: 28px;
-border-bottom: 1px solid #E5DED2;
-margin-bottom: 32px;
-position: relative;
-}
-.pdf-logo-jp {
-font-family: ‘Noto Serif JP’, serif;
-font-size: 56px;
-color: #C0392B;
-line-height: 1;
-margin-bottom: 6px;
-font-weight: 700;
-}
-.pdf-logo-en {
-font-size: 12px;
-letter-spacing: 8px;
-color: #8B8578;
-text-transform: uppercase;
-margin-bottom: 18px;
-}
-.pdf-title {
-font-size: 22px;
-font-weight: 700;
-color: #2C2C2C;
-margin-bottom: 4px;
-}
-.pdf-subtitle {
-font-size: 13px;
-color: #8B8578;
-}
-
-.pdf-meta {
-display: grid;
-grid-template-columns: 1fr 1fr 1fr;
-gap: 16px;
-margin-bottom: 28px;
-padding: 18px 20px;
-background: #F5F0E8;
-border-radius: 8px;
-}
-.pdf-meta-item {
-text-align: center;
-}
-.pdf-meta-label {
-font-size: 10px;
-color: #8B8578;
-letter-spacing: 1.5px;
-text-transform: uppercase;
-margin-bottom: 4px;
-font-weight: 600;
-}
-.pdf-meta-value {
-font-size: 16px;
-font-weight: 600;
-color: #2C2C2C;
-}
-
-.pdf-kpi-strip {
-display: grid;
-grid-template-columns: repeat(4, 1fr);
-gap: 10px;
-margin-bottom: 28px;
-}
-.pdf-kpi {
-text-align: center;
-padding: 14px 8px;
-background: #fff;
-border: 1px solid #E5DED2;
-border-radius: 8px;
-}
-.pdf-kpi-label {
-font-size: 10px;
-color: #8B8578;
-letter-spacing: 1px;
-text-transform: uppercase;
-margin-bottom: 4px;
-}
-.pdf-kpi-value {
-font-size: 18px;
-font-weight: 700;
-color: #C4A265;
-}
-.pdf-kpi-sub {
-font-size: 10px;
-color: #8B8578;
-margin-top: 2px;
-}
-
-.pdf-section {
-margin-bottom: 22px;
-}
-.pdf-section-title {
-font-size: 11px;
-letter-spacing: 2.5px;
-color: #C0392B;
-text-transform: uppercase;
-font-weight: 700;
-margin-bottom: 8px;
-padding-bottom: 4px;
-border-bottom: 1px solid #E5DED2;
-}
-.pdf-section-content {
-font-size: 13px;
-line-height: 1.7;
-color: #2C2C2C;
-white-space: pre-wrap;
-word-wrap: break-word;
-}
-.pdf-sub-section {
-margin-bottom: 14px;
-}
-.pdf-sub-title {
-font-size: 12px;
-color: #6B5B4E;
-font-weight: 600;
-margin-bottom: 4px;
-}
-
-.pdf-dishes-list {
-list-style: none;
-padding: 0;
-}
-.pdf-dishes-list li {
-padding: 8px 12px;
-background: #fff;
-border-right: 3px solid #C0392B;
-margin-bottom: 6px;
-font-size: 13px;
-border-radius: 4px;
-}
-.pdf-dishes-list strong {
-color: #2C2C2C;
-}
-.pdf-dishes-list .reason {
-color: #8B8578;
-margin-right: 4px;
-}
-
-.pdf-footer {
-margin-top: 36px;
-padding-top: 18px;
-border-top: 1px solid #E5DED2;
-text-align: center;
-font-size: 10px;
-color: #8B8578;
-letter-spacing: 1px;
-}
-
-/* Loading overlay */
-.pdf-loading {
-position: fixed; inset: 0;
-background: rgba(0,0,0,0.85);
-backdrop-filter: blur(6px);
-z-index: 2000;
-display: none;
-align-items: center;
-justify-content: center;
-flex-direction: column;
-gap: 14px;
-}
-.pdf-loading.show { display: flex; }
-.pdf-loading-spinner {
-width: 48px;
-height: 48px;
-border: 3px solid var(–line-strong);
-border-top-color: var(–accent-2);
-border-radius: 50%;
-animation: spin 0.8s linear infinite;
-}
-@keyframes spin {
-to { transform: rotate(360deg); }
-}
-.pdf-loading-text {
-color: var(–accent-2);
-font-size: 14px;
-letter-spacing: 1px;
-}
+    @media (min-width: 768px) {
+        .header { padding: 20px 32px; }
+        .stats-bar { padding: 16px 32px; gap: 12px; }
+        .stat-card { padding: 16px; }
+        .stat-card .stat-number { font-size: 28px; }
+        .controls { padding: 8px 32px; }
+        .filters { padding: 0 32px 8px; }
+        .week-header { padding: 10px 32px 5px; }
+        .week-body { padding: 0 32px 6px; max-width: 800px; }
+    }
 </style>
+```
 
 </head>
 <body>
-
-<div class="watermark">海</div>
-
-<header class="header">
-  <div class="brand-row">
-    <div class="brand">
-      <span class="brand-jp">海味</span>
-      <div>
-        <div class="brand-en">UMINO</div>
-      </div>
-    </div>
-    <div style="display:flex;align-items:center;gap:8px;">
-      <span class="status-pill" id="connStatus">מחובר</span>
-      <a href="dashboard.html" class="settings-link" title="היסטוריה" style="text-decoration:none;">📊</a>
-      <button class="settings-link" onclick="openSettings()">⚙</button>
-    </div>
-  </div>
-  <h1>דוח סיכום משמרת</h1>
-</header>
-
-<form id="shiftForm" autocomplete="off">
-
-  <!-- 1. Date & basic data -->
-
-  <div class="section">
-    <div class="section-title">פרטי משמרת <span class="section-num">一</span></div>
-    <div class="card">
-      <div class="row">
-        <div class="field">
-          <label>תאריך</label>
-          <input type="date" name="shift_date" id="shift_date" required>
+    <div class="header">
+        <div><h1>PASEO</h1><div class="header-subtitle">דשבורד לידים - גיוס עובדים</div></div>
+        <div style="text-align:left">
+            <div><span class="auto-refresh-indicator"></span><span class="last-update" id="lastUpdate">טוען...</span></div>
+            <button class="refresh-btn" onclick="loadData()" style="margin-top:4px">רענן</button>
         </div>
-        <div class="field">
-          <label>סוג משמרת</label>
-          <select name="shift_type" required>
-            <option value="evening">ערב</option>
-            <option value="morning">בוקר</option>
-            <option value="full_day">יום מלא</option>
-          </select>
-        </div>
-      </div>
-      <div class="field">
-        <label>שם אחמ"ש</label>
-        <input type="text" name="manager_name" placeholder="שם מלא" required>
-      </div>
-    </div>
-  </div>
-
-  <!-- 2. Numbers -->
-
-  <div class="section">
-    <div class="section-title">מספרים <span class="section-num">二</span></div>
-    <div class="card">
-      <div class="row">
-        <div class="field">
-          <label>הכנסה <span class="hint">(₪)</span></label>
-          <div class="num-input">
-            <input type="number" name="revenue" inputmode="numeric" placeholder="0">
-            <span class="suffix">₪</span>
-          </div>
-        </div>
-        <div class="field">
-          <label>מס׳ סועדים</label>
-          <input type="number" name="covers" inputmode="numeric" placeholder="0">
-        </div>
-      </div>
-      <div class="row-3">
-        <div class="field">
-          <label>משלוחים</label>
-          <input type="number" name="deliveries" inputmode="numeric" placeholder="0">
-        </div>
-        <div class="field">
-          <label>TA</label>
-          <input type="number" name="takeaway" inputmode="numeric" placeholder="0">
-        </div>
-        <div class="field">
-          <label>מוניות</label>
-          <input type="number" name="taxis" inputmode="numeric" placeholder="0">
-        </div>
-      </div>
-      <div class="field">
-        <label>חוסרים בקופה <span class="hint">(₪ — שלילי = עודף)</span></label>
-        <div class="num-input">
-          <input type="number" name="cash_diff" inputmode="numeric" placeholder="0">
-          <span class="suffix">₪</span>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- 3. Shift narrative -->
-
-  <div class="section">
-    <div class="section-title">מהלך המשמרת <span class="section-num">三</span></div>
-    <div class="card">
-      <div class="field">
-        <label>תיאור כללי</label>
-        <textarea name="shift_narrative" class="large" placeholder="עומס, אווירה, אירועים מיוחדים, חירומים..."></textarea>
-      </div>
-
-```
-  <div class="sub-card">
-    <div class="sub-card-title">פלור</div>
-    <textarea name="floor_notes" placeholder="בר, אקספו, קופה, מפנות, הוסטסיות — שמות וביצועים"></textarea>
-  </div>
-
-  <div class="sub-card">
-    <div class="sub-card-title">מטבח</div>
-    <textarea name="kitchen_notes" placeholder="פס חם, סושי, בקר, פסים — שמות וביצועים"></textarea>
-  </div>
-</div>
-```
-
-  </div>
-
-  <!-- 4. Returned dishes -->
-
-  <div class="section">
-    <div class="section-title">מנות חוזרות <span class="section-num">四</span></div>
-    <div class="card">
-      <div class="field">
-        <label>כמות מנות חוזרות</label>
-        <input type="number" name="returns_count" id="returns_count" inputmode="numeric" placeholder="0">
-      </div>
-      <div id="dishesContainer"></div>
-      <button type="button" class="add-row-btn" onclick="addDishRow()">+ הוסף מנה חוזרת</button>
-    </div>
-  </div>
-
-  <!-- 5. Exceptions -->
-
-  <div class="section">
-    <div class="section-title">חריגים <span class="section-num">五</span></div>
-    <div class="card">
-      <div class="sub-card">
-        <div class="sub-card-title">בעיות משמעת</div>
-        <textarea name="discipline_issues" placeholder="איחורים, לבוש, התנהגות, יחס ללקוחות"></textarea>
-      </div>
-      <div class="sub-card">
-        <div class="sub-card-title">זמני המתנה</div>
-        <textarea name="wait_times" placeholder="לדוג': 25 דק מקסימום בשיא"></textarea>
-      </div>
-      <div class="sub-card">
-        <div class="sub-card-title">איחורים</div>
-        <textarea name="late_arrivals" placeholder="שמות + זמן איחור"></textarea>
-      </div>
-    </div>
-  </div>
-
-  <!-- 6. Tech issues -->
-
-  <div class="section">
-    <div class="section-title">תקלות טכניות <span class="section-num">六</span></div>
-    <div class="card">
-      <div class="field">
-        <textarea name="tech_issues" placeholder="POS, מקפיא, מזגן, ציוד מטבח, אינטרנט — סטטוס תיקון"></textarea>
-      </div>
-    </div>
-  </div>
-
-  <!-- 7. Shortages -->
-
-  <div class="section">
-    <div class="section-title">חוסרים <span class="section-num">七</span></div>
-    <div class="card">
-      <div class="field">
-        <label>מצרכים חסרים <span class="hint">(הפרידו בפסיק)</span></label>
-        <textarea name="shortages" placeholder="לדוג': אדממה, סלמון, אורז סושי..."></textarea>
-      </div>
-    </div>
-  </div>
-
-  <!-- 8. Credits -->
-
-  <div class="section">
-    <div class="section-title">זיכויים <span class="section-num">八</span></div>
-    <div class="card">
-      <div class="field">
-        <label>זיכויים / על חשבון הבית</label>
-        <textarea name="credits" placeholder="סכום + סיבה + שולחן/לקוח"></textarea>
-      </div>
-    </div>
-  </div>
-
-  <!-- 9. Daily tasks -->
-
-  <div class="section">
-    <div class="section-title">משימות יומיות שבוצעו <span class="section-num">九</span></div>
-    <div class="card">
-      <div class="field">
-        <textarea name="daily_tasks" placeholder="הכנות, ניקיונות, ספירות מלאי..."></textarea>
-      </div>
-    </div>
-  </div>
-
-  <div class="last-saved" id="lastSaved"></div>
-
-</form>
-
-<div class="submit-bar">
-  <button type="button" class="btn-primary" onclick="reviewAndSubmit()">תצוגה מקדימה ושליחה</button>
-</div>
-
-<!-- Review modal -->
-
-<div class="modal-overlay" id="reviewModal">
-  <div class="modal">
-    <h2>תצוגה מקדימה</h2>
-    <div class="preview-text" id="previewText"></div>
-    <div class="modal-actions">
-      <button type="button" class="btn-secondary" onclick="closeReview()">ערוך</button>
-      <button type="button" class="btn-primary" id="confirmSubmitBtn" onclick="doSubmit()">שמור ושלח</button>
-    </div>
-  </div>
-</div>
-
-<!-- Success modal — shown after DB save -->
-
-<div class="modal-overlay" id="successModal">
-  <div class="modal">
-    <div style="text-align:center;padding:8px 0 16px;">
-      <div style="font-size:48px;margin-bottom:8px;">✓</div>
-      <h2 style="color:var(--ok);">הדוח נשמר בהצלחה</h2>
-      <p style="color:var(--ink-dim);font-size:13px;margin-top:4px;">
-        בחרי איך לשתף את הסיכום:
-      </p>
     </div>
 
 ```
-<div style="display:flex;flex-direction:column;gap:10px;">
-  <button type="button" onclick="downloadPDF()" style="background:#C4A265;color:#2C2C2C;border:none;padding:16px;border-radius:12px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;letter-spacing:0.5px;box-shadow:0 4px 16px rgba(196,162,101,0.3);">
-    📄 שמור PDF
-  </button>
-  <button type="button" onclick="shareWhatsApp()" style="background:#25D366;color:#fff;border:none;padding:16px;border-radius:12px;font-family:inherit;font-size:15px;font-weight:700;cursor:pointer;letter-spacing:0.5px;box-shadow:0 4px 16px rgba(37,211,102,0.3);">
-    💬 שלח בוואטסאפ
-  </button>
-  <button type="button" onclick="copyReport()" style="background:transparent;color:var(--ink-dim);border:1px solid var(--line-strong);padding:12px;border-radius:10px;font-family:inherit;font-size:13px;cursor:pointer;" id="copyBtnSecondary">
-    <span id="copyLabel">📋 העתק טקסט</span>
-  </button>
+<div class="stats-bar">
+    <div class="stat-card"><div class="stat-number" id="totalLeads">-</div><div class="stat-label">סה"כ</div></div>
+    <div class="stat-card"><div class="stat-number" id="newLeads">-</div><div class="stat-label">חדשים</div></div>
+    <div class="stat-card"><div class="stat-number" id="todayLeads">-</div><div class="stat-label">היום</div></div>
+    <div class="stat-card"><div class="stat-number" id="meetingLeads">-</div><div class="stat-label">ראיונות</div></div>
+    <div class="stat-card"><div class="stat-number" id="igLeads">-</div><div class="stat-label">IG</div></div>
 </div>
 
-<button type="button" class="btn-secondary" style="width:100%;margin-top:14px;" onclick="closeSuccess()">סיום</button>
-```
-
-  </div>
+<div class="controls">
+    <input type="text" class="search-box" id="searchBox" placeholder="חיפוש לפי שם, טלפון או משרה..." oninput="renderCards()">
+</div>
+<div class="filters">
+    <button class="filter-btn active" data-filter="all" onclick="setFilter(this)">הכל</button>
+    <button class="filter-btn" data-filter="meeting" onclick="setFilter(this)">📅 ראיונות</button>
+    <button class="filter-btn" data-filter="new" onclick="setFilter(this)">חדשים</button>
+    <button class="filter-btn" data-filter="handler_ירין" onclick="setFilter(this)">ירין</button>
+    <button class="filter-btn" data-filter="handler_עדי" onclick="setFilter(this)">עדי</button>
+    <button class="filter-btn" data-filter="handler_תומר" onclick="setFilter(this)">תומר</button>
+    <button class="filter-btn" data-filter="מלצר" onclick="setFilter(this)">מלצר/ית</button>
+    <button class="filter-btn" data-filter="בר" onclick="setFilter(this)">בר</button>
+    <button class="filter-btn" data-filter="מארחת" onclick="setFilter(this)">מארחת</button>
+    <button class="filter-btn" data-filter="מטבח" onclick="setFilter(this)">מטבח</button>
+    <button class="filter-btn" data-filter="not_relevant" onclick="setFilter(this)">לא רלוונטי</button>
 </div>
 
-<!-- PDF loading overlay -->
-
-<div class="pdf-loading" id="pdfLoading">
-  <div class="pdf-loading-spinner"></div>
-  <div class="pdf-loading-text">מייצר PDF...</div>
+<div id="leadsArea">
+    <div class="loading"><div class="loading-spinner"></div>טוען לידים...</div>
 </div>
-
-<!-- Hidden PDF template (rendered to canvas, then to PDF) -->
-
-<div id="pdfTemplate"></div>
-
-<!-- Settings modal -->
-
-<div class="modal-overlay" id="settingsModal">
-  <div class="modal">
-    <h2>הגדרות</h2>
-    <p style="color:var(--ink-faint);font-size:12px;text-align:center;margin-bottom:14px;">
-      הגדרות אלה כבר מוגדרות מראש. אין צורך לשנות.
-    </p>
-    <div class="settings-field">
-      <label>Supabase URL</label>
-      <input type="text" id="cfg_supabase_url" placeholder="https://xxx.supabase.co">
-    </div>
-    <div class="settings-field">
-      <label>Supabase anon key</label>
-      <input type="text" id="cfg_supabase_key" placeholder="eyJ...">
-    </div>
-    <div class="modal-actions">
-      <button type="button" class="btn-secondary" onclick="closeSettings()">סגור</button>
-      <button type="button" class="btn-primary" onclick="saveSettings()">שמור</button>
-    </div>
-  </div>
-</div>
-
-<div class="toast" id="toast"></div>
 
 <script>
-// ============== CONFIG ==============
-const CFG_KEY = 'umino-shift-cfg-v1';
-const DRAFT_KEY = 'umino-shift-draft-v1';
+    const SHEET_ID = '1PwASsf8j8BmbZKSGCDXWNevfkR7hgLMQKL5-Jk0ncz4';
+    const SUPABASE_URL = 'https://vzeowbriddhvhpishmhn.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ6ZW93YnJpZGRodmhwaXNobWhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MTAyNDUsImV4cCI6MjA4ODM4NjI0NX0.PWvjFj41l0wB9awroZdDsMhCJ0yJXdrf1-k-45n0Rwk';
 
-const DEFAULT_CFG = {
-  supabase_url: 'https://vzeowbriddhvhpishmhn.supabase.co',
-  supabase_key: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ6ZW93YnJpZGRodmhwaXNobWhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MTAyNDUsImV4cCI6MjA4ODM4NjI0NX0.PWvjFj41l0wB9awroZdDsMhCJ0yJXdrf1-k-45n0Rwk'
-};
+    let allLeads = [], currentFilter = 'all', leadStatuses = {}, openForms = {}, expandedCards = {}, collapsedWeeks = {};
+    const HE_DAYS = ['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
+    const COLORS = ['#1565c0','#2e7d32','#7b1fa2','#e65100','#c62828','#00695c','#4527a0'];
 
-function getCfg() {
-  try { return { ...DEFAULT_CFG, ...JSON.parse(localStorage.getItem(CFG_KEY) || '{}') }; }
-  catch { return { ...DEFAULT_CFG }; }
-}
-function setCfg(c) { localStorage.setItem(CFG_KEY, JSON.stringify(c)); }
+    const nameMap = {'yarin':'ירין','adi':'עדי','tomer':'תומר','noa':'נועה','noga':'נוגה','shaked':'שקד','eden':'עדן','amit':'עמית','rotem':'רותם','tal':'טל','mor':'מור','lihi':'ליהי','stav':'סתיו','maayan':'מעיין','shelly':'שלי','inbar':'ענבר','romi':'רומי','leon':'ליאון','itay':'איתי','lotem':'לוטם','karin':'קרין','noam':'נועם','lior':'ליאור','omer':'עומר','yael':'יעל','maya':'מאיה','daniel':'דניאל','david':'דויד','michael':'מיכאל','sarah':'שרה','rachel':'רחל','tamar':'תמר','shir':'שיר','noy':'נוי','guy':'גיא','alon':'אלון','ilan':'אילן','ran':'רן','gal':'גל','bar':'בר','ori':'אורי','yonatan':'יונתן','jonathan':'יונתן','ben':'בן','tom':'תום','lia':'ליה','ofir':'אופיר','shahar':'שחר','lian':'ליאן','agam':'אגם','yuval':'יובל','eyal':'אייל','oren':'אורן','hadar':'הדר','rina':'רינה','dor':'דור','ron':'רון','shay':'שי','shai':'שי','dana':'דנה','ella':'אלה','alma':'אלמה','neta':'נטע'};
 
-// ============== EDIT MODE ==============
-let editingRecordId = null;
-
-function checkEditMode() {
-  const params = new URLSearchParams(window.location.search);
-  const editId = params.get('edit');
-  if (!editId) return false;
-
-  const raw = sessionStorage.getItem('umino-edit-record');
-  if (!raw) return false;
-
-  try {
-    const record = JSON.parse(raw);
-    if (String(record.id) !== editId) return false;
-
-    editingRecordId = record.id;
-    sessionStorage.removeItem('umino-edit-record');
-
-    // Populate all fields from record
-    Object.entries(record).forEach(([k, v]) => {
-      const el = document.querySelector(`[name="${k}"]`);
-      if (el && v !== null && v !== undefined) {
-        el.value = v;
-      }
-    });
-
-    // Populate dish rows
-    if (Array.isArray(record.returned_dishes)) {
-      record.returned_dishes.forEach(d => addDishRow(d.name || '', d.reason || ''));
+    function hebrewName(name) {
+        if (!name) return '';
+        if (/[\u0590-\u05FF]/.test(name)) return name.trim().split(/\s+/)[0];
+        const p = name.trim().split(/\s+/);
+        return nameMap[p[0].toLowerCase().replace(/[^a-z]/g,'')] || p[0];
     }
 
-    // Visual indicator that we're in edit mode
-    const headerH1 = document.querySelector('.header h1');
-    if (headerH1) headerH1.innerHTML = '✏️ עריכת דוח קיים';
-
-    const submitBtn = document.querySelector('.submit-bar .btn-primary');
-    if (submitBtn) submitBtn.textContent = 'עדכן ושמור';
-
-    return true;
-  } catch (e) {
-    console.error('Edit mode failed:', e);
-    return false;
-  }
-}
-
-// ============== INIT ==============
-document.addEventListener('DOMContentLoaded', () => {
-  // Default date = today
-  const today = new Date();
-  const yyyy = today.getFullYear();
-  const mm = String(today.getMonth() + 1).padStart(2, '0');
-  const dd = String(today.getDate()).padStart(2, '0');
-  document.getElementById('shift_date').value = `${yyyy}-${mm}-${dd}`;
-
-  // Check edit mode FIRST — if in edit mode, skip draft loading
-  const isEditMode = checkEditMode();
-  if (!isEditMode) {
-    loadDraft();
-  }
-  setupAutosave();
-  updateConnStatus();
-});
-
-// ============== DISH ROWS ==============
-function addDishRow(name = '', reason = '') {
-  const container = document.getElementById('dishesContainer');
-  const div = document.createElement('div');
-  div.className = 'dish-row';
-  div.innerHTML = `
-    <input type="text" placeholder="שם המנה" value="${escapeHtml(name)}" data-dish="name">
-    <input type="text" placeholder="סיבה" value="${escapeHtml(reason)}" data-dish="reason">
-    <button type="button" class="icon-btn" onclick="this.parentElement.remove(); saveDraft();">×</button>
-  `;
-  container.appendChild(div);
-  div.querySelectorAll('input').forEach(i => i.addEventListener('input', saveDraft));
-}
-
-function getDishes() {
-  const rows = document.querySelectorAll('.dish-row');
-  return Array.from(rows).map(r => ({
-    name: r.querySelector('[data-dish="name"]').value.trim(),
-    reason: r.querySelector('[data-dish="reason"]').value.trim()
-  })).filter(d => d.name || d.reason);
-}
-
-// ============== FORM DATA ==============
-function getFormData() {
-  const fd = new FormData(document.getElementById('shiftForm'));
-  const obj = {};
-  for (const [k, v] of fd.entries()) {
-    obj[k] = v.toString().trim();
-  }
-  // Numeric fields
-  ['revenue','covers','deliveries','takeaway','taxis','cash_diff','returns_count'].forEach(k => {
-    obj[k] = obj[k] ? Number(obj[k]) : null;
-  });
-  obj.returned_dishes = getDishes();
-  // Only set submitted_at for NEW reports — never overwrite original timestamp on edit
-  if (!editingRecordId) {
-    obj.submitted_at = new Date().toISOString();
-  }
-  obj.venue = 'umino';
-  return obj;
-}
-
-// ============== AUTOSAVE DRAFT ==============
-function setupAutosave() {
-  const form = document.getElementById('shiftForm');
-  form.addEventListener('input', saveDraft);
-}
-function saveDraft() {
-  const data = getFormData();
-  localStorage.setItem(DRAFT_KEY, JSON.stringify(data));
-  document.getElementById('lastSaved').textContent = `שמור אוטומטית · ${new Date().toLocaleTimeString('he-IL')}`;
-}
-function loadDraft() {
-  try {
-    const raw = localStorage.getItem(DRAFT_KEY);
-    if (!raw) return;
-    const data = JSON.parse(raw);
-    // Don't load drafts older than 24h
-    if (data.submitted_at) {
-      const age = Date.now() - new Date(data.submitted_at).getTime();
-      if (age > 24 * 3600 * 1000) {
-        localStorage.removeItem(DRAFT_KEY);
-        return;
-      }
-    }
-    Object.entries(data).forEach(([k, v]) => {
-      const el = document.querySelector(`[name="${k}"]`);
-      if (el && v !== null && v !== undefined) el.value = v;
-    });
-    if (Array.isArray(data.returned_dishes)) {
-      data.returned_dishes.forEach(d => addDishRow(d.name, d.reason));
-    }
-  } catch (e) { console.error(e); }
-}
-function clearDraft() {
-  localStorage.removeItem(DRAFT_KEY);
-}
-
-// ============== TEXT BUILDER (for WhatsApp & preview) ==============
-function buildTextReport(data) {
-  const lines = [];
-  const fmt = (n, suffix = '') => (n === null || n === undefined || n === '') ? '—' : `${n}${suffix}`;
-  const dateStr = data.shift_date ? new Date(data.shift_date).toLocaleDateString('he-IL') : '—';
-  const shiftType = { evening: 'ערב', morning: 'בוקר', full_day: 'יום מלא' }[data.shift_type] || data.shift_type;
-
-  lines.push(`📋 *סיכום משמרת — אומינו*`);
-  lines.push(`📅 ${dateStr} · ${shiftType}`);
-  lines.push(`👤 אחמ"ש: ${data.manager_name || '—'}`);
-  lines.push('');
-  lines.push(`💰 הכנסה: ${fmt(data.revenue, '₪')}`);
-  lines.push(`👥 סועדים: ${fmt(data.covers)}  |  🛵 משלוחים: ${fmt(data.deliveries)}  |  📦 TA: ${fmt(data.takeaway)}`);
-  if (data.taxis) lines.push(`🚖 מוניות: ${data.taxis}`);
-  if (data.cash_diff !== null && data.cash_diff !== 0) {
-    const cashLabel = data.cash_diff > 0 ? 'חוסר' : 'עודף';
-    lines.push(`💵 קופה: ${cashLabel} ${Math.abs(data.cash_diff)}₪`);
-  }
-
-  if (data.shift_narrative) {
-    lines.push('');
-    lines.push(`📝 *מהלך המשמרת:*`);
-    lines.push(data.shift_narrative);
-  }
-  if (data.floor_notes) {
-    lines.push('');
-    lines.push(`🍽 *פלור:*`);
-    lines.push(data.floor_notes);
-  }
-  if (data.kitchen_notes) {
-    lines.push('');
-    lines.push(`🔥 *מטבח:*`);
-    lines.push(data.kitchen_notes);
-  }
-  if (data.returns_count || (data.returned_dishes && data.returned_dishes.length)) {
-    lines.push('');
-    lines.push(`↩️ *מנות חוזרות (${data.returns_count || data.returned_dishes.length}):*`);
-    (data.returned_dishes || []).forEach(d => {
-      lines.push(`• ${d.name}${d.reason ? ` — ${d.reason}` : ''}`);
-    });
-  }
-  if (data.discipline_issues || data.wait_times || data.late_arrivals) {
-    lines.push('');
-    if (data.discipline_issues) lines.push(`⚠️ *משמעת:* ${data.discipline_issues}`);
-    if (data.wait_times) lines.push(`⏱ *זמני המתנה:* ${data.wait_times}`);
-    if (data.late_arrivals) lines.push(`⏰ *איחורים:* ${data.late_arrivals}`);
-  }
-  if (data.tech_issues) {
-    lines.push('');
-    lines.push(`🔧 *תקלות:* ${data.tech_issues}`);
-  }
-  if (data.shortages) {
-    lines.push('');
-    lines.push(`📉 *חוסרים:* ${data.shortages}`);
-  }
-  if (data.credits) {
-    lines.push('');
-    lines.push(`🎁 *זיכויים:* ${data.credits}`);
-  }
-  if (data.daily_tasks) {
-    lines.push('');
-    lines.push(`✅ *משימות יומיות:* ${data.daily_tasks}`);
-  }
-
-  return lines.join('\n');
-}
-
-// ============== REVIEW & SUBMIT ==============
-function reviewAndSubmit() {
-  const data = getFormData();
-  // Minimal validation
-  if (!data.shift_date) { showToast('חסר תאריך', 'err'); return; }
-  if (!data.manager_name) { showToast('חסר שם אחמ"ש', 'err'); return; }
-
-  document.getElementById('previewText').textContent = buildTextReport(data);
-  document.getElementById('reviewModal').classList.add('show');
-}
-function closeReview() {
-  document.getElementById('reviewModal').classList.remove('show');
-}
-
-async function doSubmit() {
-  const cfg = getCfg();
-  const btn = document.getElementById('confirmSubmitBtn');
-  btn.disabled = true;
-  btn.textContent = editingRecordId ? 'מעדכן...' : 'שומר...';
-
-  const data = getFormData();
-  const textReport = buildTextReport(data);
-
-  let supabaseOk = false;
-  const errors = [];
-
-  // Save to Supabase — PATCH if editing, POST if new
-  if (cfg.supabase_url && cfg.supabase_key) {
-    try {
-      const isEdit = !!editingRecordId;
-      const url = isEdit
-        ? `${cfg.supabase_url}/rest/v1/shift_reports?id=eq.${editingRecordId}`
-        : `${cfg.supabase_url}/rest/v1/shift_reports`;
-      const method = isEdit ? 'PATCH' : 'POST';
-
-      const res = await fetch(url, {
-        method: method,
-        headers: {
-          'apikey': cfg.supabase_key,
-          'Authorization': `Bearer ${cfg.supabase_key}`,
-          'Content-Type': 'application/json',
-          'Prefer': 'return=minimal'
-        },
-        body: JSON.stringify(data)
-      });
-      if (res.ok) supabaseOk = true;
-      else { errors.push(`DB: ${res.status} ${await res.text()}`); }
-    } catch (e) {
-      errors.push(`DB: ${e.message}`);
-    }
-  } else {
-    errors.push('חסרה הגדרת Supabase');
-  }
-
-  btn.disabled = false;
-  btn.textContent = editingRecordId ? 'עדכן ושמור' : 'שמור ושלח';
-
-  if (supabaseOk) {
-    clearDraft();
-    window._lastReportText = textReport;
-    window._lastReportData = data;
-    closeReview();
-
-    if (editingRecordId) {
-      // Edit mode: redirect back to dashboard
-      editingRecordId = null;
-      showToast('✓ הדוח עודכן בהצלחה', 'ok');
-      setTimeout(() => { window.location.href = 'dashboard.html'; }, 1200);
-    } else {
-      // New report: show success modal with share options
-      document.getElementById('successModal').classList.add('show');
-    }
-  } else {
-    if (!editingRecordId) {
-      // Only queue NEW reports offline (not edits)
-      const queue = JSON.parse(localStorage.getItem('umino-queue') || '[]');
-      queue.push(data);
-      localStorage.setItem('umino-queue', JSON.stringify(queue));
-    }
-    showToast('לא הצלחנו לשמור — ' + errors.join('; '), 'err');
-  }
-}
-
-// ============== SHARE ACTIONS ==============
-function getReportText() {
-  return window._lastReportText || '';
-}
-function getLastReportData() {
-  return window._lastReportData || null;
-}
-
-function shareWhatsApp() {
-  const text = getReportText();
-  if (!text) return;
-  // Open WhatsApp picker with pre-filled text — user picks recipient/group
-  const url = `https://wa.me/?text=${encodeURIComponent(text)}`;
-  window.open(url, '_blank');
-}
-
-async function copyReport() {
-  const text = getReportText();
-  if (!text) return;
-  let success = false;
-  try {
-    if (navigator.clipboard && navigator.clipboard.writeText) {
-      await navigator.clipboard.writeText(text);
-      success = true;
-    }
-  } catch (e) { /* fallback below */ }
-  if (!success) {
-    const ta = document.createElement('textarea');
-    ta.value = text;
-    ta.style.position = 'fixed';
-    ta.style.opacity = '0';
-    document.body.appendChild(ta);
-    ta.select();
-    try { success = document.execCommand('copy'); } catch (e) {}
-    document.body.removeChild(ta);
-  }
-  if (success) {
-    const lbl = document.getElementById('copyLabel');
-    if (lbl) {
-      lbl.textContent = '✓ הועתק ללוח';
-      setTimeout(() => { lbl.textContent = '📋 העתק טקסט'; }, 2500);
-    }
-  } else {
-    showToast('ההעתקה נכשלה', 'err');
-  }
-}
-
-// ============== PDF GENERATION ==============
-function escapePdfText(s) {
-  return String(s == null ? '' : s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-}
-
-function buildPdfTemplate(data) {
-  const fmt = (n) => (n === null || n === undefined || n === '') ? '—' : new Intl.NumberFormat('he-IL').format(n);
-  const dateStr = data.shift_date
-    ? new Date(data.shift_date).toLocaleDateString('he-IL', { weekday: 'long', day: '2-digit', month: '2-digit', year: 'numeric' })
-    : '—';
-  const shiftType = { evening: 'ערב', morning: 'בוקר', full_day: 'יום מלא' }[data.shift_type] || '';
-  const ppa = (data.covers && data.revenue) ? Math.round(Number(data.revenue) / Number(data.covers)) : null;
-
-  const sec = (title, content) => {
-    if (!content || (typeof content === 'string' && (content.trim() === '' || content.trim() === '0'))) return '';
-    return `
-      <div class="pdf-section">
-        <div class="pdf-section-title">${title}</div>
-        <div class="pdf-section-content">${escapePdfText(content)}</div>
-      </div>
-    `;
-  };
-
-  const dishes = (data.returned_dishes || []).filter(d => d.name);
-  let dishesHtml = '';
-  if (dishes.length) {
-    dishesHtml = `
-      <div class="pdf-section">
-        <div class="pdf-section-title">↩ מנות חוזרות (${dishes.length})</div>
-        <ul class="pdf-dishes-list">
-          ${dishes.map(d => `<li><strong>${escapePdfText(d.name)}</strong>${d.reason ? `<span class="reason"> — ${escapePdfText(d.reason)}</span>` : ''}</li>`).join('')}
-        </ul>
-      </div>
-    `;
-  }
-
-  // Group exceptions if any exist
-  let exceptionsHtml = '';
-  const hasExceptions = (data.discipline_issues && data.discipline_issues !== '0') ||
-                        (data.wait_times && data.wait_times !== '0') ||
-                        (data.late_arrivals && data.late_arrivals !== '0');
-  if (hasExceptions) {
-    exceptionsHtml = `<div class="pdf-section"><div class="pdf-section-title">חריגים</div>`;
-    if (data.discipline_issues && data.discipline_issues !== '0') {
-      exceptionsHtml += `<div class="pdf-sub-section"><div class="pdf-sub-title">בעיות משמעת</div><div class="pdf-section-content">${escapePdfText(data.discipline_issues)}</div></div>`;
-    }
-    if (data.wait_times && data.wait_times !== '0') {
-      exceptionsHtml += `<div class="pdf-sub-section"><div class="pdf-sub-title">זמני המתנה</div><div class="pdf-section-content">${escapePdfText(data.wait_times)}</div></div>`;
-    }
-    if (data.late_arrivals && data.late_arrivals !== '0') {
-      exceptionsHtml += `<div class="pdf-sub-section"><div class="pdf-sub-title">איחורים</div><div class="pdf-section-content">${escapePdfText(data.late_arrivals)}</div></div>`;
-    }
-    exceptionsHtml += `</div>`;
-  }
-
-  return `
-    <div class="pdf-header">
-      <div class="pdf-logo-jp">海味</div>
-      <div class="pdf-logo-en">UMINO</div>
-      <div class="pdf-title">סיכום משמרת</div>
-      <div class="pdf-subtitle">${dateStr} · ${shiftType}</div>
-    </div>
-
-    <div class="pdf-meta">
-      <div class="pdf-meta-item">
-        <div class="pdf-meta-label">אחמ"ש</div>
-        <div class="pdf-meta-value">${escapePdfText(data.manager_name || '—')}</div>
-      </div>
-      <div class="pdf-meta-item">
-        <div class="pdf-meta-label">תאריך</div>
-        <div class="pdf-meta-value">${data.shift_date ? new Date(data.shift_date).toLocaleDateString('he-IL') : '—'}</div>
-      </div>
-      <div class="pdf-meta-item">
-        <div class="pdf-meta-label">משמרת</div>
-        <div class="pdf-meta-value">${shiftType}</div>
-      </div>
-    </div>
-
-    <div class="pdf-kpi-strip">
-      <div class="pdf-kpi">
-        <div class="pdf-kpi-label">הכנסה</div>
-        <div class="pdf-kpi-value">₪${fmt(data.revenue)}</div>
-        ${ppa ? `<div class="pdf-kpi-sub">₪${ppa} לסועד</div>` : ''}
-      </div>
-      <div class="pdf-kpi">
-        <div class="pdf-kpi-label">סועדים</div>
-        <div class="pdf-kpi-value">${fmt(data.covers)}</div>
-      </div>
-      <div class="pdf-kpi">
-        <div class="pdf-kpi-label">משלוחים / TA</div>
-        <div class="pdf-kpi-value">${(data.deliveries || 0) + (data.takeaway || 0) || '—'}</div>
-      </div>
-      <div class="pdf-kpi">
-        <div class="pdf-kpi-label">קופה</div>
-        <div class="pdf-kpi-value" style="color:${data.cash_diff && Number(data.cash_diff) !== 0 ? '#C0392B' : '#5B7A5E'}">
-          ${data.cash_diff != null ? '₪' + fmt(Number(data.cash_diff)) : '—'}
-        </div>
-      </div>
-    </div>
-
-    ${sec('מהלך המשמרת', data.shift_narrative)}
-    ${sec('פלור', data.floor_notes)}
-    ${sec('מטבח', data.kitchen_notes)}
-    ${dishesHtml}
-    ${exceptionsHtml}
-    ${sec('תקלות טכניות', data.tech_issues)}
-    ${sec('חוסרים', data.shortages)}
-    ${sec('זיכויים', data.credits)}
-    ${sec('משימות יומיות', data.daily_tasks)}
-
-    <div class="pdf-footer">
-      海味 UMINO · נוצר ב-${new Date().toLocaleString('he-IL')}
-    </div>
-  `;
-}
-
-async function downloadPDF() {
-  const data = getLastReportData();
-  if (!data) {
-    showToast('לא נמצא דוח לייצוא', 'err');
-    return;
-  }
-  // Check libraries loaded
-  if (typeof html2canvas === 'undefined' || typeof window.jspdf === 'undefined') {
-    showToast('ספריות PDF עדיין נטענות, נסה שוב בעוד שנייה', 'err');
-    return;
-  }
-
-  const loading = document.getElementById('pdfLoading');
-  loading.classList.add('show');
-
-  try {
-    const tpl = document.getElementById('pdfTemplate');
-    tpl.innerHTML = buildPdfTemplate(data);
-
-    // Wait for fonts to be ready
-    if (document.fonts && document.fonts.ready) {
-      await document.fonts.ready;
-    }
-    // Small delay to ensure full layout
-    await new Promise(r => setTimeout(r, 100));
-
-    const canvas = await html2canvas(tpl, {
-      scale: 2,
-      useCORS: true,
-      backgroundColor: '#FDFBF7',
-      logging: false
-    });
-
-    const { jsPDF } = window.jspdf;
-    const pdf = new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' });
-
-    const pdfWidth = 210; // A4 width in mm
-    const pdfHeight = 297; // A4 height in mm
-    const imgWidth = pdfWidth;
-    const imgHeight = (canvas.height * imgWidth) / canvas.width;
-
-    if (imgHeight <= pdfHeight) {
-      // Fits on one page
-      pdf.addImage(canvas.toDataURL('image/jpeg', 0.95), 'JPEG', 0, 0, imgWidth, imgHeight);
-    } else {
-      // Multi-page: slice the canvas
-      let position = 0;
-      let remaining = imgHeight;
-      const imgData = canvas.toDataURL('image/jpeg', 0.95);
-
-      pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
-      remaining -= pdfHeight;
-
-      while (remaining > 0) {
-        position -= pdfHeight;
-        pdf.addPage();
-        pdf.addImage(imgData, 'JPEG', 0, position, imgWidth, imgHeight);
-        remaining -= pdfHeight;
-      }
+    function getJobClass(job) {
+        if (!job) return 'job-other';
+        const j = job.toLowerCase();
+        if (j.includes('מטבח')||j.includes('טבח')||j.includes('שף')) return 'job-kitchen';
+        if (j.includes('מארח')||j.includes('הוסט')) return 'job-host';
+        if (j.includes('מלצר')||j.includes('שירות')) return 'job-waiter';
+        if (j.includes('בר')||j.includes('ברמן')) return 'job-bar';
+        return 'job-other';
     }
 
-    const dateStr = data.shift_date ? data.shift_date.replace(/-/g, '_') : 'unknown';
-    const mgrStr = (data.manager_name || 'umino').replace(/[^\w\u0590-\u05FF]/g, '_');
-    pdf.save(`umino_shift_${dateStr}_${mgrStr}.pdf`);
+    function avatarColor(name) { return COLORS[(name||'').charCodeAt(0) % COLORS.length]; }
+    function initials(name) { return (name||'?').split(' ').map(w=>w[0]||'').join('').substring(0,2).toUpperCase() || '?'; }
 
-    // Cleanup template
-    tpl.innerHTML = '';
-  } catch (e) {
-    console.error('PDF error:', e);
-    showToast('יצירת PDF נכשלה: ' + e.message, 'err');
-  } finally {
-    loading.classList.remove('show');
-  }
-}
+    function formatDate(dateStr) {
+        if (!dateStr) return '';
+        try {
+            const d = new Date(dateStr), now = new Date(), diff = Math.floor((now-d)/1000);
+            if (diff < 60) return 'עכשיו';
+            if (diff < 3600) return 'לפני ' + Math.floor(diff/60) + ' דק\'';
+            if (diff < 7200) return 'לפני שעה';
+            if (diff < 86400) return 'לפני ' + Math.floor(diff/3600) + ' שע\'';
+            if (diff < 172800) return 'אתמול';
+            if (diff < 604800) return 'לפני ' + Math.floor(diff/86400) + ' ימים';
+            return d.toLocaleDateString('he-IL',{day:'2-digit',month:'2-digit'});
+        } catch { return ''; }
+    }
 
-function closeSuccess() {
-  document.getElementById('successModal').classList.remove('show');
-  // Reset form for next shift
-  document.getElementById('shiftForm').reset();
-  document.getElementById('dishesContainer').innerHTML = '';
-  const today = new Date();
-  document.getElementById('shift_date').value = today.toISOString().split('T')[0];
-  window._lastReportText = null;
-  window._lastReportData = null;
-}
+    function isToday(dateStr) { try { return new Date(dateStr).toDateString()===new Date().toDateString(); } catch { return false; } }
 
-// ============== UTIL ==============
-function escapeHtml(s) {
-  return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
-}
-function showToast(msg, type = '') {
-  const t = document.getElementById('toast');
-  t.textContent = msg;
-  t.className = 'toast show ' + type;
-  setTimeout(() => t.classList.remove('show'), type === 'err' ? 5000 : 2500);
-}
-function updateConnStatus() {
-  const el = document.getElementById('connStatus');
-  if (navigator.onLine) {
-    el.textContent = 'מחובר';
-    el.classList.remove('offline');
-  } else {
-    el.textContent = 'לא מחובר';
-    el.classList.add('offline');
-  }
-}
-window.addEventListener('online', updateConnStatus);
-window.addEventListener('offline', updateConnStatus);
+    function formatPhone(phone) {
+        if (!phone) return '';
+        let p = phone.replace(/[^\d+]/g,'');
+        if (p.startsWith('+972')) p = '0'+p.slice(4);
+        if (p.length===10&&p.startsWith('0')) return p.slice(0,3)+'-'+p.slice(3,6)+'-'+p.slice(6);
+        return p;
+    }
 
-// ============== SETTINGS ==============
-function openSettings() {
-  const cfg = getCfg();
-  document.getElementById('cfg_supabase_url').value = cfg.supabase_url;
-  document.getElementById('cfg_supabase_key').value = cfg.supabase_key;
-  document.getElementById('settingsModal').classList.add('show');
-}
-function closeSettings() {
-  document.getElementById('settingsModal').classList.remove('show');
-}
-function saveSettings() {
-  const cfg = {
-    supabase_url: document.getElementById('cfg_supabase_url').value.trim().replace(/\/$/, ''),
-    supabase_key: document.getElementById('cfg_supabase_key').value.trim()
-  };
-  setCfg(cfg);
-  closeSettings();
-  showToast('הגדרות נשמרו', 'ok');
-}
+    function formatInterview(dateStr, timeStr) {
+        if (!dateStr) return '';
+        const d = new Date(dateStr+'T00:00:00');
+        return 'יום '+HE_DAYS[d.getDay()]+' '+d.toLocaleDateString('he-IL',{day:'2-digit',month:'2-digit'})+(timeStr?' '+timeStr.slice(0,5):'');
+    }
 
-// PWA service worker
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('sw.js').catch(() => {});
-  });
-}
+    function escapeHtml(t) { const d=document.createElement('div'); d.textContent=t; return d.innerHTML; }
+
+    // Week grouping
+    function getWeekKey(dateStr) {
+        if (!dateStr) return 'ללא תאריך';
+        try {
+            const d = new Date(dateStr);
+            const now = new Date();
+            const dow = now.getDay();
+            const weekStart = new Date(now); weekStart.setDate(now.getDate()-dow); weekStart.setHours(0,0,0,0);
+            const lastWeekStart = new Date(weekStart); lastWeekStart.setDate(weekStart.getDate()-7);
+            const twoWeeksAgo = new Date(weekStart); twoWeeksAgo.setDate(weekStart.getDate()-14);
+            if (d >= weekStart) return '0_השבוע';
+            if (d >= lastWeekStart) return '1_שבוע שעבר';
+            if (d >= twoWeeksAgo) return '2_לפני שבועיים';
+            const monthKey = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+            const monthLabel = d.toLocaleDateString('he-IL',{month:'long',year:'numeric'});
+            return '3_'+monthKey+'_'+monthLabel;
+        } catch { return '9_ישן'; }
+    }
+
+    function weekDisplayLabel(key) {
+        return key.replace(/^\d+_\d{4}-\d{2}_/,'').replace(/^\d+_/,'');
+    }
+
+    // Supabase
+    async function loadStatuses() {
+        try {
+            const resp = await fetch(SUPABASE_URL+'/rest/v1/lead_statuses?select=lead_key,handled_by,status,sub_status,interview_date,interview_time,hidden', {
+                headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}
+            });
+            const data = await resp.json();
+            leadStatuses = {};
+            if (Array.isArray(data)) data.forEach(r => {
+                leadStatuses[r.lead_key] = {handled_by:r.handled_by||'',status:r.status||'new',sub_status:r.sub_status||null,interview_date:r.interview_date||null,interview_time:r.interview_time||null,hidden:r.hidden||false};
+            });
+        } catch(e) { console.error(e); }
+    }
+
+    async function saveLeadData(key, data) {
+        try {
+            const existing = leadStatuses[key] || {handled_by:'',status:'new',sub_status:null,interview_date:null,interview_time:null,hidden:false};
+            const full = Object.assign({}, existing, data, {lead_key:key});
+            Object.keys(full).forEach(k => { if (full[k]===undefined) full[k]=null; });
+            const resp = await fetch(SUPABASE_URL+'/rest/v1/lead_statuses?on_conflict=lead_key', {
+                method:'POST',
+                headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'},
+                body:JSON.stringify(full)
+            });
+            if (!resp.ok) console.error('save error',resp.status,await resp.text());
+            if (!leadStatuses[key]) leadStatuses[key]={};
+            Object.assign(leadStatuses[key], full);
+        } catch(e) { console.error(e); }
+    }
+
+    async function clearLeadData(key) {
+        try {
+            await fetch(SUPABASE_URL+'/rest/v1/lead_statuses?lead_key=eq.'+encodeURIComponent(key), {
+                method:'DELETE', headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}
+            });
+            delete leadStatuses[key];
+        } catch(e) { console.error(e); }
+    }
+
+    // Actions
+    function toggleCard(lk) { expandedCards[lk]=!expandedCards[lk]; renderCards(); }
+    function toggleWeek(wk) { collapsedWeeks[wk]=!collapsedWeeks[wk]; renderCards(); }
+
+    async function setHandler(key, who) { await saveLeadData(key,{handled_by:who}); renderCards(); updateStats(); }
+    async function setSubStatus(key, val) {
+        const info = leadStatuses[key]||{};
+        await saveLeadData(key, {sub_status: info.sub_status===val ? null : val});
+        renderCards();
+    }
+    async function setMeetingStatus(key) { openForms[key]=true; renderCards(); }
+    async function setNotRelevant(key) {
+        const info = leadStatuses[key]||{};
+        await saveLeadData(key,{status:'not_relevant',handled_by:info.handled_by||'',interview_date:null,interview_time:null,hidden:false});
+        delete openForms[key]; renderCards(); updateStats();
+    }
+    async function hideLead(key) { await saveLeadData(key,{hidden:true}); renderCards(); updateStats(); }
+    async function saveInterview(key) {
+        const dateEl=document.getElementById('int-date-'+key), timeEl=document.getElementById('int-time-'+key);
+        if (!dateEl||!dateEl.value) { alert('נא לבחור תאריך'); return; }
+        const info=leadStatuses[key]||{};
+        await saveLeadData(key,{status:'meeting',interview_date:dateEl.value,interview_time:timeEl.value||null,handled_by:info.handled_by||''});
+        delete openForms[key]; renderCards(); updateStats();
+    }
+    function editInterview(key) { openForms[key]=true; renderCards(); }
+    async function resetLead(key) { await clearLeadData(key); delete openForms[key]; renderCards(); updateStats(); }
+
+    // Data
+    function loadData() {
+        fetch('https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json')
+            .then(r=>r.text()).then(text=>{
+                const m=text.match(/google\.visualization\.Query\.setResponse\(({.*})\)/s);
+                if (m&&m[1]) processData(JSON.parse(m[1])); else throw new Error();
+            }).catch(()=>{
+                const s=document.createElement('script');
+                s.src='https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=responseHandler:__gsheetCB';
+                document.body.appendChild(s);
+            });
+    }
+    window.__gsheetCB = r => processData(r);
+
+    function processData(response) {
+        if (!response||!response.table) return;
+        const cols=response.table.cols.map(c=>(c.label||'').toLowerCase().trim());
+        let ni=cols.indexOf('full_name'),pi=cols.indexOf('phone'),ji=cols.indexOf('job_title'),di=cols.indexOf('created_time'),pli=cols.indexOf('platform');
+        if (ni===-1) {
+            const fr=response.table.rows[0];
+            if (fr&&fr.c) {
+                const vs=fr.c.map(c=>(c&&c.v||'').toString().toLowerCase().trim());
+                if (vs.indexOf('full_name')!==-1) { ni=vs.indexOf('full_name');pi=vs.indexOf('phone');ji=vs.indexOf('job_title');di=vs.indexOf('created_time');pli=vs.indexOf('platform'); response.table.rows.shift(); }
+                else { ni=12;pi=13;ji=14;di=1;pli=11; }
+            }
+        }
+        function cv(c,i){if(i<0||i>=c.length||!c[i])return '';return String(c[i].v||'');}
+        allLeads=[];
+        for (const row of response.table.rows) {
+            const c=row.c||[], name=cv(c,ni), phone=cv(c,pi).replace(/^p:/,'').trim();
+            if (!name&&!phone) continue;
+            allLeads.push({name,phone,job:cv(c,ji),date:cv(c,di),platform:cv(c,pli)});
+        }
+        allLeads.sort((a,b)=>{try{return new Date(b.date)-new Date(a.date);}catch{return 0;}});
+        allLeads=allLeads.filter(l=>{try{return new Date(l.date)>=new Date('2026-03-01');}catch{return false;}});
+        updateStats(); renderCards();
+        document.getElementById('lastUpdate').textContent='עדכון: '+new Date().toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
+    }
+
+    function getLeadSort(info) {
+        if (!info||(!info.handled_by&&info.status==='new')) return 0;
+        if (info.status==='meeting') return 1;
+        if (info.status==='not_relevant') return 3;
+        return 2;
+    }
+
+    function updateStats() {
+        const vis=allLeads.filter(l=>{const i=leadStatuses[(l.name+'_'+l.phone).replace(/\s/g,'_')];return !i||!i.hidden;});
+        document.getElementById('totalLeads').textContent=vis.length;
+        document.getElementById('todayLeads').textContent=vis.filter(l=>isToday(l.date)).length;
+        document.getElementById('igLeads').textContent=vis.filter(l=>l.platform==='ig').length;
+        document.getElementById('newLeads').textContent=vis.filter(l=>{const i=leadStatuses[(l.name+'_'+l.phone).replace(/\s/g,'_')];return !i||(!i.handled_by&&i.status==='new');}).length;
+        document.getElementById('meetingLeads').textContent=allLeads.filter(l=>{const i=leadStatuses[(l.name+'_'+l.phone).replace(/\s/g,'_')];return i&&i.status==='meeting';}).length;
+    }
+
+    function setFilter(btn) {
+        document.querySelectorAll('.filter-btn').forEach(b=>b.classList.remove('active'));
+        btn.classList.add('active'); currentFilter=btn.dataset.filter; renderCards();
+    }
+
+    const SUB_LABELS = {sent:'📨 נשלחה הודעה',call:'📞 ניסיון התקשרות',replied:'💬 ענה/תה',no_ans:'🔇 אין מענה',later:'⏰ יחזור מאוחר יותר',hired:'✅ התקבל/ה',cancel:'❌ ביטל/ה',confirm:'✅ אישר/ה הגעה',arrived:'🎉 הגיע/ה לריאיון'};
+    const SUB_COLORS = {sent:'#e3f2fd',call:'#fff3e0',replied:'#e8f5e9',no_ans:'#f5f5f5',later:'#f3e5f5',hired:'#c8e6c9',cancel:'#ffebee',confirm:'#e8f5e9',arrived:'#c8e6c9'};
+
+    function buildCard(lead) {
+        const dn=hebrewName(lead.name), pf=formatPhone(lead.phone);
+        const pc=lead.phone.replace(/[^\d+]/g,'');
+        let wp=pc; if(wp.startsWith('0'))wp='972'+wp.slice(1); else if(wp.startsWith('+'))wp=wp.slice(1);
+        const waMsg=encodeURIComponent('היי '+dn+' מה שלומך? ראיתי שהשארת פרטים בנוגע למשרה בפסאו.');
+        const lk=(lead.name+'_'+lead.phone).replace(/\s/g,'_');
+        const info=leadStatuses[lk];
+        const handledBy=info?.handled_by||'', status=info?.status||'new', sub=info?.sub_status||null;
+        const isNR=status==='not_relevant', isMeeting=status==='meeting';
+        const isExpanded=!!expandedCards[lk];
+        const plc=lead.platform==='ig'?'platform-ig':'platform-fb', pll=lead.platform==='ig'?'IG':'FB';
+        const hcls=handledBy==='ירין'?'yarin':handledBy==='עדי'?'adi':'tomer';
+        const color=avatarColor(dn), inits=initials(dn);
+
+        let html='<div class="lead-card'+(isNR?' card-not-relevant':'')+'">';
+
+        // Summary row (always visible)
+        html+='<div class="lead-summary" onclick="toggleCard(\''+lk+'\')">';
+        html+='<div class="lead-avatar" style="background:'+color+'">'+inits+'</div>';
+        html+='<div class="lead-main">';
+        html+='<div class="lead-name-row"><span class="lead-name">'+escapeHtml(dn)+'</span>';
+        if (handledBy) html+='<span class="handler-badge '+hcls+'">'+handledBy+'</span>';
+        if (sub&&SUB_LABELS[sub]) html+='<span class="sub-status-badge" style="background:'+SUB_COLORS[sub]+'">'+SUB_LABELS[sub]+'</span>';
+        if (isMeeting&&info?.interview_date) html+='<span class="interview-chip">📅 '+formatInterview(info.interview_date,info.interview_time)+'</span>';
+        html+='<span class="lead-time">'+formatDate(lead.date)+'</span>';
+        html+='</div>';
+        html+='<div class="lead-sub-row"><span class="platform-badge '+plc+'">'+pll+'</span><span class="lead-phone-sm">'+pf+'</span>';
+        if (lead.job) html+='<span class="lead-job '+getJobClass(lead.job)+'">'+escapeHtml(lead.job)+'</span>';
+        html+='</div></div>';
+        html+='<span class="expand-icon'+(isExpanded?' open':'')+'">▼</span>';
+        html+='</div>'; // end summary
+
+        // Details (expanded)
+        html+='<div class="lead-details'+(isExpanded?' open':'')+'">';
+        html+='<div class="action-row"><a class="action-btn action-call" href="tel:'+pc+'">📞 התקשר</a><a class="action-btn action-wa" href="https://wa.me/'+wp+'?text='+waMsg+'" target="_blank">💬 וואטסאפ</a></div>';
+
+        // Handler
+        html+='<div class="det-label">מי מטפל?</div><div class="handle-btns">';
+        ['ירין','עדי','תומר'].forEach(who=>{
+            const hc=who==='ירין'?'yarin':who==='עדי'?'adi':'tomer';
+            const active=handledBy===who?' h-active h-'+hc:'';
+            html+='<div class="handle-btn'+active+'" onclick="setHandler(\''+lk+'\',\''+who+'\')">'+who+'</div>';
+        });
+        html+='</div>';
+
+        // Sub-status buttons — different sets for meeting vs regular
+        if (isMeeting) {
+            html+='<div class="det-label">סטטוס ריאיון</div><div class="sub-grid">';
+            [['sent','sub-sent','📨 נשלחה הודעה'],['no_ans','sub-no-ans','🔇 אין מענה'],['cancel','sub-cancel','❌ ביטל/ה'],['confirm','sub-confirm','✅ אישר/ה הגעה'],['later','sub-later','⏰ דחה/תה תאריך'],['arrived','sub-arrived','🎉 הגיע/ה']].forEach(([val,cls,label])=>{
+                html+='<div class="sub-btn '+cls+(sub===val?' active-sub':'')+'" onclick="setSubStatus(\''+lk+'\',\''+val+'\')">'+label+'</div>';
+            });
+            html+='</div>';
+        } else if (handledBy) {
+            html+='<div class="det-label">סטטוס טיפול</div><div class="sub-grid">';
+            [['sent','sub-sent','📨 נשלחה הודעה'],['call','sub-call','📞 ניסיון התקשרות'],['replied','sub-replied','💬 ענה/תה'],['no_ans','sub-no-ans','🔇 אין מענה'],['later','sub-later','⏰ יחזור מאוחר יותר'],['hired','sub-hired','✅ התקבל/ה']].forEach(([val,cls,label])=>{
+                html+='<div class="sub-btn '+cls+(sub===val?' active-sub':'')+'" onclick="setSubStatus(\''+lk+'\',\''+val+'\')">'+label+'</div>';
+            });
+            html+='</div>';
+        }
+
+        // Interview form or info
+        if ((status==='new'||isMeeting)&&openForms[lk]) {
+            const ed=info?.interview_date||'', et=info?.interview_time?.slice(0,5)||'';
+            html+='<div class="interview-inline"><label>תאריך ריאיון</label><input type="date" id="int-date-'+lk+'" value="'+ed+'"><label>שעה</label><input type="time" id="int-time-'+lk+'" value="'+et+'"><button class="int-save-btn" onclick="saveInterview(\''+lk+'\')">שמור ריאיון</button></div>';
+        } else if (isMeeting&&info?.interview_date) {
+            html+='<div class="interview-info"><span>📅 '+formatInterview(info.interview_date,info.interview_time)+'</span><span class="int-edit" onclick="editInterview(\''+lk+'\')">ערוך</span></div>';
+        }
+
+        // Next actions (if handler set but not meeting)
+        if (handledBy&&status==='new') {
+            html+='<div class="next-btns"><div class="next-btn btn-meeting" onclick="setMeetingStatus(\''+lk+'\')">📅 נקבע ריאיון</div><div class="next-btn btn-not-relevant" onclick="setNotRelevant(\''+lk+'\')">לא רלוונטי</div></div>';
+        }
+        if (!handledBy) {
+            html+='<div class="next-btns"><div class="next-btn btn-not-relevant" onclick="setNotRelevant(\''+lk+'\')">לא רלוונטי</div></div>';
+        }
+
+        // Not relevant
+        if (isNR) html+='<div class="not-relevant-badge"><span>❌ לא רלוונטי</span><div style="display:flex;gap:10px;align-items:center"><button class="nr-hide-btn" onclick="hideLead(\''+lk+'\')">הסתר</button><span class="nr-undo" onclick="resetLead(\''+lk+'\')">בטל</span></div></div>';
+        if (handledBy&&!isNR) html+='<div class="reset-link" onclick="resetLead(\''+lk+'\')">איפוס</div>';
+
+        html+='</div></div>'; // close details + card
+        return html;
+    }
+
+    function renderCards() {
+        const search=document.getElementById('searchBox').value.toLowerCase();
+        const isNRFilter=currentFilter==='not_relevant';
+
+        let filtered=allLeads.filter(lead=>{
+            const lk=(lead.name+'_'+lead.phone).replace(/\s/g,'_');
+            const info=leadStatuses[lk], status=info?.status||'new', hidden=info?.hidden||false;
+            if (isNRFilter) return status==='not_relevant';
+            if (hidden) return false;
+            if (currentFilter==='new') { if (info&&(info.handled_by||status!=='new')) return false; }
+            else if (currentFilter==='meeting') { if (status!=='meeting') return false; }
+            else if (currentFilter.startsWith('handler_')) { if (!info||info.handled_by!==currentFilter.replace('handler_','')) return false; }
+            else if (currentFilter!=='all') {
+                const j=lead.job.toLowerCase();
+                if (currentFilter==='מלצר'){ if (!j.includes('מלצר')&&!j.includes('שירות')) return false; }
+                else if (!j.includes(currentFilter)) return false;
+            }
+            if (search&&!(lead.name+' '+lead.phone+' '+lead.job).toLowerCase().includes(search)) return false;
+            return true;
+        });
+
+        if (filtered.length===0) { document.getElementById('leadsArea').innerHTML='<div class="empty-state">לא נמצאו לידים</div>'; return; }
+
+        // Sort: new → meeting → in-progress → not-relevant, then by date
+        if (!isNRFilter) {
+            filtered.sort((a,b)=>{
+                const ia=leadStatuses[(a.name+'_'+a.phone).replace(/\s/g,'_')];
+                const ib=leadStatuses[(b.name+'_'+b.phone).replace(/\s/g,'_')];
+                const sa=getLeadSort(ia), sb=getLeadSort(ib);
+                if (sa!==sb) return sa-sb;
+                try{return new Date(b.date)-new Date(a.date);}catch{return 0;}
+            });
+        }
+
+        // Group by week
+        const groups={}, groupOrder=[];
+        filtered.forEach(lead=>{
+            const lk=(lead.name+'_'+lead.phone).replace(/\s/g,'_');
+            const info=leadStatuses[lk], status=info?.status||'new';
+            // For meeting filter — group by interview date instead
+            let wk;
+            if (currentFilter==='meeting'&&info?.interview_date) {
+                wk='📅 '+formatInterview(info.interview_date,info.interview_time);
+            } else {
+                wk=getWeekKey(lead.date);
+            }
+            if (!groups[wk]) { groups[wk]=[]; groupOrder.push(wk); }
+            groups[wk].push(lead);
+        });
+
+        let html='';
+        groupOrder.forEach(wk=>{
+            const leads=groups[wk];
+            const isCollapsed=!!collapsedWeeks[wk];
+            const label=currentFilter==='meeting'?wk:weekDisplayLabel(wk);
+            html+='<div class="week-section">';
+            html+='<div class="week-header" onclick="toggleWeek(\''+wk.replace(/'/g,"\\'")+'\')">';
+            html+='<span class="week-title">'+escapeHtml(label)+'</span>';
+            html+='<span class="week-meta"><span class="week-count">'+leads.length+'</span><span class="week-toggle">'+(isCollapsed?'▶':'▼')+'</span></span>';
+            html+='</div>';
+            html+='<div class="week-body'+(isCollapsed?' collapsed':'')+'">';
+            leads.forEach(lead=>{ html+=buildCard(lead); });
+            html+='</div></div>';
+        });
+
+        document.getElementById('leadsArea').innerHTML=html;
+    }
+
+    async function init() { await loadStatuses(); loadData(); }
+    init();
+    setInterval(async()=>{ await loadStatuses(); loadData(); }, 2*60*1000);
 </script>
+```
 
 </body>
 </html>
