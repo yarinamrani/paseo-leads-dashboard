@@ -394,7 +394,7 @@
         const dn=hebrewName(lead.name), pf=formatPhone(lead.phone);
         const pc=lead.phone.replace(/[^\d+]/g,'');
         let wp=pc; if(wp.startsWith('0'))wp='972'+wp.slice(1); else if(wp.startsWith('+'))wp=wp.slice(1);
-        const waMsg=encodeURIComponent('היי '+dn+' מה שלומך? ראיתי שהשארת פרטים בנוגע למשרה בפסאו.');
+        const waMsg=encodeURIComponent('היי '+dn+' מה קורה? ראיתי שהתעניינת לגבי עבודה בפסאו, אשמח לשאול כמה שאלות כדי לראות שרלוונטי, ובמידה וכן נקבע ראיון עבודה 🙂\nהאם יש ניסיון? כמה משמרות בשבוע מתאים לך? והאם יכול/ה לעבוד ערבים וסופ״שים?');
         const lk=(lead.name+'_'+lead.phone).replace(/\s/g,'_');
         const info=leadStatuses[lk];
         const handledBy=info?.handled_by||'', status=info?.status||'new', sub=info?.sub_status||null;
