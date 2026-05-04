@@ -184,7 +184,36 @@
     const HE_DAYS = ['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
     const COLORS = ['#1565c0','#2e7d32','#7b1fa2','#e65100','#c62828','#00695c','#4527a0'];
 
-    const nameMap = {'yarin':'ירין','adi':'עדי','tomer':'תומר','noa':'נועה','noga':'נוגה','shaked':'שקד','eden':'עדן','amit':'עמית','rotem':'רותם','tal':'טל','mor':'מור','lihi':'ליהי','stav':'סתיו','maayan':'מעיין','shelly':'שלי','inbar':'ענבר','romi':'רומי','leon':'ליאון','itay':'איתי','lotem':'לוטם','karin':'קרין','noam':'נועם','lior':'ליאור','omer':'עומר','yael':'יעל','maya':'מאיה','daniel':'דניאל','david':'דויד','michael':'מיכאל','sarah':'שרה','rachel':'רחל','tamar':'תמר','shir':'שיר','noy':'נוי','guy':'גיא','alon':'אלון','ilan':'אילן','ran':'רן','gal':'גל','bar':'בר','ori':'אורי','yonatan':'יונתן','jonathan':'יונתן','ben':'בן','tom':'תום','lia':'ליה','ofir':'אופיר','shahar':'שחר','lian':'ליאן','agam':'אגם','yuval':'יובל','eyal':'אייל','oren':'אורן','hadar':'הדר','rina':'רינה','dor':'דור','ron':'רון','shay':'שי','shai':'שי','dana':'דנה','ella':'אלה','alma':'אלמה','neta':'נטע'};
+    const nameMap = {
+        'yarin':'ירין','adi':'עדי','tomer':'תומר','noa':'נועה','noga':'נוגה',
+        'shaked':'שקד','eden':'עדן','amit':'עמית','rotem':'רותם','tal':'טל',
+        'mor':'מור','lihi':'ליהי','stav':'סתיו','maayan':'מעיין','shelly':'שלי',
+        'inbar':'ענבר','romi':'רומי','leon':'ליאון','itay':'איתי','lotem':'לוטם',
+        'karin':'קרין','noam':'נועם','lior':'ליאור','omer':'עומר','yael':'יעל',
+        'maya':'מאיה','daniel':'דניאל','david':'דויד','michael':'מיכאל',
+        'sarah':'שרה','rachel':'רחל','tamar':'תמר','shir':'שיר','noy':'נוי',
+        'guy':'גיא','alon':'אלון','ilan':'אילן','ran':'רן','gal':'גל','bar':'בר',
+        'ori':'אורי','yonatan':'יונתן','jonathan':'יונתן','ben':'בן','tom':'תום',
+        'lia':'ליה','ofir':'אופיר','shahar':'שחר','lian':'ליאן','agam':'אגם',
+        'yuval':'יובל','eyal':'אייל','oren':'אורן','hadar':'הדר','rina':'רינה',
+        'dor':'דור','ron':'רון','shay':'שי','shai':'שי','dana':'דנה',
+        'ella':'אלה','alma':'אלמה','neta':'נטע','nave':'נאוה','nave':'נאוה',
+        'camila':'קמילה','camilla':'קמילה','irina':'אירינה','amawa':'אמאווה',
+        'annabelle':'אנבל','loren':'לורן','maor':'מאור','shoval':'שובל',
+        'romi':'רומי','liron':'לירון','nir':'ניר','mia':'מיה','sophie':'סופי',
+        'sofia':'סופיה','natalie':'נטלי','nicole':'ניקול','diana':'דיאנה',
+        'marina':'מרינה','victoria':'ויקטוריה','angelina':'אנג\'לינה',
+        'jessica':'ג\'סיקה','jennifer':'ג\'ניפר','ashley':'אשלי',
+        'stephanie':'סטפני','michelle':'מישל','elizabeth':'אליזבת',
+        'samantha':'סמנתה','amanda':'אמנדה','melissa':'מליסה',
+        'laura':'לורה','emily':'אמילי','anna':'אנה','julia':'ג\'וליה',
+        'alice':'אליס','helen':'הלן','grace':'גרייס','kate':'קייט',
+        'emma':'אמה','olivia':'אוליביה','aria':'אריה','luna':'לונה',
+        'carlos':'קרלוס','mario':'מריו','jose':'חוסה','juan':'חואן',
+        'pedro':'פדרו','miguel':'מיגל','alex':'אלכס','max':'מקס',
+        'adam':'אדם','noah':'נועה','ethan':'איתן','liam':'ליאם',
+        'james':'ג\'יימס','john':'ג\'ון','william':'וויליאם','oliver':'אוליבר',
+    };
 
     function hebrewName(name) {
         if (!name) return '';
@@ -394,7 +423,7 @@
         const dn=hebrewName(lead.name), pf=formatPhone(lead.phone);
         const pc=lead.phone.replace(/[^\d+]/g,'');
         let wp=pc; if(wp.startsWith('0'))wp='972'+wp.slice(1); else if(wp.startsWith('+'))wp=wp.slice(1);
-        const waMsg=encodeURIComponent('היי '+dn+' מה קורה? ראיתי שהתעניינת לגבי עבודה בפסאו, אשמח לשאול כמה שאלות כדי לראות שרלוונטי, ובמידה וכן נקבע ראיון עבודה 🙂\nהאם יש ניסיון? כמה משמרות בשבוע מתאים לך? והאם יכול/ה לעבוד ערבים וסופ״שים?');
+        const waMsg=encodeURIComponent('היי '+dn+' מה קורה? ראיתי שהתעניינת לגבי עבודה בפסאו, אשמח לשאול כמה שאלות כדי לראות שרלוונטי, ובמידה וכן נקבע ראיון עבודה\nהאם יש ניסיון? כמה משמרות בשבוע מתאים לך? והאם יכול/ה לעבוד ערבים וסופ"שים?');
         const lk=(lead.name+'_'+lead.phone).replace(/\s/g,'_');
         const info=leadStatuses[lk];
         const handledBy=info?.handled_by||'', status=info?.status||'new', sub=info?.sub_status||null;
