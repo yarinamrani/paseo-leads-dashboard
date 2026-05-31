@@ -4,35 +4,50 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>PASEO - דשבורד לידים</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500&family=Heebo:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --dusk: #2a1a44; --plum: #6e3566; --coral: #c95b54; --amber: #e89c5a;
+            --gold: #cf9a4e; --gold-deep: #b07d33; --cream: #fdf7ef;
+            --bg: #f7f1ea; --ink: #2c2433; --muted: #9c8f9c;
+            --sunset: linear-gradient(135deg, #2a1a44 0%, #6e3566 38%, #c95b54 72%, #e89c5a 100%);
+        }
         * { margin: 0; padding: 0; box-sizing: border-box; }
         html, body { overflow-x: hidden; width: 100%; max-width: 100vw; }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f0f2f5; color: #1a1a2e; min-height: 100vh; }
+        body { font-family: 'Heebo', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--bg); color: var(--ink); min-height: 100vh; }
 
-        .header { background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%); color: white; padding: 16px; display: flex; justify-content: space-between; align-items: center; }
-        .header h1 { font-size: 22px; font-weight: 700; letter-spacing: 2px; }
-        .header-subtitle { font-size: 12px; opacity: 0.7; margin-top: 2px; }
-        .refresh-btn { background: rgba(255,255,255,0.15); border: 1px solid rgba(255,255,255,0.25); color: white; padding: 8px 14px; border-radius: 8px; cursor: pointer; font-size: 13px; }
-        .last-update { font-size: 11px; opacity: 0.6; }
-        .auto-refresh-indicator { display: inline-block; width: 6px; height: 6px; background: #4caf50; border-radius: 50%; margin-left: 6px; animation: pulse 2s infinite; }
+        .header { background: var(--sunset); color: var(--cream); padding: 14px 16px 22px; display: flex; flex-direction: column; gap: 10px; position: relative; overflow: hidden; }
+        .header::after { content: ''; position: absolute; top: -60%; left: 50%; transform: translateX(-50%); width: 320px; height: 320px; background: radial-gradient(circle, rgba(255,225,180,0.35) 0%, rgba(255,225,180,0) 70%); pointer-events: none; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; position: relative; z-index: 1; }
+        .brand { text-align: center; position: relative; z-index: 1; }
+        .brand-emblem { display: block; height: 46px; width: auto; margin: 0 auto 6px; color: var(--cream); }
+        .brand-name { font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: 34px; letter-spacing: 0.34em; line-height: 1; text-indent: 0.34em; color: var(--cream); }
+        .brand-tag { font-size: 9px; letter-spacing: 0.42em; text-indent: 0.42em; text-transform: uppercase; opacity: 0.82; margin-top: 5px; }
+        .brand-sub { font-size: 11px; letter-spacing: 0.04em; opacity: 0.7; margin-top: 8px; }
+        .refresh-btn { background: rgba(255,255,255,0.16); border: 1px solid rgba(255,255,255,0.3); color: var(--cream); padding: 7px 16px; border-radius: 999px; cursor: pointer; font-size: 13px; font-family: inherit; backdrop-filter: blur(4px); transition: background 0.2s; }
+        .refresh-btn:hover { background: rgba(255,255,255,0.28); }
+        .last-update { font-size: 11px; opacity: 0.75; }
+        .auto-refresh-indicator { display: inline-block; width: 6px; height: 6px; background: #7be08a; border-radius: 50%; margin-left: 6px; box-shadow: 0 0 6px rgba(123,224,138,0.8); animation: pulse 2s infinite; }
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
 
         .stats-bar { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; padding: 10px; }
-        .stat-card { background: white; border-radius: 10px; padding: 10px 8px; text-align: center; box-shadow: 0 1px 3px rgba(0,0,0,0.08); }
-        .stat-card .stat-number { font-size: 20px; font-weight: 700; color: #1a1a2e; }
-        .stat-card .stat-label { font-size: 9px; color: #888; margin-top: 2px; }
+        .stat-card { background: white; border-radius: 12px; padding: 12px 8px; text-align: center; box-shadow: 0 2px 8px rgba(106,53,102,0.07); border: 1px solid rgba(207,154,78,0.12); }
+        .stat-card .stat-number { font-size: 22px; font-weight: 700; color: var(--plum); font-family: 'Cormorant Garamond', serif; }
+        .stat-card .stat-label { font-size: 9px; color: var(--muted); margin-top: 2px; letter-spacing: 0.04em; }
 
-        .controls { padding: 8px 10px; }
-        .search-box { padding: 8px 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 14px; width: 100%; direction: rtl; }
-        .search-box:focus { outline: none; border-color: #1a1a2e; }
+        .controls { padding: 10px 10px 8px; }
+        .search-box { padding: 10px 14px; border: 1px solid #e3d8cc; border-radius: 10px; font-size: 14px; width: 100%; direction: rtl; font-family: inherit; background: #fffdfb; }
+        .search-box:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(207,154,78,0.15); }
         .filters { display: flex; gap: 4px; flex-wrap: wrap; padding: 0 10px 8px; }
-        .filter-btn { padding: 6px 10px; border: 1px solid #ddd; border-radius: 6px; background: white; cursor: pointer; font-size: 11px; }
-        .filter-btn.active { background: #1a1a2e; color: white; border-color: #1a1a2e; }
+        .filter-btn { padding: 6px 12px; border: 1px solid #e3d8cc; border-radius: 999px; background: white; cursor: pointer; font-size: 11px; font-family: inherit; color: #6b5f6b; transition: all 0.15s; }
+        .filter-btn.active { background: linear-gradient(135deg, var(--plum), var(--coral)); color: white; border-color: transparent; box-shadow: 0 2px 8px rgba(201,91,84,0.3); }
 
         /* Week sections */
         .week-section { margin-bottom: 2px; }
-        .week-header { display: flex; align-items: center; justify-content: space-between; padding: 10px 10px 5px; cursor: pointer; user-select: none; }
-        .week-title { font-size: 11px; font-weight: 700; color: #888; letter-spacing: 0.5px; text-transform: uppercase; }
+        .week-header { display: flex; align-items: center; justify-content: space-between; padding: 12px 10px 5px; cursor: pointer; user-select: none; }
+        .week-title { font-size: 11px; font-weight: 700; color: var(--gold-deep); letter-spacing: 0.08em; text-transform: uppercase; }
         .week-meta { display: flex; align-items: center; gap: 6px; }
         .week-count { font-size: 11px; color: #aaa; background: #eee; border-radius: 8px; padding: 1px 7px; }
         .week-toggle { font-size: 10px; color: #ccc; }
@@ -121,23 +136,43 @@
         @keyframes spin { to { transform:rotate(360deg); } }
 
         @media (min-width: 768px) {
-            .header { padding: 20px 32px; }
+            .header { padding: 18px 32px 26px; }
+            .brand-emblem { height: 54px; }
+            .brand-name { font-size: 40px; }
             .stats-bar { padding: 16px 32px; gap: 12px; }
             .stat-card { padding: 16px; }
-            .stat-card .stat-number { font-size: 28px; }
-            .controls { padding: 8px 32px; }
+            .stat-card .stat-number { font-size: 30px; }
+            .controls { padding: 10px 32px 8px; }
             .filters { padding: 0 32px 8px; }
-            .week-header { padding: 10px 32px 5px; }
+            .week-header { padding: 12px 32px 5px; }
             .week-body { padding: 0 32px 6px; max-width: 800px; }
         }
     </style>
 </head>
 <body>
     <div class="header">
-        <div><h1>PASEO</h1><div class="header-subtitle">דשבורד לידים - גיוס עובדים</div></div>
-        <div style="text-align:left">
-            <div><span class="auto-refresh-indicator"></span><span class="last-update" id="lastUpdate">טוען...</span></div>
-            <button class="refresh-btn" onclick="loadData()" style="margin-top:4px">רענן</button>
+        <div class="header-top">
+            <span><span class="auto-refresh-indicator"></span><span class="last-update" id="lastUpdate">טוען...</span></span>
+            <button class="refresh-btn" onclick="loadData()">רענן</button>
+        </div>
+        <div class="brand">
+            <svg class="brand-emblem" viewBox="0 0 240 118" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="PASEO">
+                <g stroke="currentColor" stroke-width="1.8" stroke-linecap="round">
+                    <line x1="120" y1="68" x2="120" y2="30"/>
+                    <line x1="129.9" y1="69.6" x2="139.8" y2="39.1"/>
+                    <line x1="110.1" y1="69.6" x2="100.2" y2="39.1"/>
+                    <line x1="137.9" y1="73.5" x2="152.4" y2="51.9"/>
+                    <line x1="102.1" y1="73.5" x2="87.6" y2="51.9"/>
+                    <line x1="144.5" y1="79.4" x2="159.8" y2="66.6"/>
+                    <line x1="95.5" y1="79.4" x2="80.2" y2="66.6"/>
+                    <path d="M95 100 A25 25 0 0 1 145 100"/>
+                    <line x1="20" y1="100" x2="92" y2="100"/>
+                    <line x1="148" y1="100" x2="220" y2="100"/>
+                </g>
+            </svg>
+            <div class="brand-name">PASEO</div>
+            <div class="brand-tag">Rooftop Lounge &amp; Dining</div>
+            <div class="brand-sub">דשבורד לידים · גיוס עובדים</div>
         </div>
     </div>
 
@@ -177,7 +212,7 @@
 
         let allLeads = [], currentFilter = 'all', leadStatuses = {}, openForms = {}, expandedCards = {}, collapsedWeeks = {};
         const HE_DAYS = ['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
-        const COLORS = ['#1565c0','#2e7d32','#7b1fa2','#e65100','#c62828','#00695c','#4527a0'];
+        const COLORS = ['#c95b54','#e0954f','#b07d33','#7a3b63','#c97b8e','#6e3566','#9c5f3c'];
 
         const nameMap = {
             'yarin':'ירין','adi':'עדי','tomer':'תומר','noa':'נועה','noga':'נוגה',
