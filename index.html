@@ -83,6 +83,7 @@
         .handler-badge.yarin  { background: #e3f2fd; color: #1565c0; }
         .handler-badge.adi    { background: #f3e5f5; color: #7b1fa2; }
         .handler-badge.tomer  { background: #fff8e1; color: #f57f17; }
+        .handler-badge.kadosh { background: #e0f2f1; color: #00695c; }
         .sub-status-badge { display: inline-block; padding: 1px 7px; border-radius: 8px; font-size: 11px; }
         .interview-chip { display: inline-flex; align-items: center; gap: 3px; padding: 1px 7px; border-radius: 8px; font-size: 11px; background: #e8f5e9; color: #2e7d32; font-weight: 500; }
 
@@ -99,6 +100,7 @@
         .handle-btn.h-active.h-yarin  { background: #e3f2fd; color: #1565c0; border-color: #90caf9; }
         .handle-btn.h-active.h-adi    { background: #f3e5f5; color: #7b1fa2; border-color: #ce93d8; }
         .handle-btn.h-active.h-tomer  { background: #fff8e1; color: #f57f17; border-color: #ffe082; }
+        .handle-btn.h-active.h-kadosh { background: #e0f2f1; color: #00695c; border-color: #80cbc4; }
 
         .sub-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; }
         .sub-btn { padding: 8px 6px; border-radius: 8px; border: 1px solid #eee; background: #fafafa; font-size: 12px; cursor: pointer; text-align: center; }
@@ -194,6 +196,7 @@
         <button class="filter-btn" data-filter="handler_ירין" onclick="setFilter(this)">ירין</button>
         <button class="filter-btn" data-filter="handler_עדי" onclick="setFilter(this)">עדי</button>
         <button class="filter-btn" data-filter="handler_יורה" onclick="setFilter(this)">יורה</button>
+        <button class="filter-btn" data-filter="handler_קדוש" onclick="setFilter(this)">קדוש</button>
         <button class="filter-btn" data-filter="מלצר" onclick="setFilter(this)">מלצר/ית</button>
         <button class="filter-btn" data-filter="בר" onclick="setFilter(this)">בר</button>
         <button class="filter-btn" data-filter="מארחת" onclick="setFilter(this)">מארחת</button>
@@ -471,7 +474,7 @@
             const isNR=status==='not_relevant', isMeeting=status==='meeting';
             const isExpanded=!!expandedCards[lk];
             const plc=lead.platform==='ig'?'platform-ig':'platform-fb', pll=lead.platform==='ig'?'IG':'FB';
-            const hcls=handledBy==='ירין'?'yarin':handledBy==='עדי'?'adi':handledBy==='יורה'?'tomer':'';
+            const hcls=handledBy==='ירין'?'yarin':handledBy==='עדי'?'adi':handledBy==='יורה'?'tomer':handledBy==='קדוש'?'kadosh':'';
             const color=avatarColor(dn), inits=initials(dn);
 
             let html='<div class="lead-card'+(isNR?' card-not-relevant':'')+'">';
@@ -498,8 +501,8 @@
 
             // Handler
             html+='<div class="det-label">מי מטפל?</div><div class="handle-btns">';
-            ['ירין','עדי','יורה'].forEach(who=>{
-                const hc=who==='ירין'?'yarin':who==='עדי'?'adi':'tomer';
+            ['ירין','עדי','יורה','קדוש'].forEach(who=>{
+                const hc=who==='ירין'?'yarin':who==='עדי'?'adi':who==='יורה'?'tomer':'kadosh';
                 const active=handledBy===who?' h-active h-'+hc:'';
                 html+='<div class="handle-btn'+active+'" onclick="setHandler(\''+lk+'\',\''+who+'\')">'+who+'</div>';
             });
