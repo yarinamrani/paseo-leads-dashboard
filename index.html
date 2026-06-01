@@ -195,7 +195,6 @@
         <button class="filter-btn" data-filter="new" onclick="setFilter(this)">חדשים</button>
         <button class="filter-btn" data-filter="handler_ירין" onclick="setFilter(this)">ירין</button>
         <button class="filter-btn" data-filter="handler_עדי" onclick="setFilter(this)">עדי</button>
-        <button class="filter-btn" data-filter="handler_יורה" onclick="setFilter(this)">יורה</button>
         <button class="filter-btn" data-filter="handler_קדוש" onclick="setFilter(this)">קדוש</button>
         <button class="filter-btn" data-filter="מלצר" onclick="setFilter(this)">מלצר/ית</button>
         <button class="filter-btn" data-filter="בר" onclick="setFilter(this)">בר</button>
@@ -501,8 +500,8 @@
 
             // Handler
             html+='<div class="det-label">מי מטפל?</div><div class="handle-btns">';
-            ['ירין','עדי','יורה','קדוש'].forEach(who=>{
-                const hc=who==='ירין'?'yarin':who==='עדי'?'adi':who==='יורה'?'tomer':'kadosh';
+            ['ירין','עדי','קדוש'].forEach(who=>{
+                const hc=who==='ירין'?'yarin':who==='עדי'?'adi':'kadosh';
                 const active=handledBy===who?' h-active h-'+hc:'';
                 html+='<div class="handle-btn'+active+'" onclick="setHandler(\''+lk+'\',\''+who+'\')">'+who+'</div>';
             });
