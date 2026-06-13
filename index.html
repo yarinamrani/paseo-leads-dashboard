@@ -32,6 +32,20 @@
         .auto-refresh-indicator { display: inline-block; width: 6px; height: 6px; background: #7be08a; border-radius: 50%; margin-left: 6px; box-shadow: 0 0 6px rgba(123,224,138,0.8); animation: pulse 2s infinite; }
         @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
 
+        /* Login */
+        .login-overlay { position: fixed; inset: 0; z-index: 1000; background: var(--sunset); display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .login-overlay.hidden { display: none; }
+        .login-card { background: #fff; border-radius: 18px; padding: 32px 26px; width: 100%; max-width: 340px; text-align: center; box-shadow: 0 14px 44px rgba(0,0,0,0.28); }
+        .login-emblem { font-size: 36px; line-height: 1; }
+        .login-title { font-family: 'Cormorant Garamond', serif; font-weight: 300; font-size: 34px; letter-spacing: 0.32em; text-indent: 0.32em; color: var(--plum); margin-top: 6px; }
+        .login-sub { font-size: 12px; color: var(--muted); margin-bottom: 20px; letter-spacing: 0.04em; }
+        .login-card input { width: 100%; padding: 12px 14px; border: 1px solid #e3d8cc; border-radius: 10px; font-size: 15px; margin-bottom: 10px; direction: rtl; font-family: inherit; background: #fffdfb; }
+        .login-card input:focus { outline: none; border-color: var(--gold); box-shadow: 0 0 0 3px rgba(207,154,78,0.15); }
+        .login-card button { width: 100%; padding: 12px; border: none; border-radius: 10px; background: linear-gradient(135deg, var(--plum), var(--coral)); color: #fff; font-size: 15px; font-weight: 700; cursor: pointer; font-family: inherit; margin-top: 4px; }
+        .login-card button:disabled { opacity: 0.6; cursor: default; }
+        .login-err { color: #c62828; font-size: 13px; margin-top: 10px; min-height: 16px; }
+        .logout-link { font-size: 11px; opacity: 0.75; cursor: pointer; text-decoration: underline; color: var(--cream); }
+
         .stats-bar { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; padding: 10px; }
         .stat-card { background: white; border-radius: 12px; padding: 12px 8px; text-align: center; box-shadow: 0 2px 8px rgba(106,53,102,0.07); border: 1px solid rgba(207,154,78,0.12); }
         .stat-card .stat-number { font-size: 22px; font-weight: 700; color: var(--plum); font-family: 'Cormorant Garamond', serif; }
@@ -155,7 +169,7 @@
     <div class="header">
         <div class="header-top">
             <span><span class="auto-refresh-indicator"></span><span class="last-update" id="lastUpdate">טוען...</span></span>
-            <button class="refresh-btn" onclick="loadData()">רענן</button>
+            <span style="display:flex;align-items:center;gap:12px"><span class="logout-link" onclick="logout()">התנתק</span><button class="refresh-btn" onclick="loadData()">רענן</button></span>
         </div>
         <div class="brand">
             <svg class="brand-emblem" viewBox="0 0 240 118" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="PASEO">
@@ -207,10 +221,58 @@
         <div class="loading"><div class="loading-spinner"></div>טוען לידים...</div>
     </div>
 
+    <div id="loginOverlay" class="login-overlay">
+        <form class="login-card" onsubmit="doLogin(event)">
+            <div class="login-emblem">🌅</div>
+            <div class="login-title">PASEO</div>
+            <div class="login-sub">דשבורד לידים · התחברות</div>
+            <input id="loginEmail" type="text" placeholder="שם משתמש" autocomplete="username" autocapitalize="none" required>
+            <input id="loginPass" type="password" placeholder="סיסמה" autocomplete="current-password" required>
+            <button type="submit" id="loginBtn">התחבר</button>
+            <div id="loginErr" class="login-err"></div>
+        </form>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
         const SHEET_ID = '1PwASsf8j8BmbZKSGCDXWNevfkR7hgLMQKL5-Jk0ncz4';
         const SUPABASE_URL = 'https://vzeowbriddhvhpishmhn.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ6ZW93YnJpZGRodmhwaXNobWhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MTAyNDUsImV4cCI6MjA4ODM4NjI0NX0.PWvjFj41l0wB9awroZdDsMhCJ0yJXdrf1-k-45n0Rwk';
+        const LOGIN_DOMAIN = '@paseo.app';
+
+        // --- Auth ---
+        const sbClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: true, autoRefreshToken: true, storageKey: 'paseo-auth' } });
+        let accessToken = SUPABASE_KEY;
+        sbClient.auth.onAuthStateChange((_e, session) => { accessToken = (session && session.access_token) || SUPABASE_KEY; });
+        function authHdr(extra) { return Object.assign({ 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + accessToken }, extra || {}); }
+
+        async function doLogin(e) {
+            e.preventDefault();
+            const btn = document.getElementById('loginBtn'), err = document.getElementById('loginErr');
+            err.textContent = ''; btn.disabled = true; btn.textContent = 'מתחבר...';
+            let id = document.getElementById('loginEmail').value.trim();
+            const email = id.includes('@') ? id.toLowerCase() : id.toLowerCase() + LOGIN_DOMAIN;
+            const password = document.getElementById('loginPass').value;
+            const { data, error } = await sbClient.auth.signInWithPassword({ email, password });
+            btn.disabled = false; btn.textContent = 'התחבר';
+            if (error || !data || !data.session) { err.textContent = 'שם משתמש או סיסמה שגויים'; return; }
+            accessToken = data.session.access_token;
+            document.getElementById('loginOverlay').classList.add('hidden');
+            startApp();
+        }
+        async function logout() { await sbClient.auth.signOut(); location.reload(); }
+
+        let appStarted = false;
+        function startApp() {
+            if (appStarted) return; appStarted = true;
+            init();
+            setInterval(async () => { await loadStatuses(); loadData(); }, 2 * 60 * 1000);
+        }
+        async function bootstrap() {
+            const { data: { session } } = await sbClient.auth.getSession();
+            if (session) { accessToken = session.access_token; document.getElementById('loginOverlay').classList.add('hidden'); startApp(); }
+            else { document.getElementById('loginOverlay').classList.remove('hidden'); }
+        }
 
         let allLeads = [], currentFilter = 'all', leadStatuses = {}, openForms = {}, expandedCards = {}, collapsedWeeks = {};
         const HE_DAYS = ['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
@@ -337,7 +399,7 @@
         async function loadStatuses() {
             try {
                 const resp = await fetch(SUPABASE_URL+'/rest/v1/lead_statuses?select=lead_key,handled_by,status,sub_status,interview_date,interview_time,hidden', {
-                    headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}
+                    headers: authHdr()
                 });
                 const data = await resp.json();
                 leadStatuses = {};
@@ -354,7 +416,7 @@
                 Object.keys(full).forEach(k => { if (full[k]===undefined) full[k]=null; });
                 const resp = await fetch(SUPABASE_URL+'/rest/v1/lead_statuses?on_conflict=lead_key', {
                     method:'POST',
-                    headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY,'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'},
+                    headers: authHdr({'Content-Type':'application/json','Prefer':'resolution=merge-duplicates'}),
                     body:JSON.stringify(full)
                 });
                 if (!resp.ok) console.error('save error',resp.status,await resp.text());
@@ -366,7 +428,7 @@
         async function clearLeadData(key) {
             try {
                 await fetch(SUPABASE_URL+'/rest/v1/lead_statuses?lead_key=eq.'+encodeURIComponent(key), {
-                    method:'DELETE', headers:{'apikey':SUPABASE_KEY,'Authorization':'Bearer '+SUPABASE_KEY}
+                    method:'DELETE', headers: authHdr()
                 });
                 delete leadStatuses[key];
             } catch(e) { console.error(e); }
@@ -615,8 +677,7 @@
         }
 
         async function init() { await loadStatuses(); loadData(); }
-        init();
-        setInterval(async()=>{ await loadStatuses(); loadData(); }, 2*60*1000);
+        bootstrap();
     </script>
 </body>
 </html>
