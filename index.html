@@ -238,7 +238,8 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        const SHEET_ID = '1PwASsf8j8BmbZKSGCDXWNevfkR7hgLMQKL5-Jk0ncz4';
+        const SHEET_ID = '1kFQ9GTHwg4DRNgPVTUrYDQozF2nE7NrSvQgHykj3Uxs';
+        const SHEET_GID = '1887515514'; // טאב "עובדים" בגיליון "פסאו מעודכן"
         const SUPABASE_URL = 'https://vzeowbriddhvhpishmhn.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ6ZW93YnJpZGRodmhwaXNobWhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MTAyNDUsImV4cCI6MjA4ODM4NjI0NX0.PWvjFj41l0wB9awroZdDsMhCJ0yJXdrf1-k-45n0Rwk';
         const LOGIN_DOMAIN = '@paseo.app';
@@ -466,13 +467,13 @@
 
         // Data
         function loadData() {
-            fetch('https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json')
+            fetch('https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json&gid='+SHEET_GID)
                 .then(r=>r.text()).then(text=>{
                     const m=text.match(/google\.visualization\.Query\.setResponse\(({.*})\)/s);
                     if (m&&m[1]) processData(JSON.parse(m[1])); else throw new Error();
                 }).catch(()=>{
                     const s=document.createElement('script');
-                    s.src='https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=responseHandler:__gsheetCB';
+                    s.src='https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=responseHandler:__gsheetCB&gid='+SHEET_GID;
                     document.body.appendChild(s);
                 });
         }
