@@ -109,7 +109,6 @@
         .action-btn { flex: 1; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 10px; border-radius: 10px; text-decoration: none; font-size: 14px; font-weight: 500; border: none; cursor: pointer; }
         .action-call { background: #e3f2fd; color: #1565c0; }
         .action-wa   { background: #e8f5e9; color: #25d366; }
-        .action-ig   { background: #fce4ec; color: #c2185b; }
         .det-label { font-size: 11px; color: #aaa; margin: 10px 0 6px; }
         .handle-btns { display: flex; gap: 6px; }
         .handle-btn { flex: 1; padding: 8px; border-radius: 8px; border: 1.5px solid #eee; background: #fafafa; font-size: 13px; font-weight: 500; cursor: pointer; text-align: center; }
@@ -585,10 +584,7 @@
 
             // Details (expanded)
             html+='<div class="lead-details'+(isExpanded?' open':'')+'">';
-            html+='<div class="action-row"><a class="action-btn action-call" href="tel:'+pc+'" onclick="markContact(\''+lk+'\',\'call\')">📞 התקשר</a><a class="action-btn action-wa" href="https://wa.me/'+wp+'?text='+waMsg+'" target="_blank" onclick="markContact(\''+lk+'\',\'sent\')">💬 וואטסאפ</a>';
-            // אין שם משתמש אינסטגרם בטופס הליד של מטא — לכן חיפוש לפי השם, לא קישור ישיר לפרופיל
-            if (lead.platform==='ig') html+='<a class="action-btn action-ig" href="https://www.instagram.com/explore/search/keyword/?q='+encodeURIComponent(lead.name)+'" target="_blank">📷 אינסטגרם</a>';
-            html+='</div>';
+            html+='<div class="action-row"><a class="action-btn action-call" href="tel:'+pc+'" onclick="markContact(\''+lk+'\',\'call\')">📞 התקשר</a><a class="action-btn action-wa" href="https://wa.me/'+wp+'?text='+waMsg+'" target="_blank" onclick="markContact(\''+lk+'\',\'sent\')">💬 וואטסאפ</a></div>';
 
             // Handler
             html+='<div class="det-label">מי מטפל? · לחיצה פותחת וואטסאפ ומסמנת «נשלחה הודעה»</div><div class="handle-btns">';
