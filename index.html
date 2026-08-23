@@ -212,8 +212,8 @@
         <button class="filter-btn" data-filter="meeting" onclick="setFilter(this)">📅 ראיונות</button>
         <button class="filter-btn" data-filter="new" onclick="setFilter(this)">חדשים</button>
         <button class="filter-btn" data-filter="followup" onclick="setFilter(this)">🔁 פולואפ</button>
-        <button class="filter-btn" data-filter="src_floor" onclick="setFilter(this)">🍽️ פלור</button>
-        <button class="filter-btn" data-filter="src_kitchen" onclick="setFilter(this)">👨‍🍳 טבחים</button>
+        <!-- צ'יפ לכל מקור לידים — נבנה מ-LEAD_SOURCES כדי שהוספת גיליון תוסיף גם פילטר -->
+        <span id="srcFilterAnchor" hidden></span>
         <button class="filter-btn" data-filter="handler_ירין" onclick="setFilter(this)">ירין</button>
         <button class="filter-btn" data-filter="handler_עדי" onclick="setFilter(this)">עדי</button>
         <button class="filter-btn" data-filter="handler_קדוש" onclick="setFilter(this)">קדוש</button>
@@ -243,17 +243,22 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        const SHEET_ID = '1kMwieVnC3iE1Ui6HuxEHKtIi6EzYGFbRf2sEeuI_LGI';
-        // הגיליון החדש מפוצל לשני טאבים — קמפיין הפלור וקמפיין הטבחים.
-        // הטאבים נטענים לפי שם (פרמטר sheet של gviz) ולא לפי gid, כדי שהקוד ישרוד
-        // שכפול/יצירה מחדש של טאב. אם שם טאב משתנה בגיליון — לעדכן כאן.
-        const SHEET_TABS = [
-            { key: 'floor',   sheet: 'פלור',  label: 'פלור',  filter: 'src_floor'   },
-            { key: 'kitchen', sheet: 'טבחים', label: 'טבחים', filter: 'src_kitchen' }
+        // לידי הגיוס מפוזרים על כמה גיליונות וטאבים. כולם נטענים ומוזגים לרשימה אחת,
+        // כדי שאף מקור לא ייעלם כשנפתח קמפיין חדש. להוספת מקור — עוד שורה כאן.
+        //
+        // שתי צורות טבלה שונות במקורות האלה:
+        //   'meta'   — ייצוא אוטומטי של טופס לידים ממטא (כותרות באנגלית: full_name, phone…)
+        //   'manual' — טבלה שממלאים ידנית (כותרות בעברית: "שם מלא", "טלפון"…)
+        // הטאבים מזוהים לפי gid ולא לפי שם, כי שם טאב משתנה בקלות.
+        const LEAD_SOURCES = [
+            { key: 'workers', label: 'עובדים', icon: '📋', schema: 'meta',   sheetId: '1kFQ9GTHwg4DRNgPVTUrYDQozF2nE7NrSvQgHykj3Uxs', gid: '1887515514' },
+            { key: 'floor',   label: 'פלור',   icon: '🍽️', schema: 'manual', sheetId: '1kMwieVnC3iE1Ui6HuxEHKtIi6EzYGFbRf2sEeuI_LGI', gid: '532099517'  },
+            { key: 'kitchen', label: 'טבחים',  icon: '👨‍🍳', schema: 'manual', sheetId: '1kMwieVnC3iE1Ui6HuxEHKtIi6EzYGFbRf2sEeuI_LGI', gid: '1443778839' }
         ];
         const SUPABASE_URL = 'https://vzeowbriddhvhpishmhn.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ6ZW93YnJpZGRodmhwaXNobWhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MTAyNDUsImV4cCI6MjA4ODM4NjI0NX0.PWvjFj41l0wB9awroZdDsMhCJ0yJXdrf1-k-45n0Rwk';
         const LOGIN_DOMAIN = '@paseo.app';
+        const MIN_LEAD_TIME = new Date('2026-03-01').getTime(); // גיוסים ישנים יותר לא מוצגים
 
         // --- Auth ---
         const sbClient = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { auth: { persistSession: true, autoRefreshToken: true, storageKey: 'paseo-auth' } });
@@ -358,10 +363,12 @@
         function avatarColor(name) { return COLORS[(name||'').charCodeAt(0) % COLORS.length]; }
         function initials(name) { return (name||'?').split(' ').map(w=>w[0]||'').join('').substring(0,2).toUpperCase() || '?'; }
 
-        function formatDate(dateStr) {
-            if (!dateStr) return '';
+        // All of these take the parsed timestamp (lead.time), not the raw cell text —
+        // the sheets disagree on date format, so parsing happens once in parseTable.
+        function formatDate(t) {
+            if (!t) return '';
             try {
-                const d = new Date(dateStr), now = new Date(), diff = Math.floor((now-d)/1000);
+                const d = new Date(t), now = new Date(), diff = Math.floor((now-d)/1000);
                 if (diff < 60) return 'עכשיו';
                 if (diff < 3600) return 'לפני ' + Math.floor(diff/60) + ' דק\'';
                 if (diff < 7200) return 'לפני שעה';
@@ -372,7 +379,7 @@
             } catch { return ''; }
         }
 
-        function isToday(dateStr) { try { return new Date(dateStr).toDateString()===new Date().toDateString(); } catch { return false; } }
+        function isToday(t) { try { return !!t&&new Date(t).toDateString()===new Date().toDateString(); } catch { return false; } }
 
         function formatPhone(phone) {
             if (!phone) return '';
@@ -391,10 +398,10 @@
         function escapeHtml(t) { const d=document.createElement('div'); d.textContent=t; return d.innerHTML; }
 
         // Week grouping
-        function getWeekKey(dateStr) {
-            if (!dateStr) return 'ללא תאריך';
+        function getWeekKey(t) {
+            if (!t) return 'ללא תאריך';
             try {
-                const d = new Date(dateStr);
+                const d = new Date(t);
                 const now = new Date();
                 const dow = now.getDay();
                 const weekStart = new Date(now); weekStart.setDate(now.getDate()-dow); weekStart.setHours(0,0,0,0);
@@ -499,15 +506,15 @@
         async function resetLead(key) { await clearLeadData(key); delete openForms[key]; renderCards(); updateStats(); }
 
         // Data
-        function tabUrl(tab,handler) {
+        function sourceUrl(src,handler) {
             const tqx=handler?'responseHandler:'+handler:'out:json';
-            return 'https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx='+tqx+'&sheet='+encodeURIComponent(tab.sheet);
+            return 'https://docs.google.com/spreadsheets/d/'+src.sheetId+'/gviz/tq?tqx='+tqx+'&gid='+src.gid;
         }
 
-        // gviz has no CORS on some networks, so each tab falls back to JSONP with its
-        // own callback name — a shared one would race when both tabs load in parallel.
-        function fetchTab(tab,idx) {
-            return fetch(tabUrl(tab))
+        // gviz has no CORS on some networks, so each source falls back to JSONP with its
+        // own callback name — a shared one would race when the sources load in parallel.
+        function fetchSource(src,idx) {
+            return fetch(sourceUrl(src))
                 .then(r=>r.text()).then(text=>{
                     const m=text.match(/google\.visualization\.Query\.setResponse\(({.*})\)/s);
                     if (!m||!m[1]) throw new Error('bad gviz payload');
@@ -519,51 +526,97 @@
                     const done=r=>{ delete window[cb]; s.remove(); resolve(r); };
                     window[cb]=done;
                     s.onerror=()=>{ delete window[cb]; s.remove(); reject(new Error('jsonp failed')); };
-                    s.src=tabUrl(tab,cb);
+                    s.src=sourceUrl(src,cb);
                     document.body.appendChild(s);
                 }));
         }
 
         function loadData() {
-            Promise.all(SHEET_TABS.map((tab,i)=>
-                fetchTab(tab,i).then(res=>parseTable(res,tab)).catch(()=>null)
+            Promise.all(LEAD_SOURCES.map((src,i)=>
+                fetchSource(src,i).then(res=>parseTable(res,src)).catch(()=>null)
             )).then(results=>{
                 const ok=results.filter(r=>r!==null);
                 if (!ok.length) { showLoadError(); return; }
-                allLeads=ok.flat();
-                allLeads.sort((a,b)=>{try{return new Date(b.date)-new Date(a.date);}catch{return 0;}});
-                allLeads=allLeads.filter(l=>{try{return new Date(l.date)>=new Date('2026-03-01');}catch{return false;}});
+                // Same person can sit in more than one sheet — first source in
+                // LEAD_SOURCES order wins so a lead never shows up twice.
+                const seen={}, merged=[];
+                ok.flat().forEach(l=>{
+                    const k=(l.name+'_'+l.phone).replace(/\s/g,'_');
+                    if (seen[k]) return;
+                    seen[k]=true; merged.push(l);
+                });
+                allLeads=merged.filter(l=>l.time>=MIN_LEAD_TIME).sort((a,b)=>b.time-a.time);
                 updateStats(); renderCards();
-                const missing=SHEET_TABS.filter((t,i)=>results[i]===null).map(t=>t.label);
-                document.getElementById('lastUpdate').textContent='עדכון: '+new Date().toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'})+(missing.length?' · שגיאה בטאב '+missing.join(', '):'');
+                const missing=LEAD_SOURCES.filter((s,i)=>results[i]===null).map(s=>s.label);
+                document.getElementById('lastUpdate').textContent='עדכון: '+new Date().toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'})+(missing.length?' · שגיאה ב'+missing.join(', '):'');
             });
         }
 
         function showLoadError() {
             if (allLeads.length) return; // keep whatever is already on screen
-            document.getElementById('leadsArea').innerHTML='<div class="empty-state">לא הצלחנו לטעון את הגיליון.<br>בדקו שהגיליון משותף לצפייה ושהטאבים נקראים "'+SHEET_TABS.map(t=>t.sheet).join('" ו-"')+'".</div>';
+            document.getElementById('leadsArea').innerHTML='<div class="empty-state">לא הצלחנו לטעון את גיליונות הלידים.<br>בדקו שהם משותפים לצפייה ("כל מי שיש לו הקישור").</div>';
         }
 
-        function parseTable(response,tab) {
-            if (!response||!response.table) throw new Error('no table');
-            const cols=response.table.cols.map(c=>(c.label||'').toLowerCase().trim());
-            let ni=cols.indexOf('full_name'),pi=cols.indexOf('phone'),ji=cols.indexOf('job_title'),di=cols.indexOf('created_time'),pli=cols.indexOf('platform');
-            const rows=response.table.rows.slice();
-            if (ni===-1) {
-                const fr=rows[0];
-                if (fr&&fr.c) {
-                    const vs=fr.c.map(c=>(c&&c.v||'').toString().toLowerCase().trim());
-                    if (vs.indexOf('full_name')!==-1) { ni=vs.indexOf('full_name');pi=vs.indexOf('phone');ji=vs.indexOf('job_title');di=vs.indexOf('created_time');pli=vs.indexOf('platform'); rows.shift(); }
-                    else { ni=12;pi=13;ji=14;di=1;pli=11; }
+        // gviz returns real date cells as the literal string "Date(2026,7,23,10,5,0)"
+        // (month is 0-based), and text cells as an ISO-ish string. Handle both.
+        function parseLeadTime(s) {
+            if (!s) return 0;
+            const m=s.match(/^Date\((\d+),(\d+),(\d+)(?:,(\d+),(\d+),(\d+))?\)$/);
+            if (m) return new Date(+m[1],+m[2],+m[3],+(m[4]||0),+(m[5]||0),+(m[6]||0)).getTime();
+            const t=Date.parse(s);
+            return isNaN(t)?0:t;
+        }
+
+        // Meta's lead-form export uses English keys; the hand-filled tabs use Hebrew
+        // headers. Either way the header row can be the real header or the first data row.
+        const HEADER_ALIASES = {
+            name:     ['full_name','שם מלא','שם'],
+            phone:    ['phone','טלפון','נייד'],
+            job:      ['job_title','משרה?','משרה','תפקיד'],
+            date:     ['created_time','תאריך קבלת הליד','תאריך'],
+            platform: ['platform','פלטפורמה']
+        };
+        function mapColumns(labels) {
+            const idx={};
+            for (const field in HEADER_ALIASES) {
+                idx[field]=-1;
+                for (const alias of HEADER_ALIASES[field]) {
+                    const at=labels.indexOf(alias);
+                    if (at!==-1) { idx[field]=at; break; }
                 }
             }
-            function cv(c,i){if(i<0||i>=c.length||!c[i])return '';return String(c[i].v||'');}
+            return idx;
+        }
+
+        function parseTable(response,src) {
+            if (!response||!response.table) throw new Error('no table');
+            const rows=(response.table.rows||[]).slice();
+            const norm=v=>(v==null?'':String(v)).toLowerCase().trim();
+            let idx=mapColumns((response.table.cols||[]).map(c=>norm(c.label)));
+            if (idx.name===-1&&rows[0]&&rows[0].c) {
+                const fromRow=mapColumns(rows[0].c.map(c=>norm(c&&c.v)));
+                if (fromRow.name!==-1) { idx=fromRow; rows.shift(); }
+            }
+            // Meta export with unlabelled columns — fall back to its fixed layout.
+            if (idx.name===-1&&src.schema==='meta') idx={name:12,phone:13,job:14,date:1,platform:11};
+            if (idx.name===-1) throw new Error('no name column');
+
+            function cv(c,i){if(i<0||i>=c.length||!c[i])return '';return String(c[i].v==null?'':c[i].v).trim();}
             const leads=[];
             for (const row of rows) {
-                const c=row.c||[], name=cv(c,ni), phone=cv(c,pi).replace(/^p:/,'').trim();
-                if (!name&&!phone) continue;
-                // The tab itself is the campaign, so it stands in when job_title is blank.
-                leads.push({name,phone,job:cv(c,ji)||tab.label,date:cv(c,di),platform:cv(c,pli),source:tab.key,sourceLabel:tab.label});
+                const c=row.c||[];
+                const name=cv(c,idx.name), phone=cv(c,idx.phone).replace(/^p:/,'').trim();
+                // Blank rows and the "-" placeholder rows in the fresh campaign tabs.
+                if (!name||name==='-') continue;
+                if (!phone||phone==='-') continue;
+                leads.push({
+                    name, phone,
+                    job: cv(c,idx.job)||src.label, // the tab is the campaign when there's no job column
+                    date: cv(c,idx.date),
+                    time: parseLeadTime(cv(c,idx.date)),
+                    platform: cv(c,idx.platform).toLowerCase(),
+                    source: src.key, sourceLabel: src.label
+                });
             }
             return leads;
         }
@@ -578,7 +631,7 @@
         function updateStats() {
             const vis=allLeads.filter(l=>{const i=leadStatuses[(l.name+'_'+l.phone).replace(/\s/g,'_')];return !i||!i.hidden;});
             document.getElementById('totalLeads').textContent=vis.length;
-            document.getElementById('todayLeads').textContent=vis.filter(l=>isToday(l.date)).length;
+            document.getElementById('todayLeads').textContent=vis.filter(l=>isToday(l.time)).length;
             document.getElementById('igLeads').textContent=vis.filter(l=>l.platform==='ig').length;
             document.getElementById('newLeads').textContent=vis.filter(l=>{const i=leadStatuses[(l.name+'_'+l.phone).replace(/\s/g,'_')];return !i||(!i.handled_by&&i.status==='new');}).length;
             document.getElementById('meetingLeads').textContent=allLeads.filter(l=>{const i=leadStatuses[(l.name+'_'+l.phone).replace(/\s/g,'_')];return i&&i.status==='meeting';}).length;
@@ -617,7 +670,7 @@
             if (handledBy) html+='<span class="handler-badge '+hcls+'">'+handledBy+'</span>';
             if (sub&&SUB_LABELS[sub]) html+='<span class="sub-status-badge" style="background:'+SUB_COLORS[sub]+'">'+SUB_LABELS[sub]+'</span>';
             if (isMeeting&&info?.interview_date) html+='<span class="interview-chip">📅 '+formatInterview(info.interview_date,info.interview_time)+'</span>';
-            html+='<span class="lead-time">'+formatDate(lead.date)+'</span>';
+            html+='<span class="lead-time">'+formatDate(lead.time)+'</span>';
             html+='</div>';
             html+='<div class="lead-sub-row"><span class="platform-badge '+plc+'">'+pll+'</span><span class="lead-phone-sm">'+pf+'</span>';
             if (lead.job) html+='<span class="lead-job '+getJobClass(lead.job)+'">'+escapeHtml(lead.job)+'</span>';
@@ -713,7 +766,7 @@
                     const ib=leadStatuses[(b.name+'_'+b.phone).replace(/\s/g,'_')];
                     const sa=getLeadSort(ia), sb=getLeadSort(ib);
                     if (sa!==sb) return sa-sb;
-                    try{return new Date(b.date)-new Date(a.date);}catch{return 0;}
+                    return b.time-a.time;
                 });
             }
 
@@ -727,7 +780,7 @@
                 if (currentFilter==='meeting'&&info?.interview_date) {
                     wk='📅 '+formatInterview(info.interview_date,info.interview_time);
                 } else {
-                    wk=getWeekKey(lead.date);
+                    wk=getWeekKey(lead.time);
                 }
                 if (!groups[wk]) { groups[wk]=[]; groupOrder.push(wk); }
                 groups[wk].push(lead);
@@ -751,7 +804,15 @@
             document.getElementById('leadsArea').innerHTML=html;
         }
 
-        async function init() { await loadStatuses(); loadData(); }
+        function buildSourceFilters() {
+            const anchor=document.getElementById('srcFilterAnchor');
+            if (!anchor) return;
+            anchor.insertAdjacentHTML('afterend', LEAD_SOURCES.map(s=>
+                '<button class="filter-btn" data-filter="src_'+s.key+'" onclick="setFilter(this)">'+s.icon+' '+escapeHtml(s.label)+'</button>'
+            ).join(''));
+        }
+
+        async function init() { buildSourceFilters(); await loadStatuses(); loadData(); }
         bootstrap();
     </script>
 </body>
