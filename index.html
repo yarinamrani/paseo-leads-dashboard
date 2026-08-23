@@ -89,7 +89,9 @@
         .job-host    { background: #e8f5e9; color: #2e7d32; }
         .job-waiter  { background: #e3f2fd; color: #1565c0; }
         .job-bar     { background: #f3e5f5; color: #7b1fa2; }
+        .job-floor   { background: #fce4ec; color: #ad1457; }
         .job-other   { background: #f5f5f5; color: #616161; }
+        .src-badge   { display: inline-block; padding: 2px 7px; border-radius: 8px; font-size: 10px; font-weight: 600; background: #ede7f6; color: #4527a0; }
         .platform-badge { font-size: 10px; padding: 1px 5px; border-radius: 4px; font-weight: 500; }
         .platform-ig { background: #fce4ec; color: #c2185b; }
         .platform-fb { background: #e3f2fd; color: #1565c0; }
@@ -210,6 +212,8 @@
         <button class="filter-btn" data-filter="meeting" onclick="setFilter(this)">📅 ראיונות</button>
         <button class="filter-btn" data-filter="new" onclick="setFilter(this)">חדשים</button>
         <button class="filter-btn" data-filter="followup" onclick="setFilter(this)">🔁 פולואפ</button>
+        <button class="filter-btn" data-filter="src_floor" onclick="setFilter(this)">🍽️ פלור</button>
+        <button class="filter-btn" data-filter="src_kitchen" onclick="setFilter(this)">👨‍🍳 טבחים</button>
         <button class="filter-btn" data-filter="handler_ירין" onclick="setFilter(this)">ירין</button>
         <button class="filter-btn" data-filter="handler_עדי" onclick="setFilter(this)">עדי</button>
         <button class="filter-btn" data-filter="handler_קדוש" onclick="setFilter(this)">קדוש</button>
@@ -239,8 +243,14 @@
 
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     <script>
-        const SHEET_ID = '1kFQ9GTHwg4DRNgPVTUrYDQozF2nE7NrSvQgHykj3Uxs';
-        const SHEET_GID = '1887515514'; // טאב "עובדים" בגיליון "פסאו מעודכן"
+        const SHEET_ID = '1kMwieVnC3iE1Ui6HuxEHKtIi6EzYGFbRf2sEeuI_LGI';
+        // הגיליון החדש מפוצל לשני טאבים — קמפיין הפלור וקמפיין הטבחים.
+        // הטאבים נטענים לפי שם (פרמטר sheet של gviz) ולא לפי gid, כדי שהקוד ישרוד
+        // שכפול/יצירה מחדש של טאב. אם שם טאב משתנה בגיליון — לעדכן כאן.
+        const SHEET_TABS = [
+            { key: 'floor',   sheet: 'פלור',  label: 'פלור',  filter: 'src_floor'   },
+            { key: 'kitchen', sheet: 'טבחים', label: 'טבחים', filter: 'src_kitchen' }
+        ];
         const SUPABASE_URL = 'https://vzeowbriddhvhpishmhn.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ6ZW93YnJpZGRodmhwaXNobWhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MTAyNDUsImV4cCI6MjA4ODM4NjI0NX0.PWvjFj41l0wB9awroZdDsMhCJ0yJXdrf1-k-45n0Rwk';
         const LOGIN_DOMAIN = '@paseo.app';
@@ -329,6 +339,7 @@
             if (j.includes('מארח')||j.includes('הוסט')) return 'job-host';
             if (j.includes('מלצר')||j.includes('שירות')) return 'job-waiter';
             if (j.includes('בר')||j.includes('ברמן')) return 'job-bar';
+            if (j.includes('פלור')) return 'job-floor'; // קמפיין הפלור — התפקיד המדויק עוד לא ידוע
             return 'job-other';
         }
 
@@ -339,6 +350,7 @@
                 case 'job-bar':     return 'משרת בר';
                 case 'job-waiter':  return 'משרת מלצרות';
                 case 'job-kitchen': return 'משרת מטבח';
+                case 'job-floor':   return 'משרה בפלור';
                 default:            return 'עבודה';
             }
         }
@@ -487,42 +499,73 @@
         async function resetLead(key) { await clearLeadData(key); delete openForms[key]; renderCards(); updateStats(); }
 
         // Data
-        function loadData() {
-            fetch('https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=out:json&gid='+SHEET_GID)
+        function tabUrl(tab,handler) {
+            const tqx=handler?'responseHandler:'+handler:'out:json';
+            return 'https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx='+tqx+'&sheet='+encodeURIComponent(tab.sheet);
+        }
+
+        // gviz has no CORS on some networks, so each tab falls back to JSONP with its
+        // own callback name — a shared one would race when both tabs load in parallel.
+        function fetchTab(tab,idx) {
+            return fetch(tabUrl(tab))
                 .then(r=>r.text()).then(text=>{
                     const m=text.match(/google\.visualization\.Query\.setResponse\(({.*})\)/s);
-                    if (m&&m[1]) processData(JSON.parse(m[1])); else throw new Error();
-                }).catch(()=>{
+                    if (!m||!m[1]) throw new Error('bad gviz payload');
+                    return JSON.parse(m[1]);
+                })
+                .catch(()=>new Promise((resolve,reject)=>{
+                    const cb='__gsheetCB_'+idx;
                     const s=document.createElement('script');
-                    s.src='https://docs.google.com/spreadsheets/d/'+SHEET_ID+'/gviz/tq?tqx=responseHandler:__gsheetCB&gid='+SHEET_GID;
+                    const done=r=>{ delete window[cb]; s.remove(); resolve(r); };
+                    window[cb]=done;
+                    s.onerror=()=>{ delete window[cb]; s.remove(); reject(new Error('jsonp failed')); };
+                    s.src=tabUrl(tab,cb);
                     document.body.appendChild(s);
-                });
+                }));
         }
-        window.__gsheetCB = r => processData(r);
 
-        function processData(response) {
-            if (!response||!response.table) return;
+        function loadData() {
+            Promise.all(SHEET_TABS.map((tab,i)=>
+                fetchTab(tab,i).then(res=>parseTable(res,tab)).catch(()=>null)
+            )).then(results=>{
+                const ok=results.filter(r=>r!==null);
+                if (!ok.length) { showLoadError(); return; }
+                allLeads=ok.flat();
+                allLeads.sort((a,b)=>{try{return new Date(b.date)-new Date(a.date);}catch{return 0;}});
+                allLeads=allLeads.filter(l=>{try{return new Date(l.date)>=new Date('2026-03-01');}catch{return false;}});
+                updateStats(); renderCards();
+                const missing=SHEET_TABS.filter((t,i)=>results[i]===null).map(t=>t.label);
+                document.getElementById('lastUpdate').textContent='עדכון: '+new Date().toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'})+(missing.length?' · שגיאה בטאב '+missing.join(', '):'');
+            });
+        }
+
+        function showLoadError() {
+            if (allLeads.length) return; // keep whatever is already on screen
+            document.getElementById('leadsArea').innerHTML='<div class="empty-state">לא הצלחנו לטעון את הגיליון.<br>בדקו שהגיליון משותף לצפייה ושהטאבים נקראים "'+SHEET_TABS.map(t=>t.sheet).join('" ו-"')+'".</div>';
+        }
+
+        function parseTable(response,tab) {
+            if (!response||!response.table) throw new Error('no table');
             const cols=response.table.cols.map(c=>(c.label||'').toLowerCase().trim());
             let ni=cols.indexOf('full_name'),pi=cols.indexOf('phone'),ji=cols.indexOf('job_title'),di=cols.indexOf('created_time'),pli=cols.indexOf('platform');
+            const rows=response.table.rows.slice();
             if (ni===-1) {
-                const fr=response.table.rows[0];
+                const fr=rows[0];
                 if (fr&&fr.c) {
                     const vs=fr.c.map(c=>(c&&c.v||'').toString().toLowerCase().trim());
-                    if (vs.indexOf('full_name')!==-1) { ni=vs.indexOf('full_name');pi=vs.indexOf('phone');ji=vs.indexOf('job_title');di=vs.indexOf('created_time');pli=vs.indexOf('platform'); response.table.rows.shift(); }
+                    if (vs.indexOf('full_name')!==-1) { ni=vs.indexOf('full_name');pi=vs.indexOf('phone');ji=vs.indexOf('job_title');di=vs.indexOf('created_time');pli=vs.indexOf('platform'); rows.shift(); }
                     else { ni=12;pi=13;ji=14;di=1;pli=11; }
                 }
             }
             function cv(c,i){if(i<0||i>=c.length||!c[i])return '';return String(c[i].v||'');}
-            allLeads=[];
-            for (const row of response.table.rows) {
+            const leads=[];
+            for (const row of rows) {
                 const c=row.c||[], name=cv(c,ni), phone=cv(c,pi).replace(/^p:/,'').trim();
                 if (!name&&!phone) continue;
-                allLeads.push({name,phone,job:cv(c,ji),date:cv(c,di),platform:cv(c,pli)});
+                // The tab itself is the campaign, so it stands in when job_title is blank.
+                leads.push({name,phone,job:cv(c,ji)||tab.label,date:cv(c,di),platform:cv(c,pli),source:tab.key,sourceLabel:tab.label});
             }
-            allLeads.sort((a,b)=>{try{return new Date(b.date)-new Date(a.date);}catch{return 0;}});
-            allLeads=allLeads.filter(l=>{try{return new Date(l.date)>=new Date('2026-03-01');}catch{return false;}});
-            updateStats(); renderCards();
-            document.getElementById('lastUpdate').textContent='עדכון: '+new Date().toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'});
+            return leads;
         }
 
         function getLeadSort(info) {
@@ -578,6 +621,7 @@
             html+='</div>';
             html+='<div class="lead-sub-row"><span class="platform-badge '+plc+'">'+pll+'</span><span class="lead-phone-sm">'+pf+'</span>';
             if (lead.job) html+='<span class="lead-job '+getJobClass(lead.job)+'">'+escapeHtml(lead.job)+'</span>';
+            if (lead.sourceLabel&&lead.sourceLabel!==lead.job) html+='<span class="src-badge">'+escapeHtml(lead.sourceLabel)+'</span>';
             html+='</div></div>';
             html+='<span class="expand-icon'+(isExpanded?' open':'')+'">▼</span>';
             html+='</div>'; // end summary
@@ -650,6 +694,7 @@
                 }
                 else if (currentFilter==='meeting') { if (status!=='meeting') return false; }
                 else if (currentFilter.startsWith('handler_')) { if (!info||info.handled_by!==currentFilter.replace('handler_','')) return false; }
+                else if (currentFilter.startsWith('src_')) { if (lead.source!==currentFilter.replace('src_','')) return false; }
                 else if (currentFilter!=='all') {
                     const j=lead.job.toLowerCase();
                     if (currentFilter==='מלצר'){ if (!j.includes('מלצר')&&!j.includes('שירות')) return false; }
