@@ -211,6 +211,7 @@
         <button class="filter-btn active" data-filter="all" onclick="setFilter(this)">הכל</button>
         <button class="filter-btn" data-filter="meeting" onclick="setFilter(this)">📅 ראיונות</button>
         <button class="filter-btn" data-filter="new" onclick="setFilter(this)">חדשים</button>
+        <button class="filter-btn" data-filter="followup" onclick="setFilter(this)">🔁 פולואפ</button>
         <button class="filter-btn" data-filter="src_floor" onclick="setFilter(this)">🍽️ פלור</button>
         <button class="filter-btn" data-filter="src_kitchen" onclick="setFilter(this)">👨‍🍳 טבחים</button>
         <button class="filter-btn" data-filter="handler_ירין" onclick="setFilter(this)">ירין</button>
@@ -289,6 +290,7 @@
         }
 
         let allLeads = [], currentFilter = 'all', leadStatuses = {}, openForms = {}, expandedCards = {}, collapsedWeeks = {};
+        const waLinks = {}; // lead_key → קישור וואטסאפ מוכן, לשימוש בלחיצה על "מי מטפל"
         const HE_DAYS = ['ראשון','שני','שלישי','רביעי','חמישי','שישי','שבת'];
         const COLORS = ['#c95b54','#e0954f','#b07d33','#7a3b63','#c97b8e','#6e3566','#9c5f3c'];
 
@@ -454,7 +456,26 @@
         function toggleCard(lk) { expandedCards[lk]=!expandedCards[lk]; renderCards(); }
         function toggleWeek(wk) { collapsedWeeks[wk]=!collapsedWeeks[wk]; renderCards(); }
 
-        async function setHandler(key, who) { await saveLeadData(key,{handled_by:who}); renderCards(); updateStats(); }
+        // לחיצה על "וואטסאפ" / "התקשר" מתעדת את הפנייה מעצמה. סטטוס קיים לא נדרס —
+        // כך ש"ענה/תה" או "אין מענה" שנרשם ידנית לא יוחלף בחזרה ב"נשלחה הודעה".
+        async function markContact(key, kind) {
+            const info = leadStatuses[key] || {};
+            if (info.sub_status) return;
+            await saveLeadData(key, {sub_status:kind});
+            renderCards(); updateStats();
+        }
+
+        // לקיחת ליד = פנייה בפועל: נפתח וואטסאפ עם ההודעה המוכנה, והליד מסומן "נשלחה הודעה".
+        // חלון הוואטסאפ נפתח לפני ה-await — אחרת דפדפני מובייל חוסמים אותו כחלון קופץ.
+        async function setHandler(key, who) {
+            const info = leadStatuses[key] || {};
+            const isNew = info.handled_by !== who;
+            if (isNew && waLinks[key]) window.open(waLinks[key], '_blank');
+            const patch = {handled_by:who};
+            if (isNew && !info.sub_status) patch.sub_status = 'sent';
+            await saveLeadData(key, patch);
+            renderCards(); updateStats();
+        }
         async function setSubStatus(key, val) {
             const info = leadStatuses[key]||{};
             await saveLeadData(key, {sub_status: info.sub_status===val ? null : val});
@@ -577,6 +598,7 @@
             let wp=pc; if(wp.startsWith('0'))wp='972'+wp.slice(1); else if(wp.startsWith('+'))wp=wp.slice(1);
             const waMsg=encodeURIComponent('היי '+dn+' מה קורה? ראיתי שהתעניינת לגבי '+jobMessagePhrase(lead.job)+' בפסאו, אשמח לשאול כמה שאלות כדי לראות שרלוונטי, ובמידה וכן נקבע ראיון עבודה\nהאם יש ניסיון? כמה משמרות בשבוע מתאים לך? והאם יכול/ה לעבוד ערבים וסופ"שים?');
             const lk=(lead.name+'_'+lead.phone).replace(/\s/g,'_');
+            if (wp.length>=11) waLinks[lk]='https://wa.me/'+wp+'?text='+waMsg;
             const info=leadStatuses[lk];
             const handledBy=info?.handled_by||'', status=info?.status||'new', sub=info?.sub_status||null;
             const isNR=status==='not_relevant', isMeeting=status==='meeting';
@@ -606,10 +628,10 @@
 
             // Details (expanded)
             html+='<div class="lead-details'+(isExpanded?' open':'')+'">';
-            html+='<div class="action-row"><a class="action-btn action-call" href="tel:'+pc+'">📞 התקשר</a><a class="action-btn action-wa" href="https://wa.me/'+wp+'?text='+waMsg+'" target="_blank">💬 וואטסאפ</a></div>';
+            html+='<div class="action-row"><a class="action-btn action-call" href="tel:'+pc+'" onclick="markContact(\''+lk+'\',\'call\')">📞 התקשר</a><a class="action-btn action-wa" href="https://wa.me/'+wp+'?text='+waMsg+'" target="_blank" onclick="markContact(\''+lk+'\',\'sent\')">💬 וואטסאפ</a></div>';
 
             // Handler
-            html+='<div class="det-label">מי מטפל?</div><div class="handle-btns">';
+            html+='<div class="det-label">מי מטפל? · לחיצה פותחת וואטסאפ ומסמנת «נשלחה הודעה»</div><div class="handle-btns">';
             ['ירין','עדי','קדוש','אראל'].forEach(who=>{
                 const hc=who==='ירין'?'yarin':who==='עדי'?'adi':who==='קדוש'?'kadosh':'arel';
                 const active=handledBy===who?' h-active h-'+hc:'';
@@ -666,6 +688,10 @@
                 if (isNRFilter) return status==='not_relevant';
                 if (hidden) return false;
                 if (currentFilter==='new') { if (info&&(info.handled_by||status!=='new')) return false; }
+                else if (currentFilter==='followup') {
+                    if (status==='meeting'||status==='not_relevant') return false;
+                    if (!info||['sent','call','no_ans','later'].indexOf(info.sub_status)===-1) return false;
+                }
                 else if (currentFilter==='meeting') { if (status!=='meeting') return false; }
                 else if (currentFilter.startsWith('handler_')) { if (!info||info.handled_by!==currentFilter.replace('handler_','')) return false; }
                 else if (currentFilter.startsWith('src_')) { if (lead.source!==currentFilter.replace('src_','')) return false; }
