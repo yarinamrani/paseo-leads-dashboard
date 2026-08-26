@@ -246,14 +246,22 @@
         // לידי הגיוס מפוזרים על כמה גיליונות וטאבים. כולם נטענים ומוזגים לרשימה אחת,
         // כדי שאף מקור לא ייעלם כשנפתח קמפיין חדש. להוספת מקור — עוד שורה כאן.
         //
-        // שתי צורות טבלה שונות במקורות האלה:
-        //   'meta'   — ייצוא אוטומטי של טופס לידים ממטא (כותרות באנגלית: full_name, phone…)
-        //   'manual' — טבלה שממלאים ידנית (כותרות בעברית: "שם מלא", "טלפון"…)
-        // הטאבים מזוהים לפי gid ולא לפי שם, כי שם טאב משתנה בקלות.
+        // שלוש צורות מקור:
+        //   'meta'   — גיליון עם ייצוא אוטומטי של טופס לידים ממטא (כותרות באנגלית)
+        //   'manual' — גיליון שממלאים ידנית (כותרות בעברית: "שם מלא", "טלפון"…)
+        //   'table'  — טבלת campaign_leads ב-Supabase
+        // טאבים בגיליון מזוהים לפי gid ולא לפי שם, כי שם טאב משתנה בקלות.
+        //
+        // קמפייני הפלור והטבחים החדשים לא מחוברים לגיליון — הלידים נשארים אצל מטא.
+        // עד שהחיבור יתוקן הם נטענים מ-campaign_leads, ואחריו הם פשוט יגיעו משני
+        // המקורות; הדדופ לפי שם+טלפון משאיר עותק אחד, של הגיליון.
         const LEAD_SOURCES = [
             { key: 'workers', label: 'עובדים', icon: '📋', schema: 'meta',   sheetId: '1kFQ9GTHwg4DRNgPVTUrYDQozF2nE7NrSvQgHykj3Uxs', gid: '1887515514' },
             { key: 'floor',   label: 'פלור',   icon: '🍽️', schema: 'manual', sheetId: '1kMwieVnC3iE1Ui6HuxEHKtIi6EzYGFbRf2sEeuI_LGI', gid: '532099517'  },
-            { key: 'kitchen', label: 'טבחים',  icon: '👨‍🍳', schema: 'manual', sheetId: '1kMwieVnC3iE1Ui6HuxEHKtIi6EzYGFbRf2sEeuI_LGI', gid: '1443778839' }
+            { key: 'kitchen', label: 'טבחים',  icon: '👨‍🍳', schema: 'manual', sheetId: '1kMwieVnC3iE1Ui6HuxEHKtIi6EzYGFbRf2sEeuI_LGI', gid: '1443778839' },
+            // כל שורה נושאת את המקור שלה (floor/kitchen), ולכן היא נופלת תחת הצ'יפים
+            // הקיימים ולא צריכה צ'יפ משלה.
+            { key: 'imported', label: 'ממטא', schema: 'table', table: 'campaign_leads' }
         ];
         const SUPABASE_URL = 'https://vzeowbriddhvhpishmhn.supabase.co';
         const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InZ6ZW93YnJpZGRodmhwaXNobWhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzI4MTAyNDUsImV4cCI6MjA4ODM4NjI0NX0.PWvjFj41l0wB9awroZdDsMhCJ0yJXdrf1-k-45n0Rwk';
@@ -531,9 +539,33 @@
                 }));
         }
 
+        // לידים שנשמרו ב-Supabase כבר מגיעים בשדות הנכונים, בלי ניחוש כותרות.
+        async function fetchTableSource(src) {
+            const resp = await fetch(SUPABASE_URL+'/rest/v1/'+src.table+'?select=created_time,source_key,source_label,full_name,phone,job_title,platform', { headers: authHdr() });
+            if (!resp.ok) throw new Error('table '+resp.status);
+            const data = await resp.json();
+            if (!Array.isArray(data)) throw new Error('bad table payload');
+            return data.map(r=>({
+                name: (r.full_name||'').trim(),
+                phone: (r.phone||'').trim(),
+                job: (r.job_title||'').trim()||r.source_label||src.label,
+                date: r.created_time,
+                time: parseLeadTime(r.created_time),
+                platform: (r.platform||'').toLowerCase(),
+                source: r.source_key||src.key,
+                sourceLabel: r.source_label||src.label
+            })).filter(l=>l.name&&l.phone);
+        }
+
+        function loadSource(src,i) {
+            return src.schema==='table'
+                ? fetchTableSource(src)
+                : fetchSource(src,i).then(res=>parseTable(res,src));
+        }
+
         function loadData() {
             Promise.all(LEAD_SOURCES.map((src,i)=>
-                fetchSource(src,i).then(res=>parseTable(res,src)).catch(()=>null)
+                loadSource(src,i).catch(()=>null)
             )).then(results=>{
                 const ok=results.filter(r=>r!==null);
                 if (!ok.length) { showLoadError(); return; }
@@ -807,7 +839,8 @@
         function buildSourceFilters() {
             const anchor=document.getElementById('srcFilterAnchor');
             if (!anchor) return;
-            anchor.insertAdjacentHTML('afterend', LEAD_SOURCES.map(s=>
+            // רק מקורות עם צ'יפ משלהם; מקור שהשורות שלו נושאות מקור אחר מדולג.
+            anchor.insertAdjacentHTML('afterend', LEAD_SOURCES.filter(s=>s.icon).map(s=>
                 '<button class="filter-btn" data-filter="src_'+s.key+'" onclick="setFilter(this)">'+s.icon+' '+escapeHtml(s.label)+'</button>'
             ).join(''));
         }
