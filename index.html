@@ -173,7 +173,7 @@
     <div class="header">
         <div class="header-top">
             <span><span class="auto-refresh-indicator"></span><span class="last-update" id="lastUpdate">טוען...</span></span>
-            <span style="display:flex;align-items:center;gap:12px"><span class="logout-link" onclick="logout()">התנתק</span><button class="refresh-btn" onclick="loadData()">רענן</button></span>
+            <span style="display:flex;align-items:center;gap:12px"><span class="logout-link" onclick="logout()">התנתק</span><button class="refresh-btn" onclick="exportCsv()">⬇ ייצוא</button><button class="refresh-btn" onclick="loadData()">רענן</button></span>
         </div>
         <div class="brand">
             <svg class="brand-emblem" viewBox="0 0 240 118" fill="none" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="PASEO">
@@ -763,11 +763,13 @@
             return html;
         }
 
-        function renderCards() {
+        // מה שמוצג כרגע על המסך, אחרי הפילטר והחיפוש. גם הייצוא עובר דרך כאן,
+        // כדי שהקובץ תמיד יתאים בדיוק למה שרואים.
+        function visibleLeads() {
             const search=document.getElementById('searchBox').value.toLowerCase();
             const isNRFilter=currentFilter==='not_relevant';
 
-            let filtered=allLeads.filter(lead=>{
+            return allLeads.filter(lead=>{
                 const lk=(lead.name+'_'+lead.phone).replace(/\s/g,'_');
                 const info=leadStatuses[lk], status=info?.status||'new', hidden=info?.hidden||false;
                 if (isNRFilter) return status==='not_relevant';
@@ -788,6 +790,11 @@
                 if (search&&!(lead.name+' '+lead.phone+' '+lead.job).toLowerCase().includes(search)) return false;
                 return true;
             });
+        }
+
+        function renderCards() {
+            const isNRFilter=currentFilter==='not_relevant';
+            let filtered=visibleLeads();
 
             if (filtered.length===0) { document.getElementById('leadsArea').innerHTML='<div class="empty-state">לא נמצאו לידים</div>'; return; }
 
@@ -834,6 +841,40 @@
             });
 
             document.getElementById('leadsArea').innerHTML=html;
+        }
+
+        // ייצוא הרשימה המסוננת ל-CSV שנפתח באקסל. ה-BOM בהתחלה הוא מה שגורם
+        // לאקסל לזהות UTF-8 ולהציג עברית במקום ג'יבריש.
+        function exportCsv() {
+            const leads=visibleLeads();
+            if (!leads.length) { alert('אין לידים לייצוא בסינון הנוכחי'); return; }
+            const cols=['תאריך','שם','טלפון','וואטסאפ','משרה','מקור','פלטפורמה','סטטוס','מטפל','סטטוס טיפול'];
+            const STATUS_HE={new:'חדש',not_relevant:'לא רלוונטי',meeting:'ריאיון נקבע'};
+            const esc=v=>'"'+String(v==null?'':v).replace(/"/g,'""')+'"';
+            const lines=[cols.map(esc).join(',')];
+            leads.forEach(lead=>{
+                const lk=(lead.name+'_'+lead.phone).replace(/\s/g,'_');
+                const info=leadStatuses[lk]||{};
+                const d=lead.time?new Date(lead.time):null;
+                lines.push([
+                    d?d.toLocaleString('he-IL',{year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit'}):'',
+                    lead.name, formatPhone(lead.phone), waLinks[lk]||'',
+                    lead.job||'', lead.sourceLabel||'',
+                    lead.platform==='ig'?'אינסטגרם':lead.platform==='fb'?'פייסבוק':(lead.platform||''),
+                    STATUS_HE[info.status||'new']||info.status||'חדש',
+                    info.handled_by||'— לא שויך —',
+                    (info.sub_status&&SUB_LABELS[info.sub_status])||''
+                ].map(esc).join(','));
+            });
+            const d0=new Date(), pad=n=>String(n).padStart(2,'0');
+            const stamp=d0.getFullYear()+'-'+pad(d0.getMonth()+1)+'-'+pad(d0.getDate());
+            const blob=new Blob(['﻿'+lines.join('\r\n')],{type:'text/csv;charset=utf-8;'});
+            const a=document.createElement('a');
+            a.href=URL.createObjectURL(blob);
+            // שם קובץ באנגלית — שם עברי נשבר בחלק מהדפדפנים ובאנדרואיד
+            a.download='paseo-leads-'+stamp+'.csv';
+            document.body.appendChild(a); a.click();
+            setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); },0);
         }
 
         function buildSourceFilters() {
