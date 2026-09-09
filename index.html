@@ -90,6 +90,7 @@
         .job-waiter  { background: #e3f2fd; color: #1565c0; }
         .job-bar     { background: #f3e5f5; color: #7b1fa2; }
         .job-floor   { background: #fce4ec; color: #ad1457; }
+        .job-shift   { background: #e0f2f1; color: #00695c; }
         .job-other   { background: #f5f5f5; color: #616161; }
         .src-badge   { display: inline-block; padding: 2px 7px; border-radius: 8px; font-size: 10px; font-weight: 600; background: #ede7f6; color: #4527a0; }
         .platform-badge { font-size: 10px; padding: 1px 5px; border-radius: 4px; font-weight: 500; }
@@ -222,6 +223,7 @@
         <button class="filter-btn" data-filter="בר" onclick="setFilter(this)">בר</button>
         <button class="filter-btn" data-filter="מארחת" onclick="setFilter(this)">מארחת</button>
         <button class="filter-btn" data-filter="מטבח" onclick="setFilter(this)">מטבח</button>
+        <button class="filter-btn" data-filter="אחמ״ש" onclick="setFilter(this)">אחמ״ש</button>
         <button class="filter-btn" data-filter="not_relevant" onclick="setFilter(this)">לא רלוונטי</button>
     </div>
 
@@ -345,9 +347,12 @@
             return nameMap[p[0].toLowerCase().replace(/[^a-z]/g,'')] || p[0];
         }
 
+        const JOB_CHIP_CLASS = {'מלצר':'job-waiter','בר':'job-bar','מארחת':'job-host','מטבח':'job-kitchen','אחמ״ש':'job-shift'};
+
         function getJobClass(job) {
             if (!job) return 'job-other';
             const j = job.toLowerCase();
+            if (j.includes('אחמ')) return 'job-shift'; // אחמ"ש / אחמש / אחמשים / אחמשית
             if (j.includes('מטבח')||j.includes('טבח')||j.includes('שף')) return 'job-kitchen';
             if (j.includes('מארח')||j.includes('הוסט')) return 'job-host';
             if (j.includes('מלצר')||j.includes('שירות')) return 'job-waiter';
@@ -363,6 +368,7 @@
                 case 'job-bar':     return 'משרת בר';
                 case 'job-waiter':  return 'משרת מלצרות';
                 case 'job-kitchen': return 'משרת מטבח';
+                case 'job-shift':   return 'משרת אחמ"ש';
                 case 'job-floor':   return 'משרה בפלור';
                 default:            return 'עבודה';
             }
@@ -782,10 +788,10 @@
                 else if (currentFilter==='meeting') { if (status!=='meeting') return false; }
                 else if (currentFilter.startsWith('handler_')) { if (!info||info.handled_by!==currentFilter.replace('handler_','')) return false; }
                 else if (currentFilter.startsWith('src_')) { if (lead.source!==currentFilter.replace('src_','')) return false; }
+                // צ'יפ של משרה — משווים לפי סיווג ולא לפי מחרוזת. הטפסים החדשים
+                // כותבים ברבים ("מארחות", "טבחים") והשוואת substring פספסה אותם.
                 else if (currentFilter!=='all') {
-                    const j=lead.job.toLowerCase();
-                    if (currentFilter==='מלצר'){ if (!j.includes('מלצר')&&!j.includes('שירות')) return false; }
-                    else if (!j.includes(currentFilter)) return false;
+                    if (getJobClass(lead.job)!==JOB_CHIP_CLASS[currentFilter]) return false;
                 }
                 if (search&&!(lead.name+' '+lead.phone+' '+lead.job).toLowerCase().includes(search)) return false;
                 return true;
