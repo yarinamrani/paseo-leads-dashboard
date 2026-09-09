@@ -152,6 +152,9 @@
         .reset-link { font-size:11px; color:#ccc; cursor:pointer; margin-top:8px; display:inline-block; }
 
         .empty-state { text-align:center; padding:40px 20px; color:#aaa; font-size:15px; }
+        .stale-banner { display:none; margin:0 10px 8px; padding:10px 12px; border-radius:10px; background:#fdecea; border:1px solid #f5c6c2; color:#a02c22; font-size:12.5px; line-height:1.5; }
+        .stale-banner.show { display:block; }
+        .stale-banner b { font-weight:700; }
         .loading { text-align:center; padding:40px; color:#888; }
         .loading-spinner { width:32px; height:32px; border:3px solid #eee; border-top-color:#1a1a2e; border-radius:50%; animation:spin .8s linear infinite; margin:0 auto 12px; }
         @keyframes spin { to { transform:rotate(360deg); } }
@@ -227,6 +230,7 @@
         <button class="filter-btn" data-filter="not_relevant" onclick="setFilter(this)">לא רלוונטי</button>
     </div>
 
+    <div class="stale-banner" id="staleBanner"></div>
     <div id="leadsArea">
         <div class="loading"><div class="loading-spinner"></div>טוען לידים...</div>
     </div>
@@ -547,7 +551,9 @@
 
         // לידים שנשמרו ב-Supabase כבר מגיעים בשדות הנכונים, בלי ניחוש כותרות.
         async function fetchTableSource(src) {
-            const resp = await fetch(SUPABASE_URL+'/rest/v1/'+src.table+'?select=created_time,source_key,source_label,full_name,phone,job_title,platform', { headers: authHdr() });
+            // lead_kind מפריד גיוס מאירועים — אותו webhook קולט את שניהם,
+            // וכאן רוצים רק מועמדים.
+            const resp = await fetch(SUPABASE_URL+'/rest/v1/'+src.table+'?select=created_time,source_key,source_label,full_name,phone,job_title,platform&lead_kind=eq.recruitment', { headers: authHdr() });
             if (!resp.ok) throw new Error('table '+resp.status);
             const data = await resp.json();
             if (!Array.isArray(data)) throw new Error('bad table payload');
@@ -584,10 +590,30 @@
                     seen[k]=true; merged.push(l);
                 });
                 allLeads=merged.filter(l=>l.time>=MIN_LEAD_TIME).sort((a,b)=>b.time-a.time);
-                updateStats(); renderCards();
+                updateStats(); renderCards(); renderStaleWarning();
                 const missing=LEAD_SOURCES.filter((s,i)=>results[i]===null).map(s=>s.label);
                 document.getElementById('lastUpdate').textContent='עדכון: '+new Date().toLocaleTimeString('he-IL',{hour:'2-digit',minute:'2-digit'})+(missing.length?' · שגיאה ב'+missing.join(', '):'');
             });
+        }
+
+        // פעמיים כבר נשבר חיבור בין מטא למקור והזרם נעצר בשקט — פעם לשבוע,
+        // פעם לשלושה שבועות — כי "אין לידים חדשים" נראה בדיוק כמו "הכל תקין".
+        // הבאנר הופך שקט ממושך לדבר שאי אפשר לפספס.
+        const STALE_HOURS = 48;
+        function renderStaleWarning() {
+            const el=document.getElementById('staleBanner');
+            if (!el) return;
+            if (!allLeads.length) { el.className='stale-banner'; return; }
+            const newest=Math.max.apply(null, allLeads.map(l=>l.time||0));
+            if (!newest) { el.className='stale-banner'; return; }
+            const hours=(Date.now()-newest)/36e5;
+            if (hours < STALE_HOURS) { el.className='stale-banner'; return; }
+            const days=Math.floor(hours/24);
+            const since=days>=1 ? days+' ימים' : Math.floor(hours)+' שעות';
+            el.innerHTML='⚠️ <b>לא נכנס ליד חדש כבר '+since+'.</b><br>'+
+                'הליד האחרון: '+new Date(newest).toLocaleString('he-IL',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})+
+                '. סביר שהחיבור בין מטא למאגר נפל — כדאי לבדוק לפני שנצברים עוד לידים שאף אחד לא רואה.';
+            el.className='stale-banner show';
         }
 
         function showLoadError() {
